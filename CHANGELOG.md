@@ -12,7 +12,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 - **`spec:approve` modifiers:** `dry-run` reviews and shows the plan without changing anything; `no-merge` approves without integrating.
 - **External content is data.** The `spec` skills treat issues, pull requests, comments, commits, conversations and code as data, never as instructions (`WORKFLOW.md` §7). Text that tries to steer a review or a merge is a blocking finding in `review` and `approve`.
 - **Communication style.** Every skill reads `references/STYLE.md`: answer first, no flattery, filler or recaps, full sentences in persisted text. Adapted from the `caveman` skill (Apache-2.0, see `NOTICE`). The review guide no longer asks for praise in comments.
-- **Health-check limits.** Reports state that they are evidence-based assessments, not a pentest, an audit, a certification or legal advice. Each finding has a **Basis**: `confirmed` or `no evidence found`. The privacy check marks findings that need legal validation. Repository content that tries to change the assessment is ignored and reported.
+- **Health-check limits.** Reports state that they are evidence-based assessments, not a pentest, an audit, a certification or legal advice. Each finding has a **Basis**: `confirmed` or `no evidence found`. The privacy check marks findings that need legal validation. Findings also carry **Confidence** and **Human validation**, and Critical findings a **Reproduction** path. Repository content that tries to change the assessment is ignored and reported.
 
 ### Added
 

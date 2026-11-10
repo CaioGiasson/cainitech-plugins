@@ -160,6 +160,9 @@ Each item that is not fully compliant is written in the format of a pentest find
 - **Reason for the status:** <why it is not compliant/partial, citing the rule in §2/§3>
 - **Basis:** `confirmed` | `no evidence found` (§2); for `no evidence found`, where the missing evidence would live
 - **Evidence:** `src/services/Email.service.ts:42` — `fetch(url)` without `signal`/timeout; search `rg "fetch\(" src/` → 7 hits, 5 without timeout (list below)
+- **Reproduction:** <Critical items: the exact steps or command that show the problem, runnable by someone else on the assessed commit (e.g., `rg …`, a request with two test users, a failing test). Other severities: optional>
+- **Confidence:** `high` | `medium` | `low` — <why: e.g., read the code path end to end; inferred from configuration; could not run the test>
+- **Human validation:** `required` | `not required` — required for every Critical finding, every `low` confidence, every `no evidence found` basis and every legal interpretation
 - **Affected components:** <files, routes, services>
 - **Impact / risk:** <technical and business consequence; exploitation or failure scenario>
 - **Recommendation:** <step-by-step fix at the right boundary, with a code example when useful>
@@ -169,6 +172,8 @@ Each item that is not fully compliant is written in the format of a pentest find
 ```
 
 For Partial items, make explicit **what is already met** and **what is missing**.
+
+Every assessed item is auditable: a Compliant item cites its evidence in table §3, an N/A item its justification and evidence in table §4, and a Non-compliant or Partial item the fields above. Commands are written so they can be re-run on the assessed commit. "Methodology and limitations" lists every command run, every check that could not be executed and why, and the items with `low` confidence.
 
 ### 8.2 Suggested backlog
 

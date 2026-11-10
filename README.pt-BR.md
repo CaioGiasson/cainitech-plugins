@@ -239,6 +239,9 @@ senhas; contas administrativas não exigem segundo fator.
 - **Motivo do status:** o controle não existe e não há teste negativo (ASSESSMENT §2 e §3).
 - **Base:** `confirmed`
 - **Evidência:** `src/modules/orders/orders.controller.ts:58` — `orders.findById(req.params.id)` sem filtro por `userId`; busca `rg "findById\(req.params" src/` → 6 ocorrências, 5 sem verificação de dono.
+- **Reprodução:** entrar como usuário de teste A, criar um pedido, entrar como usuário de teste B e chamar `GET /orders/<id do pedido de A>` → 200 com os dados de A.
+- **Confiança:** `high` — a rota e o método do repositório foram lidos de ponta a ponta.
+- **Validação humana:** `required` (Crítico).
 - **Componentes afetados:** `GET /orders/:id`, `PATCH /orders/:id`, `GET /orders/:id/invoice` e outras 3 rotas.
 - **Impacto / risco:** um cliente autenticado percorre ids sequenciais e lê nome, endereço e itens de pedidos de terceiros (vazamento de dados pessoais, com impacto na LGPD).
 - **Recomendação:** buscar sempre por `{ id, userId }` na camada de repositório e responder 404 quando não encontrar. Adicionar teste em que o usuário A tenta ler o pedido do usuário B e recebe 404.

@@ -241,6 +241,9 @@ administrative accounts do not require a second factor.
 - **Reason for the status:** the control does not exist and there is no negative test (ASSESSMENT §2 and §3).
 - **Basis:** `confirmed`
 - **Evidence:** `src/modules/orders/orders.controller.ts:58` — `orders.findById(req.params.id)` with no `userId` filter; search `rg "findById\(req.params" src/` → 6 hits, 5 without an ownership check.
+- **Reproduction:** log in as test user A, create an order, log in as test user B and call `GET /orders/<A's order id>` → 200 with A's data.
+- **Confidence:** `high` — the route and the repository method were read end to end.
+- **Human validation:** `required` (Critical).
 - **Affected components:** `GET /orders/:id`, `PATCH /orders/:id`, `GET /orders/:id/invoice` and 3 other routes.
 - **Impact / risk:** an authenticated customer walks through sequential IDs and reads name, address and items of other people's orders (personal data leak, with LGPD impact).
 - **Recommendation:** always fetch by `{ id, userId }` in the repository layer and answer 404 when nothing is found. Add a test where user A tries to read user B's order and gets 404.
