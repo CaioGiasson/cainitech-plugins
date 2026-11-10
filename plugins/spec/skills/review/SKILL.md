@@ -36,7 +36,7 @@ The review is done by a subagent that starts with no context from this conversat
    Ask nothing, post nothing, change no code and commit nothing. Return the review in the Phase 9 format, or the refusal of Phase 2, plus REPO_ROOT, PR_BRANCH and ORIGINAL_BRANCH.
    ```
    Nothing else: no summary of the conversation, no description of what was implemented or why, no opinion on the change, no hint of what to look for, even when the user said something about the change in this session.
-3. Relay the reviewer's result as it came: do not add, remove, reclassify or soften findings, and do not review the change yourself. A refusal is shown to the user as is, and the skill ends.
+3. Relay the reviewer's result as it came, in full, including every **How to fix** block: do not add, remove, shorten, reclassify or soften findings, and do not review the change yourself. A refusal is shown to the user as is, and the skill ends.
 4. Run Phases 9–12 with that result.
 
 If the Agent tool is not available, say that the isolated review cannot run and stop. Run the review in this session only if the user asks for it explicitly, and then start the result with `⚠ Review not isolated: run in the same session as the conversation.`
@@ -191,7 +191,7 @@ Run in `REPO_ROOT`:
      ```
 
 4. **If the changed files have no corresponding tests** (even if the project has tests):
-   - Record, to be included in the suggestions as an important item:
+   - Record, to be included in the suggestions as an important item — or as a **🔴 Blocker** when the untested code is a critical flow (money, authentication, authorization, personal data), as Phase 8 classifies it:
      ```
      ⚠ The changes in this PR have no automated tests covering the implemented scope.
      ```
