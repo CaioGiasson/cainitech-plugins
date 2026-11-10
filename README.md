@@ -136,7 +136,7 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 | Skill | What it does | What you get |
 |---|---|---|
 | **`/spec:build`** | Takes a task, moves it on the board to "In progress" (if there is a board), builds the solution, writes the tests and reviews its own work. | On GitHub: a ready *pull request* with the code in organized steps and a test script for you to check. Without GitHub: organized local commits. Without version control: a change log file with a copy of every change. Add `dry-run` to see the plan without changing anything. |
-| **`/spec:review`** | Reviews a change: checks that everything requested was done, runs the tests and analyzes code quality. | Review comments posted on the right spot in the code, after you choose what to post (without GitHub, the review comes in the chat). It only fixes something if you ask. Add `dry-run` to review from the diff without checking out, building or posting. |
+| **`/spec:review`** | Reviews a change in an isolated subagent that sees only the change, never your conversation: checks that everything requested was done, runs the tests and analyzes code quality. Refuses to review when there is no task, refinement document or PR description with acceptance criteria to check against. | Review comments posted on the right spot in the code, after you choose what to post (without GitHub, the review comes in the chat). It only fixes something if you ask. Add `dry-run` to review from the diff without checking out, building or posting. |
 | **`/spec:approve`** | Steps in after your manual tests and does the final review before wrapping up. | If all is well, it shows exactly what it will do and waits for your OK: on GitHub, a final comment, a "Reviewed" label and the delivery completed (*merge*), then a separate question before cleaning up the working copies; without GitHub, a local merge. Add `dry-run` to see the plan without changing anything, or `no-merge` to approve without delivering. If it finds a serious problem, it only tells you and touches nothing. |
 
 ### System health check
@@ -287,7 +287,7 @@ After the report, Claude offers to turn the backlog items into well-defined task
 
 **How it is checked:**
 
-- **Evals:** 39 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
+- **Evals:** 40 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
 - **CI on every pull request:** manifest validation, catalog counts and fingerprints, references and links, the score arithmetic of the example above, and a secret scan of the whole history.
 - **Threat model:** assets, trust boundaries, twelve abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
 - **Reproducible scenarios** on public fictitious fixtures ([CASE-STUDIES.md](docs/CASE-STUDIES.md)).

@@ -136,7 +136,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 | Skill | O que faz | O que você recebe |
 |---|---|---|
 | **`/spec:build`** | Recebe uma tarefa, move no quadro para "Em andamento" (se houver quadro), programa a solução, cria os testes e se revisa sozinha. | No GitHub: uma *pull request* (pedido de revisão) pronta, com o código em etapas organizadas e um roteiro de testes para você conferir. Sem GitHub: commits locais organizados. Sem controle de versão: um arquivo de registro com a cópia de cada mudança. Acrescente `dry-run` para ver o plano sem alterar nada. |
-| **`/spec:review`** | Revisa uma mudança: confere se tudo o que foi pedido foi feito, roda os testes e analisa a qualidade do código. | Comentários de revisão publicados no trecho certo do código, depois que você escolhe o que postar (sem GitHub, a revisão vem no chat). Só corrige algo se você pedir. Acrescente `dry-run` para revisar pelo diff, sem trocar de branch, compilar nem publicar nada. |
+| **`/spec:review`** | Revisa uma mudança num subagente isolado, que vê só a mudança e nunca a sua conversa: confere se tudo o que foi pedido foi feito, roda os testes e analisa a qualidade do código. Recusa revisar quando não há tarefa, documento de refinamento ou descrição de PR com critérios de aceite para conferir. | Comentários de revisão publicados no trecho certo do código, depois que você escolhe o que postar (sem GitHub, a revisão vem no chat). Só corrige algo se você pedir. Acrescente `dry-run` para revisar pelo diff, sem trocar de branch, compilar nem publicar nada. |
 | **`/spec:approve`** | Entra depois dos seus testes manuais e faz a última revisão antes de finalizar. | Se estiver tudo certo, mostra exatamente o que vai fazer e espera o seu OK: no GitHub, comentário final, marcação "Reviewed" e entrega concluída (*merge*), depois uma pergunta separada antes de limpar as cópias de trabalho; sem GitHub, um merge local. Acrescente `dry-run` para ver o plano sem alterar nada, ou `no-merge` para aprovar sem entregar. Se achar problema sério, apenas avisa você e não mexe em nada. |
 
 ### Check-up do sistema
@@ -285,7 +285,7 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 
 **Como isso é verificado:**
 
-- **Evals:** 39 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
+- **Evals:** 40 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
 - **CI em toda pull request:** validação dos manifestos, contagens e fingerprints dos catálogos, referências e links, a conta do score do exemplo acima e uma busca de segredos em todo o histórico.
 - **Threat model:** ativos, fronteiras de confiança, doze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
 - **Cenários reproduzíveis** com fixtures públicas e fictícias ([CASE-STUDIES.md](docs/CASE-STUDIES.md), em inglês).

@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Reviews a pull request (or, without GitHub, a branch or a changelog file). Checks out the branch, reads the PR and the linked task, verifies that everything requested was implemented and that divergences were recorded, runs the build and tests, tests the functionality when possible (attaching evidence), analyzes the code against the project's conventions and the review guide, and posts the comments the user picks. It fixes nothing on its own: it asks the user and, only on explicit request, fixes in one commit per fix on the same branch."
+description: "Reviews a pull request (or, without GitHub, a branch or a changelog file) in an isolated subagent that receives only the reference to review, never the conversation. Refuses to review when there is no task, refinement document or PR description with verifiable acceptance criteria. Checks out the branch, reads the PR and the linked task, verifies that everything requested was implemented and that divergences were recorded, runs the build and tests, tests the functionality when possible (attaching evidence), analyzes the code against the project's conventions and the review guide, and posts the comments the user picks. It fixes nothing on its own: it asks the user and, only on explicit request, fixes in one commit per fix on the same branch."
 ---
 
 # Skill: review
@@ -19,6 +19,29 @@ Optional modifier, as a standalone word anywhere in the text (a reference that o
 ## Shared rules
 
 Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and apply it (language, project context, tracker, mandatory documentation record, delivery modes, tooling, external content). Write the review in the language of the user's request (English when it cannot be determined); the PR and the project's code may be in other languages — comment in the user's language unless the project clearly uses another for review comments. Read `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply it to every message and every text you write.
+
+## Isolated reviewer
+
+The review is done by a subagent that starts with no context from this conversation, so that what was said or done here (the implementation, explanations, opinions about the change) cannot bias it. Everything the reviewer needs must come from the PR, the task and the repository.
+
+**This session (the orchestrator):**
+1. Resolve only the reference and the modifier: the PR URL or number, the branch or the changelog path from `$ARGUMENTS`; with no input, `gh pr view --json url --jq .url`, otherwise `git branch --show-current`. Do not read the diff, the task or the code.
+2. Start **one new subagent** with the Agent tool (a fresh general-purpose agent; never a fork or any agent that inherits this conversation). Its prompt contains only:
+   ```
+   You are the reviewer of the /spec:review skill. Read <absolute path of this SKILL.md> and run the reviewer part (Phases 0–8) for: <reference>
+   Modifier: <dry-run | none>
+   Repository: <absolute path of the repository root>
+   Plugin root (for ${CLAUDE_PLUGIN_ROOT}): <absolute path>
+   User's language: <language>
+   Ask nothing, post nothing, change no code and commit nothing. Return the review in the Phase 9 format, or the refusal of Phase 2, plus REPO_ROOT, PR_BRANCH and ORIGINAL_BRANCH.
+   ```
+   Nothing else: no summary of the conversation, no description of what was implemented or why, no opinion on the change, no hint of what to look for, even when the user said something about the change in this session.
+3. Relay the reviewer's result as it came: do not add, remove, reclassify or soften findings, and do not review the change yourself. A refusal is shown to the user as is, and the skill ends.
+4. Run Phases 9–12 with that result.
+
+If the Agent tool is not available, say that the isolated review cannot run and stop. Run the review in this session only if the user asks for it explicitly, and then start the result with `⚠ Review not isolated: run in the same session as the conversation.`
+
+**The subagent (the reviewer)** runs Phases 0–8, restores the repository at the end (`git restore .` and `git switch "$ORIGINAL_BRANCH"`, modes A–C; not needed with `dry-run`) and returns. It never asks the user anything: where a phase would need a decision, it records the open point in the result.
 
 ---
 
@@ -67,12 +90,17 @@ Display an initial summary:
    - Acceptance criteria
    - Documented edge cases
 
-3. If **no** task is linked **and the project uses a board** (`WORKFLOW.md` §3), record a mandatory **blocker**:
+3. **Sufficiency gate.** The review needs a statement of what the change should do. Valid sources: the linked task; the refinement document of the change (`WORKFLOW.md` §4); in a project without a board, a PR description that states the expected behavior with acceptance criteria. **Refuse the review** — stop here, before Phase 3, and run nothing else — when:
+   - there is no valid source: the project uses a board (`WORKFLOW.md` §3) and no task is linked, or, without a board, there is no task, no refinement document and no PR description with acceptance criteria;
+   - the source gives no verifiable acceptance criteria (only a title or a vague goal such as "improvements" or "adjustments"), so Phase 6 cannot check what was requested;
+   - the change cannot be read: PR, branch or changelog not found, empty diff, or a diff made only of generated or binary files.
+
+   Do not fill the gap with assumptions, commit messages or the code itself: the code shows what was done, not what was requested. Return:
    ```
-   🔴 Change without a linked task.
-   Every piece of work needs a task and a pull request that references it (Closes #N).
+   ⛔ Review refused: <reason in one line>
+   Missing: <what is missing>
+   To fix: <what to add and where: link the task with "Closes #N", or write acceptance criteria in the task, the refinement document or the PR description>, then run /spec:review again.
    ```
-   The code review continues, and this blocker goes into the list of comments. If the project has no board, look instead for the refinement document; its absence (when the user did not ask not to document) is a **🟡 Important** item.
 
 4. With the task context in hand, identify:
    - What **should** be implemented (acceptance criteria)
@@ -120,7 +148,7 @@ Display an initial summary:
       Previous branch: <ORIGINAL_BRANCH>
    ```
 
-5. **All operations in the following phases run in `REPO_ROOT`.** When finishing, return to `ORIGINAL_BRANCH` (Phase 12).
+5. **All operations in the following phases run in `REPO_ROOT`.** When Phase 8 ends, the reviewer restores the repository and returns to `ORIGINAL_BRANCH` (see "Isolated reviewer").
 
 Mode D has no branch to switch; work in place.
 
@@ -241,8 +269,6 @@ Whenever possible, **test the functionality for real** and collect evidence to a
 ## PHASE 8 — Code analysis and review
 
 Based on the guides read in Phase 0, in the context of the task (Phase 2) and the results of Phases 6 and 7, analyze all the changed files.
-
-If Phase 2 found no linked task where one is required, always include the "change without a linked task" blocker in the final list, even if the diff itself is correct.
 
 ### Structure of the analysis
 
@@ -416,7 +442,7 @@ Based on the user's selection:
    Wait for the answer. Without an explicit request, **do not change code, do not commit and do not push**. 🟢 suggestions are fixed only if the user expressly includes them.
 
 2. On explicit request, fix **only the indicated items**, on the **same branch as the change** (without creating a new branch):
-   - Before starting, discard install/build/test changes to tracked files (`git restore .`) and confirm `git status --porcelain` is clean.
+   - Before starting, switch to it in `REPO_ROOT` (`git switch "$PR_BRANCH"`, modes A–C) and discard install/build/test changes to tracked files (`git restore .`) and confirm `git status --porcelain` is clean.
    - Follow each item's **How to fix**.
    - Make **one commit per fix** (never group distinct items), with `git add <the fix's files>` and a conventional-commit message referencing the item (e.g., `fix: validate the ID number in createPerson (review #2)`). Never use `--no-verify`.
    - Run build, lint and tests after each fix; if it fails, fix it before moving on.
@@ -430,7 +456,7 @@ Based on the user's selection:
 
 ## PHASE 12 — Returning to the branch and finishing
 
-1. Restore tracked files changed by install, build or tests, and return to the previous branch (modes A–C):
+1. If Phase 11 switched to the change's branch, restore tracked files changed by install, build or tests and return to the previous branch (modes A–C):
    ```bash
    cd "$REPO_ROOT"
    git restore .
