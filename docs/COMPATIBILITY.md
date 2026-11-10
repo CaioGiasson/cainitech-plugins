@@ -6,7 +6,8 @@ What each version of the plugins was checked against. "Validated" means the mani
 
 | Component | Requirement | Status |
 |---|---|---|
-| Claude Code (plugins) | Any version with plugin marketplaces. Manifests use only the fields every version understands | Validated with 2.1.63 (Windows 10) and 2.1.114 (CI, Ubuntu) |
+| Claude Code (plugins) | Any version with plugin marketplaces. Plugin manifests use only the fields every version understands | Validated with 2.1.63 (Windows 10) and 2.1.114 (CI, Ubuntu) |
+| Claude Code (`spec` plugin) | **2.1.110 or later.** `spec:approve` relies on the skill frontmatter field `disable-model-invocation: true` so that Claude cannot start it on its own. A version that ignores the field drops that protection without warning. The Claude Code changelog first mentions the field in 2.1.110 (a fix, so the field existed by then); the version that introduced it is not in the changelog | Required minimum; the confirmations inside `approve` work on any version |
 | Claude Code (evals) | 2.1.269 or later (`claude plugin eval`) | Suites validated structurally; not run yet |
 | CLI (`claude`) | — | Validated; skills not run yet |
 | Desktop app (Code tab) | Same plugin system as the CLI | Not tested |

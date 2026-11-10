@@ -294,7 +294,7 @@ After the report, Claude offers to turn the backlog items into well-defined task
 
 ## Compatibility
 
-Made for every Claude Code surface that supports plugins (terminal, desktop app, VS Code); so far the manifests are validated with Claude Code 2.1.63 and 2.1.114, and the desktop app and VS Code are not tested yet; running the evals needs 2.1.269 or later. The `spec` skills work best with the GitHub CLI (`gh`). Tested versions, systems and known limits: [COMPATIBILITY.md](docs/COMPATIBILITY.md).
+Made for every Claude Code surface that supports plugins (terminal, desktop app, VS Code); so far the manifests are validated with Claude Code 2.1.63 and 2.1.114, and the desktop app and VS Code are not tested yet; running the evals needs 2.1.269 or later. The `spec` plugin needs Claude Code 2.1.110 or later and works best with the GitHub CLI (`gh`). Tested versions, systems and known limits: [COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Before using the task skills
 

@@ -30,7 +30,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 ### Compatibility
 
-See `docs/COMPATIBILITY.md` for the full matrix. CI validates the manifests with Claude Code 2.1.114; they were also validated locally with 2.1.63 on Windows. Score rules, weights and catalog items are unchanged: reports from 1.0.0 remain comparable.
+See `docs/COMPATIBILITY.md` for the full matrix. `spec` requires Claude Code 2.1.110 or later, the first version the Claude Code changelog shows honoring `disable-model-invocation`. CI validates the manifests with Claude Code 2.1.114; they were also validated locally with 2.1.63 on Windows. Score rules, weights and catalog items are unchanged: reports from 1.0.0 remain comparable.
 
 ## 1.0.0 — 2026-10-14
 

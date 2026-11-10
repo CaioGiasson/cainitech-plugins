@@ -292,7 +292,7 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 
 ## Compatibilidade
 
-Feito para toda superfície do Claude Code que aceita plugins (terminal, app desktop, VS Code); até agora os manifestos são validados com o Claude Code 2.1.63 e 2.1.114, e o app desktop e o VS Code ainda não foram testados; rodar as evals exige a 2.1.269 ou mais nova. As skills `spec` funcionam melhor com o GitHub CLI (`gh`). Versões, sistemas testados e limites conhecidos: [COMPATIBILITY.md](docs/COMPATIBILITY.md) (em inglês).
+Feito para toda superfície do Claude Code que aceita plugins (terminal, app desktop, VS Code); até agora os manifestos são validados com o Claude Code 2.1.63 e 2.1.114, e o app desktop e o VS Code ainda não foram testados; rodar as evals exige a 2.1.269 ou mais nova. O plugin `spec` exige o Claude Code 2.1.110 ou mais novo e funciona melhor com o GitHub CLI (`gh`). Versões, sistemas testados e limites conhecidos: [COMPATIBILITY.md](docs/COMPATIBILITY.md) (em inglês).
 
 ## Antes de usar as skills de tarefas
 
