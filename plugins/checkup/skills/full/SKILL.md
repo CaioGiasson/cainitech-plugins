@@ -32,6 +32,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 3. Read the repository context (`AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md`).
 4. Look for earlier reports in `docs/checkups/` (per pillar and consolidated) for the Evolution section.
 5. Build **a single inventory** of the application (stack, frontend, database, integrations, authentication, personal data, third parties, CI/CD, infrastructure, agent context files, AI usage); it is shared by the four pillars and avoids repeated work.
+6. Read `${CLAUDE_PLUGIN_ROOT}/references/TOOLS.md` and run each installed tool **once** (a tool such as `gitleaks` serves more than one pillar); give each pillar the results that concern it.
 
 ---
 
@@ -46,7 +47,7 @@ For each pillar, run the complete flow of the corresponding skill (its Phases 1 
 | Privacy (LGPD) | `/checkup:privacy` | `${CLAUDE_PLUGIN_ROOT}/skills/privacy/references/checklist.md` | 126 |
 | AI Readiness | `/checkup:ai-readiness` | `${CLAUDE_PLUGIN_ROOT}/skills/ai-readiness/references/checklist.md` | 70 |
 
-- If the tool allows subagents, run the four pillars **in parallel**, one subagent per pillar, giving each one: the pillar's `SKILL.md`, the catalog path, the Phase 0 inventory, the commit and the earlier reports of that pillar. Otherwise run them in sequence: Security → Privacy → Performance → AI Readiness (Privacy uses the Security result in PRIV-12.01).
+- If the tool allows subagents, run the four pillars **in parallel**, one subagent per pillar, giving each one: the pillar's `SKILL.md`, the catalog path, the tool results that concern it (run each tool once in Phase 0 and share its output, see `TOOLS.md`), the Phase 0 inventory, the commit and the earlier reports of that pillar. Otherwise run them in sequence: Security → Privacy → Performance → AI Readiness (Privacy uses the Security result in PRIV-12.01).
 - Each pillar saves its own report to `docs/checkups/YYYY-MM-DD-<pillar>.md` (see `ASSESSMENT.md` §7).
 - Before consolidating, check that each pillar assessed **all** of its items (count equal to the table above) and that the point sums add up.
 

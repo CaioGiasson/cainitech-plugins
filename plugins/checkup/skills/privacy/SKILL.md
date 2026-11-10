@@ -30,6 +30,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 1. Read **in full**:
    - `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` — communication style (apply it to every message and every text you write);
    - `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` — methodology, statuses, weights, score, classification and report format (follow it to the letter);
+   - `${CLAUDE_PLUGIN_ROOT}/references/TOOLS.md` — which installed tools to run, how to run them read-only and how to interpret their output;
    - `${CLAUDE_PLUGIN_ROOT}/skills/privacy/references/checklist.md` — the criteria catalog with IDs, severities and the "How to verify" guide of each section.
 2. Read the context of the assessed repository: `AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md` (if they exist).
 3. Record the assessed commit: `git rev-parse --short HEAD` and `git branch --show-current`. If the repository has no git history, say so and record the date instead. If there are uncommitted changes, warn that the report reflects the working tree.
@@ -52,13 +53,19 @@ Show a summary of the inventory (stack, components, applicable and N/A condition
 
 ---
 
+## PHASE 1b — Automated tools
+
+Follow `TOOLS.md` for this pillar: detect the installed tools, run them in report mode (never install one, never run one through a downloader), confirm each result in the code before using it, and keep the `Tool | Version | Command | Result` table for "Methodology and limitations". Their confirmed results are evidence for Phase 2; their silence is not compliance.
+
+---
+
 ## PHASE 2 — Item-by-item assessment
 
 1. Go through the catalog **section by section, in order**, using each section's "How to verify" as the search script.
 2. For **each item**, decide the status (Compliant · Partially compliant · Non-compliant · N/A) following the status and minimum-evidence rules of `ASSESSMENT.md` (§2 and §3). Severity is the catalog's; never change it.
 3. Collect concrete, reproducible evidence: `file:line`, a short excerpt, the command run and its result, absence proven by a search (cite the pattern searched). Mask secrets and personal data.
 4. Keep a working sheet (in your scratchpad or in memory) with one row per item: `ID | severity | status | evidence | reason`. **Every catalog item must end with a status**; at the end, the number of rows must equal the catalog total (126).
-5. Allowed commands during the assessment: reading code, schema, legal documents and configuration; the project's test command to prove rights and retention flows. **Do not** access databases with real data or export data subjects' data.
+5. Allowed commands during the assessment, besides the tools of Phase 1b: reading code, schema, legal documents and configuration; the project's test command to prove rights and retention flows. **Do not** access databases with real data or export data subjects' data.
 6. Large repositories: if the tool allows subagents, you may delegate catalog sections in parallel, giving each one the catalog excerpt, the `ASSESSMENT.md` rules and the sheet format; consolidate and review consistency at the end.
 
 ### Tips specific to this pillar

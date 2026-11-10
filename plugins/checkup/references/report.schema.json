@@ -11,7 +11,7 @@
     { "if": { "properties": { "kind": { "const": "full" } } }, "then": { "required": ["pillars", "backlog"] } }
   ],
   "properties": {
-    "schemaVersion": { "type": "string", "enum": ["1.0.0"] },
+    "schemaVersion": { "type": "string", "enum": ["1.0.0", "1.1.0"] },
     "kind": { "type": "string", "enum": ["pillar", "full"] },
     "pillar": { "type": "string", "enum": ["security", "performance", "privacy", "ai-readiness"] },
     "repository": { "type": "string", "minLength": 1 },
@@ -67,6 +67,7 @@
       }
     },
     "delta": { "$ref": "#/$defs/delta" },
+    "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" }, "description": "Automated tools of the pillar (TOOLS.md §4); added in schema 1.1.0" },
     "limitations": { "type": "array", "items": { "type": "string" } }
   },
   "$defs": {
@@ -122,6 +123,20 @@
         "retestCriterion": { "type": "string" },
         "effort": { "type": "string", "enum": ["S", "M", "L"] },
         "scoreGain": { "type": "number", "minimum": 0 }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "required": ["name", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": ["string", "null"] },
+        "command": { "type": "string", "description": "the command as run, in report mode" },
+        "status": { "type": "string", "enum": ["ran", "notInstalled", "failed", "skipped"] },
+        "results": { "type": "integer", "minimum": 0, "description": "results reported by the tool" },
+        "confirmed": { "type": "integer", "minimum": 0, "description": "results confirmed in the code and used as evidence" },
+        "note": { "type": "string", "description": "reason for failed or skipped; install hint for notInstalled" }
       }
     },
     "pillarSummary": {
