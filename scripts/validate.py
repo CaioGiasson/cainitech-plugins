@@ -202,8 +202,14 @@ def schema_errors(value, schema, root, path="$"):
             return isinstance(value, JSON_TYPES[name])
         if not any(matches(name) for name in types):
             return [f"{path}: tipo {type(value).__name__}, esperado {types}"]
+    for part in schema.get("allOf", []):
+        found += schema_errors(value, part, root, path)
+    if "if" in schema and not schema_errors(value, schema["if"], root, path):
+        found += schema_errors(value, schema.get("then", {}), root, path)
     if value is None:
         return found
+    if "const" in schema and value != schema["const"]:
+        found.append(f"{path}: {value!r} diferente de {schema['const']!r}")
     if "enum" in schema and value not in schema["enum"]:
         found.append(f"{path}: {value!r} fora de {schema['enum']}")
     if isinstance(value, str):
@@ -235,7 +241,10 @@ def schema_errors(value, schema, root, path="$"):
 def check_report_example():
     schema = json.loads(read(REPORT_SCHEMA))
     example = json.loads(read(REPORT_EXAMPLE))
-    errors.extend(f"{REPORT_EXAMPLE}: {e}" for e in schema_errors(example, schema, schema))
+    found = schema_errors(example, schema, schema)
+    if found:
+        errors.extend(f"{REPORT_EXAMPLE}: {e}" for e in found)
+        return
     weights = {"critical": 3, "important": 2, "minor": 1}
     earned = possible = 0
     for severity, weight in weights.items():
