@@ -80,8 +80,14 @@ Before assessing, read `${CLAUDE_PLUGIN_ROOT}/references/CATALOG-CHANGELOG.md` a
 
 0. Compare the catalog version and fingerprint of the previous report with the current ones. If they differ, the **Evolution** section opens with **Methodology change**: the versions, and every item the changelog lists as added, changed or deprecated between them. A score difference caused only by those items is labelled as methodology, not as progress or regression. Reports without a catalog version predate 1.0.0 of the changelog: say so.
 1. Use the previous verdict as the starting point and re-assess **every** item with the current evidence.
-2. Record in the **Evolution** section: previous score → current, items that improved, items that regressed (always with the cause) and items added to or removed from the catalog.
-3. An item only gets worse if the evidence stopped existing or if the previous assessment was wrong; in that case, say explicitly that it is an assessment correction.
+2. Prefer the previous **JSON twin** (§8.3) as the baseline; use the Markdown report only when there is no JSON. Compare **by item ID**, never by wording, so runs in different languages compare cleanly.
+3. Record in the **Evolution** section, and in the `delta` field of the JSON:
+   - previous score → current, and the previous report's file (it is never overwritten, §7);
+   - **improved** and **regressed** items, each with the old and new status and its cause: `evidence changed` (cite what changed, ideally the commit), `assessment correction` (the previous verdict was wrong; say why) or `catalog change` (the item changed between catalog versions);
+   - **added** and **removed** item IDs between catalog versions (removed items are listed, never dropped silently);
+   - `methodologyChange: true` when the catalog version or fingerprint differs (step 0).
+4. An item only gets worse if the evidence stopped existing or if the previous assessment was wrong; in that case, say explicitly that it is an assessment correction. A regression without one of the three causes is not allowed.
+5. Show the delta as a table in the Evolution section: `ID | Before | After | Cause`.
 
 ## 7. Where to save
 

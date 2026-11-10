@@ -21,6 +21,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 - "What these plugins do not do" section in both READMEs.
 - `scripts/validate.py`, run locally and in CI: catalog counts and IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, forbidden files (`personal/`, `.env`) and the score arithmetic of the README example.
 - CI secret scan of the whole history with gitleaks 8.30.1, pinned by checksum.
+- **Run-to-run delta:** the Evolution section and the JSON `delta` list improved, regressed, added and removed items by ID, each regression with its cause (`evidence changed`, `assessment correction` or `catalog change`).
 - **JSON reports:** every checkup report has a JSON twin following `plugins/checkup/references/report.schema.json` (version 1.0.0), for CI, dashboards and run-to-run comparison. `docs/examples/security-report.example.json` is checked against the schema and the scoring rules in CI.
 - **Catalog versioning:** `plugins/checkup/references/CATALOG-CHANGELOG.md` records the catalog version and a fingerprint per pillar. `scripts/validate.py` fails when an item changes without a new version, and every report records the catalog version; the Evolution section flags methodology changes between runs.
 
