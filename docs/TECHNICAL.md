@@ -48,6 +48,7 @@ cainitech-plugins/
 │           └── ui/                 # SKILL.md + references/ (design-system, visual-tells, site, app, copy, motion, checklist)
 ├── docs/
 │   ├── TECHNICAL.md                # this document
+│   ├── THREAT-MODEL.md             # assets, actors, trust boundaries, abuse cases and mitigations
 │   └── TECNICO.md                  # Portuguese version
 ├── scripts/validate.py             # structural validations (CI and local)
 ├── CHANGELOG.md

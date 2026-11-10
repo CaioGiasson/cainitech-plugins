@@ -17,6 +17,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 ### Added
 
 - `SECURITY.md`, `CONTRIBUTING.md`, a pull request template and this changelog.
+- `docs/THREAT-MODEL.md`: assets, actors, trust boundaries, twelve abuse cases with mitigations and known limitations, and the actions that always need confirmation.
 - "What these plugins do not do" section in both READMEs.
 - `scripts/validate.py`, run locally and in CI: catalog counts and IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, forbidden files (`personal/`, `.env`) and the score arithmetic of the README example.
 - CI secret scan of the whole history with gitleaks 8.30.1, pinned by checksum.

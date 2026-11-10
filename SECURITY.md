@@ -33,4 +33,6 @@ Include:
 - An assessment and a plan within 30 days.
 - Credit in the release notes, if you want it.
 
+The assets, trust boundaries and known limitations are documented in the [threat model](docs/THREAT-MODEL.md).
+
 These plugins are text instructions run by Claude with your own account and permissions. They are not a security product and come with no warranty (see [LICENSE](LICENSE)).
