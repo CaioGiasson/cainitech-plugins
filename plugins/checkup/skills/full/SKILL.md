@@ -33,6 +33,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 4. Look for earlier reports in `docs/checkups/` (per pillar and consolidated) for the Evolution section.
 5. Build **a single inventory** of the application (stack, frontend, database, integrations, authentication, personal data, third parties, CI/CD, infrastructure, agent context files, AI usage); it is shared by the four pillars and avoids repeated work.
 6. Read `${CLAUDE_PLUGIN_ROOT}/references/TOOLS.md` and run each installed tool **once** (a tool such as `gitleaks` serves more than one pillar); give each pillar the results that concern it.
+7. If the repository has `.checkup.json` at its root, read `${CLAUDE_PLUGIN_ROOT}/references/CONFIG.md`, validate the file once and give each pillar its own entries and the excluded paths. The consolidated report lists every entry, applied or rejected, in one Exceptions table.
 
 ---
 

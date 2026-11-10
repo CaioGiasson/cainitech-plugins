@@ -67,6 +67,19 @@
       }
     },
     "delta": { "$ref": "#/$defs/delta" },
+    "config": {
+      "type": ["object", "null"],
+      "required": ["file", "fingerprint", "exceptions", "exclude"],
+      "additionalProperties": false,
+      "description": "The .checkup.json of the assessed repository (CONFIG.md); null when there is none. Added in schema 1.1.0",
+      "properties": {
+        "file": { "type": "string" },
+        "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{12}$" },
+        "exceptions": { "type": "array", "items": { "$ref": "#/$defs/exceptionOutcome" } },
+        "exclude": { "type": "array", "items": { "$ref": "#/$defs/exclusionOutcome" } },
+        "unsupportedKeys": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" }, "description": "Automated tools of the pillar (TOOLS.md §4); added in schema 1.1.0" },
     "limitations": { "type": "array", "items": { "type": "string" } }
   },
@@ -122,7 +135,33 @@
         "recommendation": { "type": "string" },
         "retestCriterion": { "type": "string" },
         "effort": { "type": "string", "enum": ["S", "M", "L"] },
-        "scoreGain": { "type": "number", "minimum": 0 }
+        "scoreGain": { "type": "number", "minimum": 0 },
+        "exception": { "$ref": "#/$defs/exceptionOutcome" }
+      }
+    },
+    "exceptionOutcome": {
+      "type": "object",
+      "required": ["id", "type", "reason", "owner", "expires", "outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["acceptedRisk", "notApplicable"] },
+        "reason": { "type": "string" },
+        "owner": { "type": "string" },
+        "expires": { "type": "string" },
+        "outcome": { "type": "string", "enum": ["applied", "rejected", "not needed"] },
+        "rejection": { "type": "string", "description": "why it was rejected: Critical item, expired, missing field, unknown id, contradicted by evidence" }
+      }
+    },
+    "exclusionOutcome": {
+      "type": "object",
+      "required": ["path", "reason", "outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string" },
+        "reason": { "type": "string" },
+        "outcome": { "type": "string", "enum": ["applied", "rejected"] },
+        "rejection": { "type": "string" }
       }
     },
     "tool": {
@@ -186,7 +225,7 @@
         "id": { "type": "string" },
         "from": { "type": "string", "enum": ["compliant", "partial", "nonCompliant", "notApplicable"] },
         "to": { "type": "string", "enum": ["compliant", "partial", "nonCompliant", "notApplicable"] },
-        "cause": { "type": "string", "enum": ["evidence changed", "assessment correction", "catalog change"] },
+        "cause": { "type": "string", "enum": ["evidence changed", "assessment correction", "catalog change", "config change"] },
         "note": { "type": "string" }
       }
     }

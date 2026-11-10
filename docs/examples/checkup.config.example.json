@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "exceptions": [
+    {
+      "id": "SEC-1.03",
+      "type": "acceptedRisk",
+      "reason": "Threat model scheduled for the payments redesign; current flows reviewed in the architecture review of 2026-09.",
+      "owner": "platform-team",
+      "expires": "2027-03-31",
+      "reference": "https://github.com/acme/shop/issues/120"
+    },
+    {
+      "id": "PRIV-8.02",
+      "type": "notApplicable",
+      "reason": "B2B service: accounts belong to employees of client companies; the audience assessment is recorded in docs/privacy/audience.md (PRIV-8.01).",
+      "owner": "dpo@acme.example",
+      "expires": "2027-06-30"
+    }
+  ],
+  "exclude": [
+    { "path": "vendor/**", "reason": "Third-party code vendored unchanged; covered by the dependency scan." },
+    { "path": "test/fixtures/**", "reason": "Fake data for tests; never deployed." }
+  ]
+}

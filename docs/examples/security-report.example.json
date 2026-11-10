@@ -54,6 +54,7 @@
   "backlog": [
     { "priority": 1, "title": "Check order ownership on every /orders route", "itemIds": ["SEC-3.02"], "severity": "Critical", "effort": "S", "scoreGain": 1.0 }
   ],
+  "config": null,
   "tools": [
     { "name": "osv-scanner", "version": "2.0.2", "command": "osv-scanner scan source -r --format json .", "status": "ran", "results": 3, "confirmed": 2, "note": "one result is a dev-only dependency, outside the production bundle" },
     { "name": "gitleaks", "version": "8.30.1", "command": "gitleaks detect --no-banner --redact --report-format json --report-path <scratch>/gitleaks.json", "status": "ran", "results": 1, "confirmed": 1 },
