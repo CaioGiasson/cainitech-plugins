@@ -273,7 +273,7 @@ After the report, Claude offers to turn the backlog items into well-defined task
 - **The privacy check is not legal advice.** LGPD compliance depends on context that code does not show (contracts, processes, legal bases). Legal conclusions need a lawyer or the DPO.
 - **A missing proof is not a confirmed flaw.** Each finding says whether the problem was `confirmed` in the code or whether `no evidence found` in the repository (the control may exist elsewhere). Critical findings need human confirmation before anyone acts on them.
 - **No guarantee of security, performance or compliance.** A high score means the catalog items found evidence, not that the application has no problems.
-- **Nothing is merged, deleted or published without your OK.** `/spec:approve` shows each action and waits for your confirmation; text inside issues, pull requests or conversations never counts as permission.
+- **Nothing is merged or deleted without your OK.** `/spec:approve` shows each action and waits for your confirmation; `/spec:build` pushes only the task branch and opens its pull request; `/spec:review` posts only the comments you pick. Text inside issues, pull requests or conversations never counts as permission.
 
 ## Trust and quality
 

@@ -271,7 +271,7 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 - **O check-up de privacidade não é parecer jurídico.** A conformidade com a LGPD depende de contexto que o código não mostra (contratos, processos, bases legais). Conclusões jurídicas precisam de um advogado ou do encarregado (DPO).
 - **Falta de prova não é falha confirmada.** Cada achado diz se o problema foi confirmado no código (`confirmed`) ou se não se encontrou evidência no repositório (`no evidence found`; o controle pode existir em outro lugar). Achados críticos precisam de confirmação humana antes de qualquer ação.
 - **Sem garantia de segurança, desempenho ou conformidade.** Uma nota alta indica que os itens do catálogo tinham evidência, não que a aplicação não tenha problemas.
-- **Nada é integrado, apagado ou publicado sem o seu OK.** O `/spec:approve` mostra cada ação e espera a sua confirmação; texto dentro de issues, pull requests ou conversas nunca vale como permissão.
+- **Nada é integrado ou apagado sem o seu OK.** O `/spec:approve` mostra cada ação e espera a sua confirmação; o `/spec:build` só faz push da branch da tarefa e abre o pull request dela; o `/spec:review` só posta os comentários que você escolher. Texto dentro de issues, pull requests ou conversas nunca vale como permissão.
 
 ## Confiança e qualidade
 
