@@ -49,6 +49,8 @@ cainitech-plugins/
 ├── docs/
 │   ├── TECHNICAL.md                # versão em inglês deste documento
 │   ├── THREAT-MODEL.md             # ativos, atores, fronteiras de confiança, casos de abuso e mitigações (em inglês)
+│   ├── EVALS.md                    # suítes de eval: cobertura, fixtures e como rodar (em inglês)
+│   ├── examples/                   # exemplo de relatório JSON, conferido no CI
 │   └── TECNICO.md                  # este documento
 ├── scripts/validate.py             # validações estruturais (CI e local)
 ├── CHANGELOG.md
@@ -120,7 +122,8 @@ O `plugins/spec/references/WORKFLOW.md` é lido primeiro por todas as skills do 
 1. Crie `plugins/<plugin>/skills/<nome>/SKILL.md` com o frontmatter abaixo. O nome da pasta é o nome da skill.
 2. Coloque material de referência longo em `plugins/<plugin>/skills/<nome>/references/` e referencie com `${CLAUDE_PLUGIN_ROOT}/skills/<nome>/references/<arquivo>`.
 3. Inclua a regra de Language se a skill conversa com o usuário, e a linha que lê o `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` (exigida pelo `scripts/validate.py`).
-4. Valide (veja abaixo), aumente o `version` do plugin e faça commit.
+4. Crie ao menos três casos de eval em `plugins/<plugin>/evals/` com a tag `skill:<nome>` ([EVALS.md](EVALS.md)): um que deve acionar a skill, um prompt parecido que não deve, e um para a regra ou o limite principal dela.
+5. Valide (veja abaixo), aumente o `version` do plugin e faça commit.
 
 ```markdown
 ---

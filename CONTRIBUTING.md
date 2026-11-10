@@ -26,6 +26,10 @@ python3 -X utf8 scripts/validate.py
 
 `scripts/validate.py` checks the catalog counts, IDs, header totals and fingerprints against `CATALOG-CHANGELOG.md`, the `${CLAUDE_PLUGIN_ROOT}` references, the frontmatter of every `SKILL.md`, the shared `STYLE.md`, internal Markdown links, forbidden files and the arithmetic of the example report in both READMEs (points, score and classification). CI also scans the history for secrets with gitleaks.
 
+## Evals
+
+Every skill has at least three eval cases in `plugins/<plugin>/evals/` ([docs/EVALS.md](docs/EVALS.md)). A pull request that changes a skill's behavior adds or updates its cases. Run the suites of the changed plugins before every release; they need Claude Code 2.1.269+ and are billed to your account, so CI does not run them.
+
 ## Rules for changes
 
 - **Catalogs:** any change to an item needs a new version in [plugins/checkup/references/CATALOG-CHANGELOG.md](plugins/checkup/references/CATALOG-CHANGELOG.md); `scripts/validate.py` fails otherwise. Scores between runs depend on them.

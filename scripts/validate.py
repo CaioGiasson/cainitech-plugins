@@ -18,6 +18,7 @@ STYLE_REFERENCE = "${CLAUDE_PLUGIN_ROOT}/references/STYLE.md"
 CATALOG_CHANGELOG = "plugins/checkup/references/CATALOG-CHANGELOG.md"
 REPORT_SCHEMA = "plugins/checkup/references/report.schema.json"
 REPORT_EXAMPLE = "docs/examples/security-report.example.json"
+MIN_EVALS = 3
 USER_ONLY_SKILLS = ("plugins/spec/skills/approve/SKILL.md",)
 FORBIDDEN_PATHS = re.compile(r"^personal/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
 
@@ -259,6 +260,35 @@ def check_report_example():
         errors.append(f"{REPORT_EXAMPLE}: fingerprint do catálogo desatualizado")
 
 
+def check_evals():
+    """Cada skill tem ao menos MIN_EVALS casos; cada caso tem prompt, tag da skill e ao menos um grader."""
+    skills = {p.replace(os.sep, "/").split("/")[-2]: p.replace(os.sep, "/").split("/")[1]
+              for p in glob.glob("plugins/*/skills/*/SKILL.md", root_dir=ROOT)}
+    per_skill = {skill: 0 for skill in skills}
+    for prompt in glob.glob("plugins/*/evals/*/prompt.md", root_dir=ROOT):
+        prompt = prompt.replace(os.sep, "/")
+        case = os.path.dirname(prompt)
+        plugin = prompt.split("/")[1]
+        meta = frontmatter(read(prompt)) or ""
+        tagged = re.findall(r"skill:([\w-]+)", meta)
+        if len(tagged) != 1 or skills.get(tagged[0]) != plugin:
+            errors.append(f"{prompt}: precisa de exatamente uma tag skill:<skill do plugin {plugin}>")
+        else:
+            per_skill[tagged[0]] += 1
+        if not glob.glob(f"{case}/graders/*.md", root_dir=ROOT):
+            errors.append(f"{case}: caso sem grader")
+        for grader in glob.glob(f"{case}/graders/*.md", root_dir=ROOT):
+            if not re.search(r"^type: (regex|tool_used|tool_order|file_exists|llm|baseline)$", frontmatter(read(grader)) or "", re.M):
+                errors.append(f"{grader}: 'type' ausente ou inválido")
+        if os.path.exists(os.path.join(ROOT, case, "case.yaml")):
+            script = re.search(r"scaffold_script: (\S+)", read(f"{case}/case.yaml"))
+            if script and not os.path.exists(os.path.join(ROOT, case, script.group(1))):
+                errors.append(f"{case}/case.yaml: scaffold inexistente {script.group(1)}")
+    for skill, count in per_skill.items():
+        if count < MIN_EVALS:
+            errors.append(f"skill {skill}: {count} casos de eval, mínimo {MIN_EVALS}")
+
+
 if "--fingerprints" in sys.argv:
     for skill in CATALOGS:
         print(f"{skill}: {fingerprint(catalog_items(skill)[1])}")
@@ -272,6 +302,7 @@ check_markdown_links()
 check_forbidden_paths()
 check_readme_examples()
 check_report_example()
+check_evals()
 
 if errors:
     print("\n".join(errors))
