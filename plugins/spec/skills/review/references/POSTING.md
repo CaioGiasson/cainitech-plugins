@@ -24,7 +24,7 @@ Based on the user's selection:
 
    The body of each 🔴/🟡 comment includes the full **How to fix** block. Group all selected comments into **a single review**, not separate requests.
 
-1b. The review **body** must contain, in markdown: the summary of the result, the **Requested × Implemented** table (Phase 6), the state of the divergences (recorded or not) and the **🧪 Functional test evidence** section (Phase 7: scenarios, commands, outputs obtained and verdict; or the reason it was not executed). No tokens, passwords or personal data.
+1b. The review **body** must contain, in markdown: the summary of the result, the reviewer's **📋 Requested × Implemented** table, the state of the divergences (recorded or not) and the reviewer's **🧪 Functional test** table with its evidence (scenarios, commands, outputs obtained and verdict; or the reason it was not executed), as the reviewer returned them. No tokens, passwords or personal data.
 
 2. If any **blocker items were selected**, submit the review with `event: REQUEST_CHANGES`.
    If there are **only suggestions**, submit with `event: COMMENT`.

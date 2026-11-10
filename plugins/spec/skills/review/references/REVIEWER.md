@@ -305,7 +305,7 @@ Rules:
 
 ## Result to return
 
-Return all suggestions organized by priority:
+Return, in this order: the change summary of Phase 1, the **📋 Requested × Implemented** table of Phase 6 with the state of the divergences, the **🧪 Functional test** table of Phase 7 with its evidence (or the reason it was not executed), and all suggestions organized by priority. The skill posts the two tables in the body of the review, so return them complete:
 
 ```
 ══════════════════════════════════════════════════
