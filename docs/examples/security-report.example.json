@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "kind": "pillar",
   "pillar": "security",
   "repository": "loja-online",
@@ -53,6 +53,12 @@
   ],
   "backlog": [
     { "priority": 1, "title": "Check order ownership on every /orders route", "itemIds": ["SEC-3.02"], "severity": "Critical", "effort": "S", "scoreGain": 1.0 }
+  ],
+  "config": null,
+  "tools": [
+    { "name": "osv-scanner", "version": "2.0.2", "command": "osv-scanner scan source -r --format json .", "status": "ran", "results": 3, "confirmed": 2, "note": "one result is a dev-only dependency, outside the production bundle" },
+    { "name": "gitleaks", "version": "8.30.1", "command": "gitleaks detect --no-banner --redact --report-format json --report-path <scratch>/gitleaks.json", "status": "ran", "results": 1, "confirmed": 1 },
+    { "name": "semgrep", "version": null, "status": "notInstalled", "note": "install with `pipx install semgrep` and run the assessment again" }
   ],
   "previousRun": null,
   "limitations": [

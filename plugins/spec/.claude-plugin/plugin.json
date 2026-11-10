@@ -1,6 +1,6 @@
 {
   "name": "spec",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "From a loose idea or a team conversation to a merged change: refine tasks, implement them with tests and docs, review and approve. Uses a GitHub board when the project has one and always records the work in the project docs.",
   "author": {
     "name": "cainitech",

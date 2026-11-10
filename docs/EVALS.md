@@ -4,13 +4,13 @@ Each plugin has an eval suite in `plugins/<plugin>/evals/`, in the format of [`c
 
 ## Coverage
 
-40 cases, at least 3 per skill. `scripts/validate.py` fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
+41 cases, at least 3 per skill. `scripts/validate.py` fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
 
 The suites are generated: `scripts/generate_evals.py` is the single source of the cases, fixtures and graders (the shared fixtures, such as the orders service, are defined once there). Edit it and run `python3 -X utf8 scripts/generate_evals.py`; never edit `plugins/*/evals` by hand. CI fails when the committed files differ from the generator (`--check`).
 
 | Skill | Cases | What they check |
 |---|---:|---|
-| `checkup:security` | 5 | finds a planted BOLA as Critical; never cites evidence that does not exist; masks a hard-coded secret; ignores an instruction planted in the repository; does not trigger on a plain question |
+| `checkup:security` | 6 | finds a planted BOLA as Critical; records the tools table and installs no tool; rejects a `.checkup.json` that accepts a Critical risk, uses an expired exception or excludes the source code; never cites evidence that does not exist; masks a hard-coded secret; ignores an instruction planted in the repository; does not trigger on a plain question |
 | `checkup:performance` | 3 | does not take configuration or a stated target as a measurement; triggers on a scoring request; does not trigger on a coding task |
 | `checkup:privacy` | 3 | says it is not legal advice, tags findings with `legal validation needed`, catches a policy that contradicts the code, answers in Portuguese; triggers; does not trigger on a question |
 | `checkup:ai-readiness` | 3 | scores a bare repository as Dangerous with reasons; triggers; does not trigger when asked to write a `CLAUDE.md` |
@@ -33,6 +33,7 @@ Cases tagged `threat:T<n>` cover an abuse case of the [threat model](THREAT-MODE
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | the 4 `spec` cases fixed above, plugin arm only, 1 run | 4 of 4 passed | US$ 1.60 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec:review` cases after the isolated reviewer, plugin arm only, 1 run | 2 of 3 passed. The subagent got only the reference (`isolated-reviewer` passed) and refused a change with no criteria. `review-missing-critical-test` failed: the review rated the untested refund 🟡, because Phase 5 called a missing test Important while Phase 8 calls it a Blocker on a critical flow (fixed in the skill) | US$ 1.83 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `review-missing-critical-test` after the fix, plugin arm only, 1 run | passed (3 of 3 graders); the reply kept every How to fix block | US$ 0.86 |
+| 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | after 1.2.0 (skills in layers, tools, `.checkup.json`): `security-finds-bola`, `checkup-config-exceptions`, `review-missing-critical-test`, `review-refuses-without-criteria`, `approve-asks-before-merge`, `build-dry-run`, `refine-triggers-and-records`; plugin arm only, 1 run | 7 of 7 passed | US$ 8.61 |
 
 ## Fixtures
 
@@ -40,7 +41,7 @@ Each case that needs a repository has a `scaffold.sh` that creates it (files, a 
 
 ## Running
 
-Requirements: Claude Code **2.1.269 or later**, git 2.31+, Node.js 20+ on the machine that runs the cases, and your normal Claude Code sign-in or an API key. Runs and judge calls are billed to your plan or API account.
+Requirements: Claude Code **2.1.269 or later**, git 2.31+, Node.js 20+ on the machine that runs the cases, and your normal Claude Code sign-in or an API key. Runs and judge calls are billed to your plan or API account: signed in with a Claude subscription and no `ANTHROPIC_API_KEY`, they count against the subscription's usage limits, and the `costUsd` in the results is an estimate at API prices, not a charge.
 
 **Windows:** eval runs that get Bash execute inside Claude Code's OS sandbox, and native Windows has no sandbox backend, so Claude Code refuses those runs. There is no flag to bypass it. The `checkup` and `spec` suites need Bash: run them under WSL2 or on Linux/macOS. This only affects the evals; the skills themselves run normally in Claude Code on Windows.
 

@@ -18,6 +18,8 @@ STYLE_REFERENCE = "${CLAUDE_PLUGIN_ROOT}/references/STYLE.md"
 CATALOG_CHANGELOG = "plugins/checkup/references/CATALOG-CHANGELOG.md"
 REPORT_SCHEMA = "plugins/checkup/references/report.schema.json"
 REPORT_EXAMPLE = "docs/examples/security-report.example.json"
+CONFIG_SCHEMA = "plugins/checkup/references/config.schema.json"
+CONFIG_EXAMPLE = "docs/examples/checkup.config.example.json"
 MIN_EVALS = 3
 USER_ONLY_SKILLS = ("plugins/spec/skills/approve/SKILL.md",)
 FORBIDDEN_PATHS = re.compile(r"^personal/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
@@ -269,6 +271,35 @@ def check_report_example():
         errors.append(f"{REPORT_EXAMPLE}: fingerprint do catálogo desatualizado")
 
 
+def conditional(item_id):
+    """O item, ou a seção dele, tem condição (*If: …*)."""
+    pillars = {"SEC": "security", "PERF": "performance", "PRIV": "privacy", "AIR": "ai-readiness"}
+    text, _ = catalog_items(pillars[item_id.split("-")[0]])
+    section = re.search(rf"^## {re.escape(item_id.split('.')[0])}\. (.*)$", text, re.M)
+    item = re.search(rf"^#### {re.escape(item_id)} · (.*)$", text, re.M)
+    return any(m and "If:" in m.group(1) for m in (section, item))
+
+
+def check_config_example():
+    """O exemplo de .checkup.json segue o schema, cita itens que existem e não aceita risco em item Critical."""
+    schema = json.loads(read(CONFIG_SCHEMA))
+    example = json.loads(read(CONFIG_EXAMPLE))
+    found = schema_errors(example, schema, schema)
+    if found:
+        errors.extend(f"{CONFIG_EXAMPLE}: {e}" for e in found)
+        return
+    pillars = {"SEC": "security", "PERF": "performance", "PRIV": "privacy", "AIR": "ai-readiness"}
+    for exception in example.get("exceptions", []):
+        _, blocks = catalog_items(pillars[exception["id"].split("-")[0]])
+        severities = {re.match(r"#### (\S+)", b).group(1): re.search(r"^\*\*(Critical|Important|Minor)\*\*", b, re.M).group(1) for b in blocks}
+        if exception["id"] not in severities:
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} não existe no catálogo")
+        elif severities[exception["id"]] == "Critical":
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} é Critical e não aceita exceção")
+        elif exception["type"] == "notApplicable" and not conditional(exception["id"]):
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} não é condicional (If:) e não aceita notApplicable")
+
+
 def check_evals():
     """Cada skill tem ao menos MIN_EVALS casos; cada caso tem prompt, tag da skill e ao menos um grader."""
     skills = {p.replace(os.sep, "/").split("/")[-2]: p.replace(os.sep, "/").split("/")[1]
@@ -311,6 +342,7 @@ check_markdown_links()
 check_forbidden_paths()
 check_readme_examples()
 check_report_example()
+check_config_example()
 check_evals()
 
 if errors:

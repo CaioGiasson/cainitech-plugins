@@ -2,6 +2,26 @@
 
 Versions follow [Semantic Versioning](https://semver.org). Each plugin has its own `version` in `plugins/<plugin>/.claude-plugin/plugin.json`; an entry lists the plugins it changes.
 
+## 1.2.0 — 2026-11-10
+
+`checkup` 1.2.0 · `spec` 1.2.0 · `polish` 1.1.0 (unchanged)
+
+### Added
+
+- **`checkup` runs the analysis tools already installed** (`semgrep`, `trivy`, `osv-scanner`, `npm audit` and the other package audits, `gitleaks`, `trufflehog`, the project's lint) in report mode, confirms each result in the code and uses it as evidence (`references/TOOLS.md`). It never installs a tool or runs one through a downloader. Every report lists the tools with their result, and the JSON twin has `tools`.
+- **Repository exceptions in `.checkup.json`** (`references/CONFIG.md`, `references/config.schema.json`): accepted risks, items that do not apply and paths out of scope, each with a reason, an owner and an expiry of at most 12 months. No exception on a Critical item; `notApplicable` only on a conditional item and with the assessor's own evidence, never the file's word; only generated, vendored or test-only paths can be excluded, and secret scanners ignore exclusions. The file never changes severities, weights, the formula or the classification, and every entry, applied or rejected, appears in a new Exceptions section and in the JSON `config`. Changes it causes between runs have the delta cause `config change`. Example in `docs/examples/checkup.config.example.json`, checked by `scripts/validate.py`.
+- Threat model T13 (`.checkup.json` used to hide a flaw) and T14 (tool installation or tool output steering the assessment), with evals.
+
+### Changed
+
+- **Skills in layers.** `SKILL.md` files keep the dispatch and the steps that always run; the rest is read when the skill reaches it: `spec:review` keeps its review rules in `references/REVIEWER.md`, read only by the isolated reviewer, and posting and fixes in `POSTING.md` and `FIXES.md`; `spec:refine` reads the issue templates only when there is a board; `spec:build` reads the delivery of its mode and `spec:approve` the integration plan of its mode; the code examples of the review guide moved to `PR_REVIEW_EXAMPLES.md`. In the session that runs `/spec:review`, the skill and the files it reads drop from about 58 KB to about 20 KB; the review rules load in the reviewer's own context.
+- **Report JSON schema 1.1.0:** adds `tools`, `config`, the item `exception` and the delta cause `config change`. Reports in schema 1.0.0 remain valid.
+- The marketplace manifest has `metadata.description` (asked for by `claude plugin validate --strict` and understood by older Claude Code versions).
+
+### Compatibility
+
+Score rules, weights and catalog items are unchanged: reports from 1.0.0 and 1.1.0 remain comparable. A run with `.checkup.json` can differ from one without it through the N/A items and the excluded paths it applies (accepted risks keep their points); the report lists every entry, and the delta marks those changes as `config change`.
+
 ## 1.1.0 — 2026-11-09
 
 `checkup` 1.1.0 · `spec` 1.1.0 · `polish` 1.1.0

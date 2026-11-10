@@ -25,6 +25,10 @@ cainitech-plugins/
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── references/
 │   │   │   ├── ASSESSMENT.md       # metodologia, status, pesos, score e formato do relatório (compartilhado pelas 5 skills)
+│   │   │   ├── TOOLS.md            # ferramentas de análise instaladas: o que rodar por pilar, só leitura, como interpretar
+│   │   │   ├── CONFIG.md           # .checkup.json do repositório avaliado: exceções e seus limites
+│   │   │   ├── config.schema.json  # formato do .checkup.json
+│   │   │   ├── report.schema.json  # JSON gêmeo dos relatórios
 │   │   │   └── STYLE.md            # estilo de comunicação (idêntico em todos os plugins)
 │   │   └── skills/
 │   │       ├── security/           # SKILL.md + references/checklist.md (153 critérios, SEC-*)
@@ -37,9 +41,10 @@ cainitech-plugins/
 │   │   ├── references/
 │   │   │   ├── WORKFLOW.md         # idioma, contexto do projeto, detecção de quadro, documentação obrigatória, modos de entrega, conteúdo externo
 │   │   │   ├── PR_REVIEW_GUIDE.md  # guia de revisão neutro quanto à stack
+│   │   │   ├── PR_REVIEW_EXAMPLES.md # exemplos de código e comentários modelo, lidos sob demanda
 │   │   │   └── STYLE.md            # estilo de comunicação (idêntico em todos os plugins)
 │   │   └── skills/
-│   │       ├── refine/  from-thread/  build/  review/  approve/
+│   │       ├── refine/  from-thread/  build/  review/  approve/   # SKILL.md + references/ lidas sob demanda (review: REVIEWER.md para o revisor isolado)
 │   └── polish/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # aviso MIT do taste-skill, origem da adaptação
@@ -91,7 +96,7 @@ ${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md
 ${CLAUDE_PLUGIN_ROOT}/skills/security/references/checklist.md
 ```
 
-Por que as guidelines e os catálogos ficam em **arquivos separados e não dentro do `SKILL.md`**: o corpo da skill é carregado quando ela é invocada, mas os arquivos que ela referencia só são lidos quando ela pede. Os 200 KB de catálogos, portanto, não custam nada até uma avaliação realmente rodar, e `/checkup:security` lê só o próprio catálogo. Mantenha o `SKILL.md` curto e procedural e coloque o material de referência em `references/`.
+Por que as guidelines e os catálogos ficam em **arquivos separados e não dentro do `SKILL.md`**: o corpo da skill é carregado quando ela é invocada, mas os arquivos que ela referencia só são lidos quando ela pede. Os 200 KB de catálogos, portanto, não custam nada até uma avaliação realmente rodar, e `/checkup:security` lê só o próprio catálogo. Mantenha o `SKILL.md` curto e procedural e coloque o material de referência em `references/`. O mesmo vale dentro de uma skill: passos que só rodam em alguns casos (postar a revisão, criar issues num quadro, um modo de entrega) ficam em `references/` da skill e são lidos quando a skill chega neles, e o `/spec:review` guarda as regras de revisão em `references/REVIEWER.md`, lido só pelo revisor isolado.
 
 O material **não** é compartilhado entre plugins: `checkup`, `spec` e `polish` são independentes. A única exceção é o `references/STYLE.md`, copiado em todos os plugins porque um plugin não lê arquivos de outro; o `scripts/validate.py` falha se as cópias divergirem. O `spec` nunca depende do `checkup`, e o `checkup` só menciona `/spec:refine` como próximo passo opcional.
 
