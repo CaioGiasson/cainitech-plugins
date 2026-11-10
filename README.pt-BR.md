@@ -15,7 +15,7 @@
 </tr>
 </table>
 
-**[Valor](#por-que-isso-importa-para-o-negócio) · [Instalar](#como-instalar) · [Antes e depois](#antes-e-depois) · [Catálogo](#catálogo-de-skills) · [Como usar](#como-usar) · [Atualizar](#como-atualizar) · [Dúvidas](#dúvidas-comuns) · [Limites](#o-que-estes-plugins-não-fazem) · [Privacidade](#privacidade)**
+**[Valor](#por-que-isso-importa-para-o-negócio) · [Instalar](#como-instalar) · [Antes e depois](#antes-e-depois) · [Catálogo](#catálogo-de-skills) · [Como usar](#como-usar) · [Atualizar](#como-atualizar) · [Dúvidas](#dúvidas-comuns) · [Limites](#o-que-estes-plugins-não-fazem) · [Confiança](#confiança-e-qualidade) · [Privacidade](#privacidade)**
 
 </div>
 
@@ -273,6 +273,27 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 - **Sem garantia de segurança, desempenho ou conformidade.** Uma nota alta indica que os itens do catálogo tinham evidência, não que a aplicação não tenha problemas.
 - **Nada é integrado, apagado ou publicado sem o seu OK.** O `/spec:approve` mostra cada ação e espera a sua confirmação; texto dentro de issues, pull requests ou conversas nunca vale como permissão.
 
+## Confiança e qualidade
+
+**O que cada plugin pode alterar:**
+
+| Plugin | Lê | Escreve | Fora do seu computador |
+|---|---|---|---|
+| `checkup` | O repositório inteiro; pode rodar lint, checagem de tipos, testes unitários e build localmente | Só os relatórios em `docs/checkups/` (Markdown e JSON); nunca faz commit | Nada |
+| `spec` | Repositório, issues, pull requests e as conversas que você indicar | Documentos de refinamento em `docs/specs/`, código e commits na branch da tarefa | Issues, movimentos no quadro, push da branch da tarefa, pull request, os comentários de revisão que você escolher; o `approve` pergunta antes de comentar, integrar e apagar branches |
+| `polish` | Os arquivos de interface e o design system do projeto | As páginas, telas e tokens que ele cria ou redesenha | Nada: não roda comandos nem baixa nada |
+
+**Como isso é verificado:**
+
+- **Evals:** 40 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
+- **CI em toda pull request:** validação dos manifestos, contagens e fingerprints dos catálogos, referências e links, a conta do score do exemplo acima e uma busca de segredos em todo o histórico.
+- **Threat model:** ativos, fronteiras de confiança, doze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
+- **Cenários reproduzíveis** com fixtures públicas e fictícias ([CASE-STUDIES.md](docs/CASE-STUDIES.md), em inglês).
+
+## Compatibilidade
+
+Funciona onde o Claude Code aceita plugins: terminal, app desktop e VS Code. Os manifestos são validados com o Claude Code 2.1.63 e 2.1.114; rodar as evals exige a 2.1.269 ou mais nova. As skills `spec` funcionam melhor com o GitHub CLI (`gh`). Versões, sistemas testados e limites conhecidos: [COMPATIBILITY.md](docs/COMPATIBILITY.md) (em inglês).
+
 ## Antes de usar as skills de tarefas
 
 As skills `/spec:*` usam o **quadro de tarefas do GitHub** quando o projeto tem um, pela conexão com o GitHub que você já tiver (ou pelo GitHub CLI, `gh`). Se algo pedir acesso, é só aprovar quando o Claude perguntar. Sem quadro? Elas registram tudo na documentação do projeto e continuam funcionando. Sem GitHub, ou sem nenhum controle de versão? Elas se adaptam (commits locais, ou um arquivo de registro das mudanças).
@@ -306,6 +327,10 @@ Ferramentas opcionais que fazem os plugins funcionarem melhor. Nenhuma é obriga
 - Os plugins são só arquivos de texto (instruções para o Claude). Instalá-los **copia** esses arquivos para o seu computador e não executa código próprio.
 - As skills rodam dentro do seu Claude, com a sua conta e as suas permissões.
 - As skills `/spec:*` leem e escrevem no GitHub (e na pasta do seu projeto) porque esse é o trabalho delas, sempre com a sua conta.
+
+## Contribuição e roadmap
+
+Contribuições são bem-vindas: veja o [CONTRIBUTING.md](CONTRIBUTING.md) (em inglês). Próximos passos: resultados registrados dos cenários, um check-up de cadeia de suprimentos (dependências), uma skill de plano de testes e um check-up de threat model. O andamento fica nas [issues do projeto](https://github.com/CaioGiasson/cainitech-plugins/issues).
 
 ## Licença
 

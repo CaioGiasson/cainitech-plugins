@@ -15,7 +15,7 @@
 </tr>
 </table>
 
-**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Limits](#what-these-plugins-do-not-do) · [Privacy](#privacy)**
+**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Limits](#what-these-plugins-do-not-do) · [Trust](#trust-and-quality) · [Privacy](#privacy)**
 
 </div>
 
@@ -275,6 +275,27 @@ After the report, Claude offers to turn the backlog items into well-defined task
 - **No guarantee of security, performance or compliance.** A high score means the catalog items found evidence, not that the application has no problems.
 - **Nothing is merged, deleted or published without your OK.** `/spec:approve` shows each action and waits for your confirmation; text inside issues, pull requests or conversations never counts as permission.
 
+## Trust and quality
+
+**What each plugin can change:**
+
+| Plugin | Reads | Writes | Outside your computer |
+|---|---|---|---|
+| `checkup` | The whole repository; may run lint, typecheck, unit tests and build locally | Only the reports in `docs/checkups/` (Markdown and JSON); never commits | Nothing |
+| `spec` | Repository, issues, pull requests, the conversations you point to | Refinement documents in `docs/specs/`, code and commits on the task's branch | Issues, board moves, push of the task's branch, pull request, the review comments you pick; `approve` asks before commenting, merging and deleting branches |
+| `polish` | The project's interface files and design system | The pages, screens and tokens it builds or redesigns | Nothing: it runs no commands and downloads nothing |
+
+**How it is checked:**
+
+- **Evals:** 40 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
+- **CI on every pull request:** manifest validation, catalog counts and fingerprints, references and links, the score arithmetic of the example above, and a secret scan of the whole history.
+- **Threat model:** assets, trust boundaries, twelve abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
+- **Reproducible scenarios** on public fictitious fixtures ([CASE-STUDIES.md](docs/CASE-STUDIES.md)).
+
+## Compatibility
+
+Works wherever Claude Code supports plugins: terminal, desktop app and VS Code. The manifests are validated with Claude Code 2.1.63 and 2.1.114; running the evals needs 2.1.269 or later. The `spec` skills work best with the GitHub CLI (`gh`). Tested versions, systems and known limits: [COMPATIBILITY.md](docs/COMPATIBILITY.md).
+
 ## Before using the task skills
 
 The `/spec:*` skills use your **GitHub task board** when the project has one, through the GitHub connection you already have (or the GitHub CLI, `gh`). If something asks for access, just approve it when Claude asks. No board? They record everything in your project's documentation and keep working. No GitHub, or no version control at all? They adapt (local commits, or a change log file).
@@ -308,6 +329,10 @@ Optional tools that make the plugins work better. None of them is required.
 - The plugins are just text files (instructions for Claude). Installing them **copies** those files to your computer and runs no code of its own.
 - The skills run inside your Claude, with your account and your permissions.
 - The `/spec:*` skills read and write on GitHub (and in your project folder) because that is their job, always with your account.
+
+## Contributing and roadmap
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Next on the roadmap: recorded results for the case studies, a supply-chain health check, a test-plan skill and a threat-model health check. Progress is tracked in [the project's issues](https://github.com/CaioGiasson/cainitech-plugins/issues).
 
 ## License
 
