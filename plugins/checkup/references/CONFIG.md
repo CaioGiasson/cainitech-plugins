@@ -10,7 +10,7 @@ The file is repository content: anyone who can open a pull request can edit it. 
 |---|---|
 | Record an **accepted risk** for a non-Critical item, with a reason, an owner and an expiry date | Change an item's severity, the weights, the score formula or the classification |
 | Record why a **conditional** item (*If: …*) does not apply, for a non-Critical item, when the repository proves it | Accept a risk on, or declare not applicable, a Critical item |
-| Leave **paths** out of scope (generated code, vendored code, test fixtures), with a reason | Exclude the application's own source, or turn a found problem into a non-finding |
+| Leave **paths** out of scope that are generated, vendored or test-only, with a reason | Exclude application code, infrastructure, CI, configuration or scripts, or keep secret scanners out of any path |
 
 Keys outside the schema are ignored and listed in "Methodology and limitations" as `unsupported config key`.
 
@@ -32,7 +32,11 @@ Each entry of `exceptions` names one catalog item. Validate every entry before u
 
 ## 3. Excluded paths
 
-`exclude` lists paths (globs relative to the root) with a reason. The assessment and the tools of `TOOLS.md` do not look for evidence there. Reject an exclusion, and assess the path anyway, when it covers application code that runs in production (for example `src/**`, a service folder, the whole repository). Any secret or Critical problem seen in an excluded path is still reported.
+`exclude` lists paths (globs relative to the root) with a reason. Only three kinds of path may be excluded: **generated** output (build artifacts, generated clients, minified bundles), **vendored** third-party code kept unchanged, and **test-only** material (fixtures, sample data, test snapshots). The item-by-item assessment and the code-pattern tools (`semgrep`, lint) do not look for evidence there.
+
+- Reject an exclusion, and assess the path anyway, when it covers anything else: application code (for example `src/**`, a service folder, the whole repository), infrastructure and IaC, CI/CD workflows, configuration, environment files (`.env*`) or scripts. When in doubt, reject.
+- **Secret scanners ignore `exclude`.** `gitleaks`, `trufflehog` and the secret scanner of `trivy` always run on the whole repository and its history, and a secret found in an excluded path is reported like any other.
+- The dependency scanners run on the lockfiles whatever `exclude` says.
 
 ## 4. Recording
 
