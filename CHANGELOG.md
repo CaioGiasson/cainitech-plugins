@@ -19,6 +19,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 - `SECURITY.md`, `CONTRIBUTING.md`, a pull request template and this changelog.
 - **Eval suites** for the 11 skills (40 cases, at least 3 per skill) in `plugins/<plugin>/evals/`, in the `claude plugin eval` format, with fixtures created by scaffold scripts. They cover triggering, safety rules, dry runs and the abuse cases of the threat model. See `docs/EVALS.md`.
+- `docs/CASE-STUDIES.md`: three reproducible scenarios on public fixtures (security flaws, conversation to merge, privacy limits), and `scripts/fixture.sh` to create the fixture of any eval case. Results are added once recorded with a released version.
 - `docs/THREAT-MODEL.md`: assets, actors, trust boundaries, twelve abuse cases with mitigations and known limitations, and the actions that always need confirmation.
 - "What these plugins do not do" section in both READMEs.
 - `scripts/validate.py`, run locally and in CI: catalog counts and IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, forbidden files (`personal/`, `.env`) and the score arithmetic of the README example.

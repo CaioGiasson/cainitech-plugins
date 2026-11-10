@@ -50,9 +50,12 @@ cainitech-plugins/
 │   ├── TECHNICAL.md                # this document
 │   ├── THREAT-MODEL.md             # assets, actors, trust boundaries, abuse cases and mitigations
 │   ├── EVALS.md                    # eval suites: coverage, fixtures, how to run
+│   ├── CASE-STUDIES.md             # reproducible scenarios on public fixtures
 │   ├── examples/                   # JSON report example, checked in CI
 │   └── TECNICO.md                  # Portuguese version
-├── scripts/validate.py             # structural validations (CI and local)
+├── scripts/
+│   ├── validate.py                 # structural validations (CI and local)
+│   └── fixture.sh                  # creates the fictitious repository of an eval case, for demos
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
