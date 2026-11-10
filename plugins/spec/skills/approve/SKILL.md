@@ -230,7 +230,7 @@ First restore the working tree and return to the original branch (as in Path A, 
 
 ### Mode B/C — Git without GitHub, or another VCS
 
-1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), `REVIEWED_SHA`, the build and test results and the files changed, then ask: reply "merge" to merge locally, or "cancel". With `no-merge`, display the review result only and stop.
+1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), `REVIEWED_SHA`, the build and test results and the files changed, then ask: reply "merge" to merge locally with that strategy, or "cancel". Offer no other strategy: the strategy comes from the project's convention, and changing it is the user's call, made by saying so. With `no-merge`, display the review result only and stop.
 2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green:
    ```bash
    git switch "$BASE_BRANCH"
