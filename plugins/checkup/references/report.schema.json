@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/CaioGiasson/cainitech-plugins/plugins/checkup/references/report.schema.json",
+  "title": "cainitech checkup report",
+  "description": "Machine-readable twin of a per-pillar or consolidated checkup report (ASSESSMENT.md §8.3). Never contains secret values or personal data: evidence cites location and type, with values masked.",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "repository", "date", "commit", "catalog", "score", "classification", "totals", "previousRun", "limitations"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "enum": ["1.0.0"] },
+    "kind": { "type": "string", "enum": ["pillar", "full"] },
+    "pillar": { "type": "string", "enum": ["security", "performance", "privacy", "ai-readiness"] },
+    "repository": { "type": "string", "minLength": 1 },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "commit": {
+      "type": "object",
+      "required": ["sha", "branch", "dirty"],
+      "additionalProperties": false,
+      "properties": {
+        "sha": { "type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$" },
+        "branch": { "type": ["string", "null"] },
+        "dirty": { "type": "boolean" }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "required": ["source", "version", "fingerprints"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "fingerprints": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{12}$" }
+        }
+      }
+    },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "classification": { "type": "string", "enum": ["Dangerous", "Bronze", "Silver", "Gold", "Platinum"] },
+    "totals": {
+      "type": "object",
+      "required": ["critical", "important", "minor", "earned", "possible"],
+      "additionalProperties": false,
+      "properties": {
+        "critical": { "$ref": "#/$defs/severityTotals" },
+        "important": { "$ref": "#/$defs/severityTotals" },
+        "minor": { "$ref": "#/$defs/severityTotals" },
+        "earned": { "type": "number", "minimum": 0 },
+        "possible": { "type": "number", "minimum": 0 }
+      }
+    },
+    "items": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+    "pillars": { "type": "array", "items": { "$ref": "#/$defs/pillarSummary" } },
+    "backlog": { "type": "array", "items": { "$ref": "#/$defs/backlogTask" } },
+    "previousRun": {
+      "type": ["object", "null"],
+      "required": ["file", "score", "catalogVersion"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string" },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "catalogVersion": { "type": ["string", "null"] }
+      }
+    },
+    "delta": { "$ref": "#/$defs/delta" },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "severityTotals": {
+      "type": "object",
+      "required": ["compliant", "partial", "nonCompliant", "notApplicable", "earned", "possible"],
+      "additionalProperties": false,
+      "properties": {
+        "compliant": { "type": "integer", "minimum": 0 },
+        "partial": { "type": "integer", "minimum": 0 },
+        "nonCompliant": { "type": "integer", "minimum": 0 },
+        "notApplicable": { "type": "integer", "minimum": 0 },
+        "earned": { "type": "number", "minimum": 0 },
+        "possible": { "type": "number", "minimum": 0 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["description"],
+      "additionalProperties": false,
+      "properties": {
+        "location": { "type": "string", "description": "file:line or path; never the secret value" },
+        "command": { "type": "string", "description": "a command that can be re-run on the assessed commit" },
+        "description": { "type": "string" }
+      }
+    },
+    "item": {
+      "type": "object",
+      "required": ["id", "title", "severity", "status", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^(SEC|PERF|PRIV|AIR)-\\d+\\.\\d{2}$" },
+        "title": { "type": "string" },
+        "severity": { "type": "string", "enum": ["Critical", "Important", "Minor"] },
+        "status": { "type": "string", "enum": ["compliant", "partial", "nonCompliant", "notApplicable"] },
+        "basis": { "type": "string", "enum": ["confirmed", "no evidence found"] },
+        "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+        "humanValidation": { "type": "string", "enum": ["required", "not required"] },
+        "tags": { "type": "array", "items": { "type": "string", "enum": ["external evidence needed", "legal validation needed"] } },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+        "reproduction": { "type": "string" },
+        "recommendation": { "type": "string" },
+        "retestCriterion": { "type": "string" },
+        "effort": { "type": "string", "enum": ["S", "M", "L"] },
+        "scoreGain": { "type": "number", "minimum": 0 }
+      }
+    },
+    "pillarSummary": {
+      "type": "object",
+      "required": ["pillar", "score", "classification", "openCriticals", "report"],
+      "additionalProperties": false,
+      "properties": {
+        "pillar": { "type": "string", "enum": ["security", "performance", "privacy", "ai-readiness"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "classification": { "type": "string", "enum": ["Dangerous", "Bronze", "Silver", "Gold", "Platinum"] },
+        "openCriticals": { "type": "integer", "minimum": 0 },
+        "report": { "type": "string" }
+      }
+    },
+    "backlogTask": {
+      "type": "object",
+      "required": ["priority", "title", "itemIds", "severity", "effort", "scoreGain"],
+      "additionalProperties": false,
+      "properties": {
+        "priority": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string" },
+        "itemIds": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "severity": { "type": "string", "enum": ["Critical", "Important", "Minor"] },
+        "effort": { "type": "string", "enum": ["S", "M", "L"] },
+        "scoreGain": { "type": "number", "minimum": 0 }
+      }
+    },
+    "delta": {
+      "type": "object",
+      "required": ["previousScore", "currentScore", "methodologyChange", "improved", "regressed", "added", "removed"],
+      "additionalProperties": false,
+      "properties": {
+        "previousScore": { "type": "number" },
+        "currentScore": { "type": "number" },
+        "methodologyChange": { "type": "boolean" },
+        "improved": { "type": "array", "items": { "$ref": "#/$defs/change" } },
+        "regressed": { "type": "array", "items": { "$ref": "#/$defs/change" } },
+        "added": { "type": "array", "items": { "type": "string" } },
+        "removed": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "change": {
+      "type": "object",
+      "required": ["id", "from", "to", "cause"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "from": { "type": "string", "enum": ["compliant", "partial", "nonCompliant", "notApplicable"] },
+        "to": { "type": "string", "enum": ["compliant", "partial", "nonCompliant", "notApplicable"] },
+        "cause": { "type": "string", "enum": ["evidence changed", "assessment correction", "catalog change"] },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

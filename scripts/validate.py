@@ -5,6 +5,7 @@ Uso: python3 -X utf8 scripts/validate.py [--fingerprints]
 
 import glob
 import hashlib
+import json
 import os
 import re
 import subprocess
@@ -15,6 +16,8 @@ PLUGINS = ("checkup", "spec", "polish")
 CATALOGS = {"security": 153, "performance": 163, "privacy": 126, "ai-readiness": 70}
 STYLE_REFERENCE = "${CLAUDE_PLUGIN_ROOT}/references/STYLE.md"
 CATALOG_CHANGELOG = "plugins/checkup/references/CATALOG-CHANGELOG.md"
+REPORT_SCHEMA = "plugins/checkup/references/report.schema.json"
+REPORT_EXAMPLE = "docs/examples/security-report.example.json"
 USER_ONLY_SKILLS = ("plugins/spec/skills/approve/SKILL.md",)
 FORBIDDEN_PATHS = re.compile(r"^personal/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
 
@@ -180,6 +183,82 @@ def check_readme_examples():
             errors.append(f"{readme}: classificação do exemplo deveria ser {expected}")
 
 
+JSON_TYPES = {"object": dict, "array": list, "string": str, "boolean": bool, "null": type(None)}
+
+
+def schema_errors(value, schema, root, path="$"):
+    """Validador mínimo do subconjunto de JSON Schema usado em report.schema.json (sem dependências)."""
+    if "$ref" in schema:
+        schema = root["$defs"][schema["$ref"].split("/")[-1]]
+    found = []
+    types = schema.get("type")
+    if types:
+        types = [types] if isinstance(types, str) else types
+        def matches(name):
+            if name in ("number", "integer"):
+                ok = isinstance(value, (int, float)) and not isinstance(value, bool)
+                return ok and (name == "number" or float(value).is_integer())
+            return isinstance(value, JSON_TYPES[name])
+        if not any(matches(name) for name in types):
+            return [f"{path}: tipo {type(value).__name__}, esperado {types}"]
+    if value is None:
+        return found
+    if "enum" in schema and value not in schema["enum"]:
+        found.append(f"{path}: {value!r} fora de {schema['enum']}")
+    if isinstance(value, str):
+        if "pattern" in schema and not re.search(schema["pattern"], value):
+            found.append(f"{path}: {value!r} não casa com {schema['pattern']}")
+        if len(value) < schema.get("minLength", 0):
+            found.append(f"{path}: texto vazio")
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        if value < schema.get("minimum", value) or value > schema.get("maximum", value):
+            found.append(f"{path}: {value} fora do intervalo")
+    if isinstance(value, list):
+        if len(value) < schema.get("minItems", 0):
+            found.append(f"{path}: itens insuficientes")
+        for index, item in enumerate(value):
+            found += schema_errors(item, schema.get("items", {}), root, f"{path}[{index}]")
+    if isinstance(value, dict):
+        properties = schema.get("properties", {})
+        found += [f"{path}: campo obrigatório '{key}' ausente" for key in schema.get("required", []) if key not in value]
+        for key, item in value.items():
+            if key in properties:
+                found += schema_errors(item, properties[key], root, f"{path}.{key}")
+            elif schema.get("additionalProperties") is False:
+                found.append(f"{path}: campo não previsto '{key}'")
+            elif isinstance(schema.get("additionalProperties"), dict):
+                found += schema_errors(item, schema["additionalProperties"], root, f"{path}.{key}")
+    return found
+
+
+def check_report_example():
+    schema = json.loads(read(REPORT_SCHEMA))
+    example = json.loads(read(REPORT_EXAMPLE))
+    errors.extend(f"{REPORT_EXAMPLE}: {e}" for e in schema_errors(example, schema, schema))
+    weights = {"critical": 3, "important": 2, "minor": 1}
+    earned = possible = 0
+    for severity, weight in weights.items():
+        row = example["totals"][severity]
+        row_earned = row["compliant"] * weight + row["partial"] * weight / 2
+        row_possible = (row["compliant"] + row["partial"] + row["nonCompliant"]) * weight
+        if (row["earned"], row["possible"]) != (row_earned, row_possible):
+            errors.append(f"{REPORT_EXAMPLE}: totais de {severity} deveriam ser {row_earned:g} / {row_possible}")
+        earned += row_earned
+        possible += row_possible
+    score = round(100 * earned / possible, 1)
+    if (example["totals"]["earned"], example["totals"]["possible"], example["score"]) != (earned, possible, score):
+        errors.append(f"{REPORT_EXAMPLE}: total deveria ser {earned:g} / {possible} = {score}")
+    if example["classification"] != classification(score):
+        errors.append(f"{REPORT_EXAMPLE}: classificação deveria ser {classification(score)}")
+    _, blocks = catalog_items(example["pillar"])
+    severities = {re.match(r"#### (\S+)", b).group(1): re.search(r"^\*\*(Critical|Important|Minor)\*\*", b, re.M).group(1) for b in blocks}
+    for item in example["items"]:
+        if severities.get(item["id"]) != item["severity"]:
+            errors.append(f"{REPORT_EXAMPLE}: {item['id']} não existe no catálogo ou a severidade difere")
+    if example["catalog"]["fingerprints"].get(example["pillar"]) != fingerprint(blocks):
+        errors.append(f"{REPORT_EXAMPLE}: fingerprint do catálogo desatualizado")
+
+
 if "--fingerprints" in sys.argv:
     for skill in CATALOGS:
         print(f"{skill}: {fingerprint(catalog_items(skill)[1])}")
@@ -192,6 +271,7 @@ check_style_copies()
 check_markdown_links()
 check_forbidden_paths()
 check_readme_examples()
+check_report_example()
 
 if errors:
     print("\n".join(errors))

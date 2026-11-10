@@ -87,6 +87,7 @@ Before assessing, read `${CLAUDE_PLUGIN_ROOT}/references/CATALOG-CHANGELOG.md` a
 
 - Per-pillar report: `docs/checkups/YYYY-MM-DD-<pillar>.md` at the root of the assessed repository (`<pillar>` ∈ `performance`, `security`, `privacy`, `ai-readiness`).
 - Consolidated report: `docs/checkups/YYYY-MM-DD-full.md`.
+- Every Markdown report has a JSON twin with the same base name (`docs/checkups/YYYY-MM-DD-<pillar>.json`, `docs/checkups/YYYY-MM-DD-full.json`), in the format of §8.3.
 - If a file with the same name already exists, add a suffix `-2`, `-3`… (never overwrite history).
 - Do not commit automatically: follow the commit rules of the assessed repository.
 - If the project has no `docs/` folder, create `docs/checkups/`. If the user explicitly asks not to save files, only show the report in the chat.
@@ -178,6 +179,15 @@ Every assessed item is auditable: a Compliant item cites its evidence in table �
 ### 8.2 Suggested backlog
 
 Order by: severity (Critical → Minor), then status (Non-compliant before Partial), then effort (S before L). The **Score gain** column shows how many percentage points the score rises if the item becomes Compliant (`missing weight ÷ possible points × 100`). Group items that are solved by the same change and say so in the task.
+
+### 8.3 JSON twin
+
+Write the JSON twin after the Markdown report, following `${CLAUDE_PLUGIN_ROOT}/references/report.schema.json` (schema version `1.0.0`; no fields beyond the schema):
+
+- **Per pillar** (`kind: "pillar"`): every catalog item in `items`, including Compliant and N/A ones, with the same status, basis, confidence, human validation, evidence and score gain as the Markdown; `totals`, `score` and `classification` identical to the summary table; `backlog` identical to §5 of the report.
+- **Consolidated** (`kind: "full"`): `pillars` with each pillar's score, classification, open criticals and the path of its JSON report; `totals`, `score` and `classification` over all applicable items (§9); the deduplicated `backlog`. No `items`: they live in the pillar files.
+- Evidence cites location, command and a description. **Never** put a secret value, a token or personal data in the JSON.
+- When the Markdown and the JSON disagree, the report is wrong: fix it before finishing. In the chat reply, say that both files were saved.
 
 ## 9. Consolidated report (`/checkup:full`)
 
