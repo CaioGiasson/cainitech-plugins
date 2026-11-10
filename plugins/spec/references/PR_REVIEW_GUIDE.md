@@ -42,6 +42,8 @@ Before reviewing:
 
 Use the checklist below: clean code, typing, error handling, security, performance, observability, database migrations, tests, documentation.
 
+Code examples for the checklist items and model review comments are in `${CLAUDE_PLUGIN_ROOT}/references/PR_REVIEW_EXAMPLES.md`. Read it only when you need a model for an item or for the wording of a comment.
+
 ## 📋 Review checklist
 
 ### 🔍 First impression
@@ -55,31 +57,7 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Clean code
 
 -   [ ] **Descriptive names**: variables, functions and classes have clear names
-
-    ```typescript
-    // ❌ Review
-    const d = getData()
-    const u = processUser(u)
-
-    // ✅ Approve
-    const userData = getUserData()
-    const processedUser = processUser(userData)
-    ```
-
 -   [ ] **Small functions**: functions do one thing
-
-    ```typescript
-    // ❌ Review - function too big
-    function processOrder(order) {
-    	validate(order)
-    	calculate(order)
-    	save(order)
-    	sendEmail(order)
-    	log(order)
-    	// ... 50 more lines
-    }
-    ```
-
 -   [ ] **No duplication**: duplicated code was extracted
 -   [ ] **Useful comments**: comments explain the “why”, not the “what”
 -   [ ] **No dead code**: commented-out or unused code was removed
@@ -87,19 +65,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Typing *(statically typed or gradually typed languages)*
 
 -   [ ] **Avoid the escape hatches** (`any`, `Object`, unchecked casts, `# type: ignore`): if strictly necessary (e.g., an untyped library or complex dynamic data), it must be justified with a comment
-
-    ```typescript
-    // ❌ Review - no justification
-    function process(data: any) {}
-
-    // ✅ Approve - justified
-    // Using any temporarily because the legacy library has no types
-    function process(data: any) {}
-
-    // ✅ Approve - typed properly
-    function process(data: UserData) {}
-    ```
-
 -   [ ] **Explicit types**: types are clear (avoid ambiguous inference)
 -   [ ] **Well-defined interfaces**: interfaces describe clear contracts
 -   [ ] **Type guards**: types are validated where needed
@@ -108,15 +73,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Functions and methods
 
 -   [ ] **Avoid long parameter lists**: functions with more than ~3 parameters should take a configuration object (DTO/interface). The goal is readability and maintainability
-
-    ```typescript
-    // ❌ Review - too many parameters
-    function createUser(name, email, age, city, country, phone) {}
-
-    // ✅ Approve - configuration object
-    function createUser(userData: CreateUserData) {}
-    ```
-
 -   [ ] **Single responsibility**: each function has a single responsibility
 -   [ ] **Input validation**: parameters are validated up front
 -   [ ] **Error handling**: errors are handled properly
@@ -124,15 +80,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Error handling
 
 -   [ ] **Specific errors**: custom/typed errors with clear messages, following the project's error hierarchy if it has one
-
-    ```typescript
-    // ❌ Review
-    throw new Error('Error')
-
-    // ✅ Approve
-    throw new ValidationError('Email format is invalid')
-    ```
-
 -   [ ] **Correct status codes**: appropriate HTTP status (for APIs)
 -   [ ] **Adequate logging**: errors are logged with context
 -   [ ] **Do not expose details**: messages do not expose internals
@@ -141,21 +88,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Security
 
 -   [ ] **Input validation**: all inputs at external boundaries are validated
-
-    ```typescript
-    // ❌ Review - no validation
-    function updateUser(userId: string, data: any) {
-    	return db.users.update({ where: { id: userId }, data })
-    }
-
-    // ✅ Approve - validated
-    function updateUser(userId: string, data: UpdateUserData) {
-    	validateUserId(userId)
-    	validateUserData(data)
-    	return db.users.update({ where: { id: userId }, data })
-    }
-    ```
-
 -   [ ] **Sanitization**: data is sanitized before processing
 -   [ ] **Authentication**: protected endpoints require authentication
 -   [ ] **Authorization**: permissions are checked on the server
@@ -164,20 +96,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Performance
 
 -   [ ] **Optimized queries**: efficient queries (indexes, projections)
-
-    ```typescript
-    // ❌ Review - N+1 queries
-    const users = await db.users.findMany()
-    for (const user of users) {
-    	user.posts = await db.posts.findMany({ where: { userId: user.id } })
-    }
-
-    // ✅ Approve - single query
-    const users = await db.users.findMany({
-    	include: { posts: true },
-    })
-    ```
-
 -   [ ] **Pagination**: large lists are paginated
 -   [ ] **Appropriate cache**: cache is used when it makes sense
 -   [ ] **No queries in loops**: avoid queries inside loops
@@ -186,17 +104,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ REST APIs *(when the change touches HTTP endpoints)*
 
 -   [ ] **RESTful naming**: URLs follow REST conventions
-
-    ```
-    // ❌ Review
-    GET  /getUserById/123
-    POST /createNewUser
-
-    // ✅ Approve
-    GET  /users/123
-    POST /users
-    ```
-
 -   [ ] **Correct HTTP methods**: GET, POST, PATCH, PUT, DELETE are appropriate
 -   [ ] **Appropriate status codes**: HTTP status reflects the result
 -   [ ] **Documentation**: the API contract is updated where the project keeps it (OpenAPI/Swagger, request collections, API docs) — missing contract for a new or changed endpoint is a blocker when the project adopts one
@@ -218,26 +125,9 @@ Use the checklist below: clean code, typing, error handling, security, performan
 -   [ ] **Edge cases**: edge cases are tested
 -   [ ] **Clear naming**: test names describe behavior
 
-    ```typescript
-    // ❌ Review
-    it('test 1', () => {})
-
-    // ✅ Approve
-    it('should throw ValidationError when email is invalid', () => {})
-    ```
-
 ### ✅ Observability and logging
 
 -   [ ] **The application's logger** — not `print`/`console.log` in application code, when the project has a logger
-
-    ```typescript
-    // ❌ Review
-    console.log('User created', userId)
-
-    // ✅ Approve
-    logger.info('User created', { userId })
-    ```
-
 -   [ ] **Log levels**: appropriate use of info, warn, error
 -   [ ] **Context in logs**: logs include enough context
 -   [ ] **No sensitive data**: credentials and personal data do not appear in logs
@@ -246,15 +136,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 ### ✅ Environment variables and configuration
 
 -   [ ] **Config outside the code**: configuration is not hardcoded
-
-    ```typescript
-    // ❌ Review
-    const apiUrl = 'https://api.example.com'
-
-    // ✅ Approve
-    const apiUrl = process.env.API_URL
-    ```
-
 -   [ ] **Validation at startup**: required variables are validated
 -   [ ] **Documentation**: variables are documented (`.env.example` or equivalent)
 -   [ ] **No secrets in code**: secrets are never committed
@@ -263,12 +144,6 @@ Use the checklist below: clean code, typing, error handling, security, performan
 
 -   [ ] **Atomic commits**: each commit represents a logical change
 -   [ ] **Descriptive messages**: clear, descriptive messages
-
-    ```
-    ❌ Review: "fix"
-    ✅ Approve: "Validate email format on user creation input"
-    ```
-
 -   [ ] **No unnecessary files**: `.env`, dependency folders and build output are not committed
 -   [ ] **Branch naming**: the branch follows the convention and links to the task
 
@@ -405,128 +280,6 @@ Examples:
 When something is “almost important” but not worth blocking:
 
 -   mark it as **Comment (🟡 optional / follow-up)** and suggest opening an issue/task as technical debt.
-
-## 📝 Examples of Change Requests and Comments
-
-### Example 1: Input validation (Change Request 🔴)
-
-```typescript
-// Code in the PR
-function createUser(email: string, age: number) {
-	return db.users.create({ email, age })
-}
-```
-
-**Change Request (🔴):**
-
-```
-Change request (🔴): This function does not validate its inputs. An invalid
-email or a negative age can cause problems in the database and break the user
-creation flow. Risk: invalid data can be persisted.
-
-Suggestion: add validation before creating:
-
-function createUser(email: string, age: number) {
-  if (!isValidEmail(email)) {
-    throw new ValidationError('Invalid email format')
-  }
-  if (age < 0 || age > 150) {
-    throw new ValidationError('Age must be between 0 and 150')
-  }
-  return db.users.create({ email, age })
-}
-```
-
-### Example 2: Performance (Change Request 🟡)
-
-```typescript
-// Code in the PR
-const users = await db.users.findMany()
-for (const user of users) {
-	user.posts = await db.posts.findMany({ where: { userId: user.id } })
-}
-```
-
-**Change Request (🟡):**
-
-```
-Change request (🟡): This causes an N+1 query problem. For 100 users there
-will be 101 database queries. Risk: in production with many users this can
-significantly degrade performance and overload the database.
-
-Suggestion: use include to join in a single query:
-
-const users = await db.users.findMany({
-  include: { posts: true }
-})
-```
-
-### Example 3: Typing (Change Request 🟡)
-
-```typescript
-// Code in the PR
-function process(data: any) {
-	return data.value * 2
-}
-```
-
-**Change Request (🟡):**
-
-```
-Change request (🟡): Using `any` removes the benefits of the type system and
-can cause runtime errors if `data.value` does not exist or is not a number.
-Risk: loss of type safety and possible bugs that are hard to detect.
-
-Suggestion: create an interface to type it properly:
-
-interface ProcessableData {
-  value: number
-}
-
-function process(data: ProcessableData): number {
-  return data.value * 2
-}
-```
-
-### Example 4: Naming (Comment 🟢)
-
-```typescript
-// Code in the PR
-function calc(x: number, y: number): number {
-	return x + y
-}
-```
-
-**Comment (🟢):**
-
-```
-Comment (🟢): How about renaming `calc` to something more descriptive such as
-`calculateSum` or `addNumbers`? That would make the code more readable and
-self-documenting. It is not critical, but it would be an improvement.
-```
-
-### Example 5: Organization (Comment 🟢)
-
-```typescript
-// Code in the PR
-function processOrder(order: Order) {
-	validate(order)
-	calculate(order)
-	save(order)
-	sendEmail(order)
-	log(order)
-	return order
-}
-```
-
-**Comment (🟢):**
-
-```
-Comment (🟢): This function does several things. Did you consider extracting
-some responsibilities into separate functions? For example, `sendOrderEmail()`
-and `logOrderCreation()`. That would make the code more testable and reusable.
-It is not urgent, but it would be a good refactor for the future.
-```
 
 ## ✅ Final checklist before approving
 
