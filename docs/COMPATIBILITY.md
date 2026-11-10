@@ -8,8 +8,8 @@ What each version of the plugins was checked against. "Validated" means the mani
 |---|---|---|
 | Claude Code (plugins) | Any version with plugin marketplaces. Plugin manifests use only the fields every version understands | Validated with 2.1.63 (Windows 10) and 2.1.114 (CI, Ubuntu) |
 | Claude Code (`spec` plugin) | **2.1.110 or later.** `spec:approve` relies on the skill frontmatter field `disable-model-invocation: true` so that Claude cannot start it on its own. A version that ignores the field drops that protection without warning. The Claude Code changelog first mentions the field in 2.1.110 (a fix, so the field existed by then); the version that introduced it is not in the changelog | Required minimum (not tested on older versions); the confirmations inside `approve` do not depend on the field |
-| Claude Code (evals) | 2.1.269 or later (`claude plugin eval`) | Suites validated structurally; not run yet |
-| CLI (`claude`) | — | Validated; skills not run yet |
+| Claude Code (evals) | 2.1.269 or later (`claude plugin eval`) | Run on 2.1.322 (WSL2): `trigger` cases of the three plugins and `slow` cases of `spec`; `slow` cases of `checkup` and `polish` not run yet (see `docs/EVALS.md`) |
+| CLI (`claude`) | — | Validated; skills run by the evals on 2.1.322 (WSL2) and by hand (`spec`, see `docs/CASE-STUDIES.md`) |
 | Desktop app (Code tab) | Same plugin system as the CLI | Not tested |
 | VS Code extension | `/plugins` → Manage plugins | Not tested |
 | Windows | — | Validated (manifests); evals need WSL2 |
