@@ -97,6 +97,16 @@ In any conversation in the **Code** tab, type `/` and pick the skill from the li
 
 > `/spec:refine` I want customers to be able to download their invoice as a PDF on the payments screen.
 
+More examples, with the interface skill:
+
+| You type | What happens |
+|---|---|
+| `/polish:ui` | Audits the project: finds the design system, reviews the main screens and lists the improvements by impact. |
+| `/polish:ui` my orders screen looks AI-made | Redesigns that screen, reusing the project's components. |
+| `/polish:ui` landing page for a neighborhood bakery | Builds a new page from your brief. |
+| `/polish:ui review` the pricing page | Only assesses and reports. Changes nothing. |
+| `/polish:ui system` | Creates the design system if there is none, or tidies up the existing one. |
+
 Or just describe what you want. Claude also suggests the right skill.
 
 > The skills reply in the language you write in. If they can't tell, they use English.

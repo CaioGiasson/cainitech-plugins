@@ -97,6 +97,16 @@ Em qualquer conversa na aba **Code**, digite `/` e escolha a skill na lista. As 
 
 > `/spec:refine` Quero que o cliente consiga baixar a fatura em PDF na tela de pagamentos.
 
+Mais exemplos, com a skill de interface:
+
+| Você digita | O que acontece |
+|---|---|
+| `/polish:ui` | Audita o projeto: encontra o design system, revisa as telas principais e lista as melhorias por impacto. |
+| `/polish:ui` minha tela de pedidos está com cara de feita por IA | Redesenha essa tela, reusando os componentes do projeto. |
+| `/polish:ui` landing page para uma padaria de bairro | Cria uma página nova a partir do seu briefing. |
+| `/polish:ui review` a página de preços | Só avalia e relata. Não altera nada. |
+| `/polish:ui system` | Cria o design system se não existir, ou organiza o que já existe. |
+
 Se preferir, só descreva o que quer. O Claude também sugere a skill certa.
 
 > As skills respondem no idioma em que você escreve. Se não conseguirem identificar, usam inglês.
