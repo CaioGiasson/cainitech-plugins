@@ -30,7 +30,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 ### Compatibility
 
-CI validates the manifests with Claude Code 2.1.114; they were also validated locally with 2.1.63 on Windows. Score rules, weights and catalog items are unchanged: reports from 1.0.0 remain comparable.
+See `docs/COMPATIBILITY.md` for the full matrix. CI validates the manifests with Claude Code 2.1.114; they were also validated locally with 2.1.63 on Windows. Score rules, weights and catalog items are unchanged: reports from 1.0.0 remain comparable.
 
 ## 1.0.0 — 2026-10-14
 

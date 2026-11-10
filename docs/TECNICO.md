@@ -51,6 +51,7 @@ cainitech-plugins/
 │   ├── THREAT-MODEL.md             # ativos, atores, fronteiras de confiança, casos de abuso e mitigações (em inglês)
 │   ├── EVALS.md                    # suítes de eval: cobertura, fixtures e como rodar (em inglês)
 │   ├── CASE-STUDIES.md             # cenários reproduzíveis com fixtures públicas (em inglês)
+│   ├── COMPATIBILITY.md            # versões, superfícies, sistemas e ferramentas testados (em inglês)
 │   ├── examples/                   # exemplo de relatório JSON, conferido no CI
 │   └── TECNICO.md                  # este documento
 ├── scripts/

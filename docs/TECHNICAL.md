@@ -51,6 +51,7 @@ cainitech-plugins/
 │   ├── THREAT-MODEL.md             # assets, actors, trust boundaries, abuse cases and mitigations
 │   ├── EVALS.md                    # eval suites: coverage, fixtures, how to run
 │   ├── CASE-STUDIES.md             # reproducible scenarios on public fixtures
+│   ├── COMPATIBILITY.md            # tested versions, surfaces, systems and external tools
 │   ├── examples/                   # JSON report example, checked in CI
 │   └── TECNICO.md                  # Portuguese version
 ├── scripts/
