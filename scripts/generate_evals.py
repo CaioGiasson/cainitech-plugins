@@ -231,7 +231,38 @@ FAILING_TEST = [("src/discount.js", """
     });
     """)]
 
-CLEAN_FEATURE = [("src/status.js", """
+# Mudança completa: refinamento registrado, código, teste e um único bump de versão (nada bloqueante nem importante)
+CLEAN_FEATURE = [("docs/specs/9-close-order.md", """
+    # 9 — Close an order
+
+    - Date: 2026-11-10
+    - Branch: `feat/9-close`
+
+    ## Objective
+    A pure helper returns a closed copy of an order, for callers that persist it themselves.
+
+    ## Business rules
+    - Closing returns a new object with `status: "closed"`; the input is not mutated.
+    - Persisting the closed order is the caller's job (out of scope).
+
+    ## Acceptance criteria
+    - `closeOrder({ status: "open" }).status === "closed"`.
+    - The input object keeps its original status.
+
+    ## Edge cases
+    - An order that is already closed stays closed.
+
+    ## Order of commits
+    1. feat: fechar pedido (helper, test, version bump to 1.3.0)
+
+    ## Test script
+    1. Run `npm test`: all tests pass.
+
+    ## 🤖 Prompt for Claude
+    Add `closeOrder` in `src/status.js` with a test in `test/status.test.js` and bump the version to 1.3.0.
+    """), ("package.json", """
+    { "name": "orders-service", "version": "1.3.0", "private": true, "scripts": { "test": "node --test" } }
+    """), ("src/status.js", """
     function closeOrder(order) {
       return { ...order, status: "closed" };
     }
@@ -244,6 +275,16 @@ CLEAN_FEATURE = [("src/status.js", """
 
     test("closes an order", () => {
       assert.strictEqual(closeOrder({ status: "open" }).status, "closed");
+    });
+
+    test("does not mutate the input", () => {
+      const order = { status: "open" };
+      closeOrder(order);
+      assert.strictEqual(order.status, "open");
+    });
+
+    test("keeps a closed order closed", () => {
+      assert.strictEqual(closeOrder({ status: "closed" }).status, "closed");
     });
     """)]
 
