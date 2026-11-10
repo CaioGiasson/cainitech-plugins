@@ -143,6 +143,8 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 
 **They only read and assess. They change nothing in your project.** Each health check delivers a report with a **score from 0 to 100**, a **rating** and a **list of problems by priority**, ready to become an action plan. The report is saved in the assessed project's `docs/checkups` folder.
 
+The checks also run the analysis tools already installed on your machine, such as `semgrep`, `trivy`, `osv-scanner`, `npm audit` and `gitleaks`, and use their confirmed results as evidence; they never install anything. A `.checkup.json` file in your project can record accepted risks and items that do not apply, with a reason, an owner and an expiry date. It never changes the scoring rules, and every entry shows up in the report.
+
 | Skill | What it assesses | Criteria | What you get |
 |---|---|---:|---|
 | **`/checkup:security`** | Security: login, data protection, known weaknesses, exposed secrets. Works as preparation for a penetration test. | 153 | A security score and weak points by severity. |
@@ -281,15 +283,15 @@ After the report, Claude offers to turn the backlog items into well-defined task
 
 | Plugin | Reads | Writes | Outside your computer |
 |---|---|---|---|
-| `checkup` | The whole repository; may run lint, typecheck, unit tests and build locally | Only the reports in `docs/checkups/` (Markdown and JSON); never commits | Nothing |
+| `checkup` | The whole repository; may run lint, typecheck, unit tests, build and the analysis tools already installed, locally and in report mode | Only the reports in `docs/checkups/` (Markdown and JSON); never commits | Nothing |
 | `spec` | Repository, issues, pull requests, the conversations you point to | Refinement documents in `docs/specs/`, code and commits on the task's branch | Issues, board moves, push of the task's branch, pull request, the review comments you pick; `approve` asks before commenting, merging and deleting branches |
 | `polish` | The project's interface files and design system | The pages, screens and tokens it builds or redesigns | Nothing: it runs no commands and downloads nothing |
 
 **How it is checked:**
 
-- **Evals:** 40 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
+- **Evals:** 41 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
 - **CI on every pull request:** manifest validation, catalog counts and fingerprints, references and links, the score arithmetic of the example above, and a secret scan of the whole history.
-- **Threat model:** assets, trust boundaries, twelve abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
+- **Threat model:** assets, trust boundaries, fourteen abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
 - **Reproducible scenarios** on public fictitious fixtures ([CASE-STUDIES.md](docs/CASE-STUDIES.md)).
 
 ## Compatibility

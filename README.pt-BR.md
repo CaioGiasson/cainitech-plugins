@@ -143,6 +143,8 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 
 **Só leem e avaliam. Não alteram nada no seu projeto.** Cada check-up entrega um relatório com **nota de 0 a 100**, uma **classificação** e uma **lista de problemas por prioridade**, pronta para virar plano de ação. O relatório fica salvo na pasta `docs/checkups` do projeto avaliado.
 
+Os check-ups também rodam as ferramentas de análise já instaladas na sua máquina, como `semgrep`, `trivy`, `osv-scanner`, `npm audit` e `gitleaks`, e usam os resultados confirmados como evidência; nunca instalam nada. Um arquivo `.checkup.json` no seu projeto pode registrar riscos aceitos e itens que não se aplicam, com motivo, responsável e validade. Ele nunca muda as regras da nota, e toda entrada aparece no relatório.
+
 | Skill | O que avalia | Critérios | O que você recebe |
 |---|---|---:|---|
 | **`/checkup:security`** | Segurança: login, proteção de dados, brechas conhecidas, segredos expostos. Serve de preparação para um teste de invasão. | 153 | Nota de segurança e pontos fracos por gravidade. |
@@ -279,15 +281,15 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 
 | Plugin | Lê | Escreve | Fora do seu computador |
 |---|---|---|---|
-| `checkup` | O repositório inteiro; pode rodar lint, checagem de tipos, testes unitários e build localmente | Só os relatórios em `docs/checkups/` (Markdown e JSON); nunca faz commit | Nada |
+| `checkup` | O repositório inteiro; pode rodar lint, checagem de tipos, testes unitários, build e as ferramentas de análise já instaladas, localmente e em modo relatório | Só os relatórios em `docs/checkups/` (Markdown e JSON); nunca faz commit | Nada |
 | `spec` | Repositório, issues, pull requests e as conversas que você indicar | Documentos de refinamento em `docs/specs/`, código e commits na branch da tarefa | Issues, movimentos no quadro, push da branch da tarefa, pull request, os comentários de revisão que você escolher; o `approve` pergunta antes de comentar, integrar e apagar branches |
 | `polish` | Os arquivos de interface e o design system do projeto | As páginas, telas e tokens que ele cria ou redesenha | Nada: não roda comandos nem baixa nada |
 
 **Como isso é verificado:**
 
-- **Evals:** 40 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
+- **Evals:** 41 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
 - **CI em toda pull request:** validação dos manifestos, contagens e fingerprints dos catálogos, referências e links, a conta do score do exemplo acima e uma busca de segredos em todo o histórico.
-- **Threat model:** ativos, fronteiras de confiança, doze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
+- **Threat model:** ativos, fronteiras de confiança, catorze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
 - **Cenários reproduzíveis** com fixtures públicas e fictícias ([CASE-STUDIES.md](docs/CASE-STUDIES.md), em inglês).
 
 ## Compatibilidade

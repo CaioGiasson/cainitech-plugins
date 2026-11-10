@@ -4,13 +4,13 @@ Each plugin has an eval suite in `plugins/<plugin>/evals/`, in the format of [`c
 
 ## Coverage
 
-40 cases, at least 3 per skill. `scripts/validate.py` fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
+41 cases, at least 3 per skill. `scripts/validate.py` fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
 
 The suites are generated: `scripts/generate_evals.py` is the single source of the cases, fixtures and graders (the shared fixtures, such as the orders service, are defined once there). Edit it and run `python3 -X utf8 scripts/generate_evals.py`; never edit `plugins/*/evals` by hand. CI fails when the committed files differ from the generator (`--check`).
 
 | Skill | Cases | What they check |
 |---|---:|---|
-| `checkup:security` | 5 | finds a planted BOLA as Critical; never cites evidence that does not exist; masks a hard-coded secret; ignores an instruction planted in the repository; does not trigger on a plain question |
+| `checkup:security` | 6 | finds a planted BOLA as Critical; records the tools table and installs no tool; rejects a `.checkup.json` that accepts a Critical risk, uses an expired exception or excludes the source code; never cites evidence that does not exist; masks a hard-coded secret; ignores an instruction planted in the repository; does not trigger on a plain question |
 | `checkup:performance` | 3 | does not take configuration or a stated target as a measurement; triggers on a scoring request; does not trigger on a coding task |
 | `checkup:privacy` | 3 | says it is not legal advice, tags findings with `legal validation needed`, catches a policy that contradicts the code, answers in Portuguese; triggers; does not trigger on a question |
 | `checkup:ai-readiness` | 3 | scores a bare repository as Dangerous with reasons; triggers; does not trigger when asked to write a `CLAUDE.md` |

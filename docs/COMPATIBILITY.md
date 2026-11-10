@@ -2,7 +2,7 @@
 
 What each version of the plugins was checked against. "Validated" means the manifests and structure pass `claude plugin validate` and `scripts/validate.py`; "run" means the skills were executed end to end; "not tested" means neither.
 
-## Plugins 1.1.0
+## Plugins 1.2.0 (`polish` 1.1.0)
 
 | Component | Requirement | Status |
 |---|---|---|
