@@ -17,6 +17,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 ### Added
 
+- **`polish` plugin** (skill `ui`), first release.
 - `SECURITY.md`, `CONTRIBUTING.md`, a pull request template and this changelog.
 - **Eval suites** for the 11 skills (39 cases, at least 3 per skill) in `plugins/<plugin>/evals/`, in the `claude plugin eval` format, with fixtures created by scaffold scripts. `scripts/generate_evals.py` is their single source; CI checks that the committed suites match it. They cover triggering, safety rules, dry runs and the abuse cases of the threat model. See `docs/EVALS.md`.
 - `docs/CASE-STUDIES.md`: three reproducible scenarios on public fixtures (security flaws, conversation to merge, privacy limits), and `scripts/fixture.sh` to create the fixture of any eval case. Results are added once recorded with a released version.
@@ -34,4 +35,4 @@ See `docs/COMPATIBILITY.md` for the full matrix. `spec` requires Claude Code 2.1
 
 ## 1.0.0 — 2026-10-14
 
-First marketplace release: `checkup` (security, performance, privacy, ai-readiness and full; 512 criteria) and `spec` (refine, from-thread, build, review, approve). `polish` (ui) joined at 1.0.0 on 2026-11-09.
+First marketplace release: `checkup` (security, performance, privacy, ai-readiness and full; 512 criteria) and `spec` (refine, from-thread, build, review, approve).
