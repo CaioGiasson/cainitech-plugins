@@ -25,6 +25,7 @@ jobs:
           claude plugin validate .
           claude plugin validate plugins/checkup
           claude plugin validate plugins/spec
+          claude plugin validate plugins/design
 
       - name: Conferir catálogos e referências
         run: |
@@ -40,7 +41,7 @@ jobs:
                   errors.append(f"{skill}: {len(ids)} itens, esperado {count}")
               if len(set(ids)) != len(ids):
                   errors.append(f"{skill}: IDs duplicados")
-          for plugin in ("checkup", "spec"):
+          for plugin in ("checkup", "spec", "design"):
               root = f"plugins/{plugin}"
               for md in glob.glob(f"{root}/**/*.md", recursive=True):
                   for m in re.finditer(r"\$\{CLAUDE_PLUGIN_ROOT\}/([A-Za-z0-9_./-]+)", open(md, encoding="utf-8").read()):

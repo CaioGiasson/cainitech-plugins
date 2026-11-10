@@ -4,12 +4,13 @@ For maintainers and technical users. For the overview and the skill catalog, see
 
 ## What this repository is
 
-A Claude Code **plugin marketplace** named `cainitech`, with two plugins in a single repository:
+A Claude Code **plugin marketplace** named `cainitech`, with three plugins in a single repository:
 
 | Plugin | Skills | What it is |
 |---|---|---|
 | `checkup` | `security`, `performance`, `privacy`, `ai-readiness`, `full` | Read-only application assessments: 512 criteria, a 0–100 score, a classification and a prioritized backlog. |
 | `spec` | `refine`, `from-thread`, `build`, `review`, `approve` | Task workflow from idea to merge. Uses a GitHub Project board when the project has one, always records the work in the project docs, and adapts to GitHub / Git without GitHub / other VCS / no VCS. |
+| `design` | `frontend` | Design taste for websites and landing pages: layout, type, copy, motion and a review checklist. Text-only: runs no commands and downloads nothing. Adapted from taste-skill (MIT, see `plugins/design/THIRD_PARTY_NOTICES.md`). |
 
 Skills are invoked as `/<plugin>:<skill>` (for example `/checkup:security`, `/spec:refine`).
 
@@ -18,7 +19,7 @@ Skills are invoked as `/<plugin>:<skill>` (for example `/checkup:security`, `/sp
 ```
 cainitech-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json            # marketplace "cainitech": lists the two plugins
+│   └── marketplace.json            # marketplace "cainitech": lists the three plugins
 ├── plugins/
 │   ├── checkup/
 │   │   ├── .claude-plugin/plugin.json
@@ -30,13 +31,18 @@ cainitech-plugins/
 │   │       ├── privacy/            # SKILL.md + references/checklist.md (126 criteria, PRIV-*)
 │   │       ├── ai-readiness/       # SKILL.md + references/checklist.md (70 criteria, AIR-*)
 │   │       └── full/               # SKILL.md (runs the four pillars and consolidates)
-│   └── spec/
+│   ├── spec/
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── references/
+│   │   │   ├── WORKFLOW.md         # language, project context, tracker detection, mandatory docs, delivery modes
+│   │   │   └── PR_REVIEW_GUIDE.md  # stack-neutral review guide
+│   │   └── skills/
+│   │       ├── refine/  from-thread/  build/  review/  approve/
+│   └── design/
 │       ├── .claude-plugin/plugin.json
-│       ├── references/
-│       │   ├── WORKFLOW.md         # language, project context, tracker detection, mandatory docs, delivery modes
-│       │   └── PR_REVIEW_GUIDE.md  # stack-neutral review guide
+│       ├── THIRD_PARTY_NOTICES.md  # MIT notice of taste-skill, the source of the adaptation
 │       └── skills/
-│           ├── refine/  from-thread/  build/  review/  approve/
+│           └── frontend/           # SKILL.md + references/ (copy, layout, motion, checklist)
 ├── docs/
 │   ├── TECHNICAL.md                # this document
 │   └── TECNICO.md                  # Portuguese version
@@ -51,13 +57,14 @@ cainitech-plugins/
 claude plugin marketplace add CaioGiasson/cainitech-plugins
 claude plugin install checkup@cainitech
 claude plugin install spec@cainitech
+claude plugin install design@cainitech
 ```
 
 Inside a session the equivalents are `/plugin marketplace add CaioGiasson/cainitech-plugins` and `/plugin install checkup@cainitech`. In VS Code, type `/plugins` to open **Manage plugins**. Add `--scope project` to enable a plugin for everyone who works in a given repository.
 
 Updates: `claude plugin marketplace update cainitech` followed by `claude plugin update <plugin>@cainitech`. Auto-update is off by default for third-party marketplaces; turn it on in `/plugin` → **Marketplaces** → **Enable auto-update**.
 
-Local development without installing: `claude --plugin-dir ./plugins/checkup --plugin-dir ./plugins/spec`.
+Local development without installing: `claude --plugin-dir ./plugins/checkup --plugin-dir ./plugins/spec --plugin-dir ./plugins/design`.
 
 ## How a skill finds its shared files
 
@@ -120,6 +127,7 @@ Create `plugins/<name>/.claude-plugin/plugin.json` and `plugins/<name>/skills/�
 claude plugin validate .                    # marketplace
 claude plugin validate plugins/checkup   # plugin manifest and skills
 claude plugin validate plugins/spec
+claude plugin validate plugins/design
 ```
 
 Because `version` is set in each `plugin.json`, users only receive an update when you **increase it** (`claude plugin update` reports "already at the latest version" otherwise). Bump the version of every plugin you changed in the same pull request. Optionally tag releases with `claude plugin tag`.
