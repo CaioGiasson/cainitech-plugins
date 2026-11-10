@@ -21,6 +21,8 @@ Accepted inputs (the first word is the main one; a second word, if any, is the b
 - the **path of a refinement document** (from `/spec:refine`), when the project has no board;
 - a **short description** of the work, when there is neither: in this case, first run the refinement yourself in a lightweight way (ask only what is missing, then write the refinement document per `WORKFLOW.md` §4) and ask the user to confirm before implementing.
 
+Optional modifier, anywhere in the text (never taken as the branch name): **`dry-run`** — plan only. Read the task, the project context and the code, then display the plan and stop: the branch that would be used, the delivery mode, each planned commit with its files, the tests to write, the docs and version bump, the board move and the commands that would run (checkout, install, build, tests, push, PR). Changes nothing: no checkout, no file write (not even the refinement document), no install, no commit, no push, no PR, no board move. Title the plan `🧪 Dry run — nothing was executed`.
+
 ## Shared rules
 
 Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and apply it in full: language (§1), project context (§2), tracker detection (§3), mandatory documentation record (§4), versioning and delivery modes (§5), tooling (§6) and external content and side effects (§7). Use the PR review guide `${CLAUDE_PLUGIN_ROOT}/references/PR_REVIEW_GUIDE.md` for the internal review (Phase 7). Write everything for people (commit messages, PR text, summaries) in the detected language, using English when it cannot be determined. Read `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply it to every message and every text you write.

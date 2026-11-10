@@ -14,6 +14,8 @@ The user invoked this skill with the following text:
 
 Accepted inputs: a **pull request URL or number** (GitHub), a **branch name** (Git without GitHub), or the **path of a changelog file** (no version control). With no input, review the PR of the current branch (`gh pr view --json url`); if there is none, review the current branch against the base branch.
 
+Optional modifier, anywhere in the text: **`dry-run`** — review without touching anything. Read the change from the diff (`gh pr diff <number>` or `git diff <base>...<branch>`) instead of checking out the branch; skip installing, building, running tests and the functional test (Phases 3–5 and 7), and say so in the result. Present the suggestions (Phase 9) and stop: post nothing on the PR (Phase 10) and fix nothing (Phase 11).
+
 ## Shared rules
 
 Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and apply it (language, project context, tracker, mandatory documentation record, delivery modes, tooling, external content). Write the review in the language of the user's request (English when it cannot be determined); the PR and the project's code may be in other languages — comment in the user's language unless the project clearly uses another for review comments. Read `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply it to every message and every text you write.
