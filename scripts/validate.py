@@ -1,9 +1,10 @@
 """Validações estruturais do marketplace, executadas no CI e localmente.
 
-Uso: python3 -X utf8 scripts/validate.py
+Uso: python3 -X utf8 scripts/validate.py [--fingerprints]
 """
 
 import glob
+import hashlib
 import os
 import re
 import subprocess
@@ -13,6 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLUGINS = ("checkup", "spec", "polish")
 CATALOGS = {"security": 153, "performance": 163, "privacy": 126, "ai-readiness": 70}
 STYLE_REFERENCE = "${CLAUDE_PLUGIN_ROOT}/references/STYLE.md"
+CATALOG_CHANGELOG = "plugins/checkup/references/CATALOG-CHANGELOG.md"
 USER_ONLY_SKILLS = ("plugins/spec/skills/approve/SKILL.md",)
 FORBIDDEN_PATHS = re.compile(r"^personal/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
 
@@ -29,14 +31,46 @@ def frontmatter(text):
     return match.group(1) if match else None
 
 
+def catalog_items(skill):
+    text = read(f"plugins/checkup/skills/{skill}/references/checklist.md").replace("\r", "")
+    blocks = re.findall(r"^(#### [A-Z]+-\d+\.\d+ · .*?)(?=^#{2,4} |\Z)", text, re.M | re.S)
+    return text, [re.sub(r"[ \t]+$", "", block.strip(), flags=re.M) for block in blocks]
+
+
+def fingerprint(blocks):
+    return hashlib.sha256("\n".join(blocks).encode("utf-8")).hexdigest()[:12]
+
+
 def check_catalogs():
+    changelog = read(CATALOG_CHANGELOG)
+    latest = re.search(r"^## (\d+\.\d+\.\d+) — .*?(?=^## |\Z)", changelog, re.M | re.S)
+    if not latest:
+        errors.append(f"{CATALOG_CHANGELOG}: nenhuma versão encontrada")
+        return
     for skill, count in CATALOGS.items():
         path = f"plugins/checkup/skills/{skill}/references/checklist.md"
-        ids = re.findall(r"^#### ([A-Z]+-\d+\.\d+)", read(path), re.M)
+        text, blocks = catalog_items(skill)
+        ids = [re.match(r"#### (\S+)", block).group(1) for block in blocks]
+        severities = [re.search(r"^\*\*(Critical|Important|Minor)\*\*", block, re.M) for block in blocks]
         if len(ids) != count:
             errors.append(f"{path}: {len(ids)} itens, esperado {count}")
         if len(set(ids)) != len(ids):
             errors.append(f"{path}: IDs duplicados")
+        if not all(severities):
+            errors.append(f"{path}: item sem severidade")
+            continue
+        totals = [sum(1 for s in severities if s.group(1) == name) for name in ("Critical", "Important", "Minor")]
+        header = re.search(r"\*\*Total items:\*\* (\d+) — Critical: (\d+) · Important: (\d+) · Minor: (\d+)", text)
+        if not header or [int(n) for n in header.groups()] != [len(ids)] + totals:
+            errors.append(f"{path}: totais do cabeçalho diferem dos itens ({len(ids)} — {' · '.join(map(str, totals))})")
+        row = re.search(rf"^\| {re.escape(skill)} \| (\d+) \| (\d+) · (\d+) · (\d+) \| `([0-9a-f]{{12}})` \|$", latest.group(0), re.M)
+        if not row:
+            errors.append(f"{CATALOG_CHANGELOG}: versão {latest.group(1)} sem linha para {skill}")
+        elif [int(n) for n in row.groups()[:4]] != [len(ids)] + totals or row.group(5) != fingerprint(blocks):
+            errors.append(
+                f"{path}: o catálogo mudou desde a versão {latest.group(1)}; registre uma nova versão em {CATALOG_CHANGELOG} "
+                f"(atual: {len(ids)} itens, {' · '.join(map(str, totals))}, fingerprint {fingerprint(blocks)})"
+            )
 
 
 def check_plugin_references():
@@ -94,6 +128,11 @@ def check_forbidden_paths():
         if FORBIDDEN_PATHS.search(path):
             errors.append(f"{path}: arquivo proibido no repositório (contexto pessoal ou segredos)")
 
+
+if "--fingerprints" in sys.argv:
+    for skill in CATALOGS:
+        print(f"{skill}: {fingerprint(catalog_items(skill)[1])}")
+    sys.exit(0)
 
 check_catalogs()
 check_plugin_references()

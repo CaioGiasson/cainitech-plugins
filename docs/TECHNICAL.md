@@ -98,7 +98,7 @@ Every skill reads `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and applies it to 
 ## Assessment catalogs
 
 - The `skills/*/references/checklist.md` files are now the **source of truth** (there is no generator script anymore). Edit them directly.
-- **Never change an item ID, severity or weight casually**: score comparison between runs depends on them. If you must, record it in the pull request and the plugin changelog.
+- **Never change an item ID, severity or weight casually**: score comparison between runs depends on them. Any change to an item changes the pillar's fingerprint, and `scripts/validate.py` fails until a new version is recorded in `plugins/checkup/references/CATALOG-CHANGELOG.md` (rules at the top of that file; `python3 -X utf8 scripts/validate.py --fingerprints` prints the new fingerprints). Reports record the catalog version, so a methodology change is never read as progress.
 - Expected totals: security 153 (48 critical · 89 important · 16 minor), performance 163 (9 · 82 · 72), privacy 126 (37 · 66 · 23), ai-readiness 70 (6 · 30 · 34). Their counts must keep adding up to 512.
 - Report format, statuses, weights and classification thresholds live in `plugins/checkup/references/ASSESSMENT.md`.
 

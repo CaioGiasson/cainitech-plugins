@@ -211,7 +211,7 @@ Evolução: primeira execução
 |---|---|
 | Data | 2026-10-14 |
 | Commit avaliado | `a3f9c21` (branch `main`) |
-| Catálogo | application-assessment v3 — 153 itens (137 aplicáveis, 16 N/A) |
+| Catálogo | application-assessment v3 · catálogo 1.0.0 (`a2369a69e155`) — 153 itens (137 aplicáveis, 16 N/A) |
 | Escopo | API Node.js + Next.js + MongoDB; app mobile e LLM fora do escopo (N/A) |
 | Execução anterior | primeira execução |
 

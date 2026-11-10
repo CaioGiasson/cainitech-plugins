@@ -213,7 +213,7 @@ In plain English: the project scored **56.1 out of 100 (Silver)**; 14 critical p
 |---|---|
 | Date | 2026-10-14 |
 | Assessed commit | `a3f9c21` (branch `main`) |
-| Catalog | application-assessment v3 — 153 items (137 applicable, 16 N/A) |
+| Catalog | application-assessment v3 · catalog 1.0.0 (`a2369a69e155`) — 153 items (137 applicable, 16 N/A) |
 | Scope | Node.js API + Next.js + MongoDB; mobile app and LLM out of scope (N/A) |
 | Previous run | first run |
 

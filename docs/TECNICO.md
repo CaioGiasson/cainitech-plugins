@@ -98,7 +98,7 @@ Toda skill lê o `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` e o aplica às mens
 ## Catálogos de assessment
 
 - Os arquivos `skills/*/references/checklist.md` agora são a **fonte da verdade** (não há mais script gerador). Edite-os diretamente.
-- **Nunca altere ID, severidade ou peso de um item sem cuidado**: a comparação de score entre execuções depende deles. Se for inevitável, registre na pull request e no changelog do plugin.
+- **Nunca altere ID, severidade ou peso de um item sem cuidado**: a comparação de score entre execuções depende deles. Qualquer mudança em um item altera o fingerprint do pilar, e o `scripts/validate.py` falha até que uma nova versão seja registrada em `plugins/checkup/references/CATALOG-CHANGELOG.md` (regras no topo do arquivo; `python3 -X utf8 scripts/validate.py --fingerprints` mostra os novos fingerprints). Os relatórios registram a versão do catálogo, então uma mudança de metodologia nunca é lida como progresso.
 - Totais esperados: security 153 (48 críticos · 89 importantes · 16 menores), performance 163 (9 · 82 · 72), privacy 126 (37 · 66 · 23), ai-readiness 70 (6 · 30 · 34). A soma deve continuar sendo 512.
 - Formato do relatório, status, pesos e faixas de classificação ficam em `plugins/checkup/references/ASSESSMENT.md`.
 

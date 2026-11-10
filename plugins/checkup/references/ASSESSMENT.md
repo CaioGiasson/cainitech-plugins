@@ -76,8 +76,9 @@ Round the score to **one decimal place**. The report always shows the calculatio
 
 ## 6. Comparison with previous runs
 
-Before assessing, look for previous reports of the same pillar in `docs/checkups/`. If one exists:
+Before assessing, read `${CLAUDE_PLUGIN_ROOT}/references/CATALOG-CHANGELOG.md` and take the current catalog version and the pillar's fingerprint from its first entry; both go in the report header (§8). Then look for previous reports of the same pillar in `docs/checkups/`. If one exists:
 
+0. Compare the catalog version and fingerprint of the previous report with the current ones. If they differ, the **Evolution** section opens with **Methodology change**: the versions, and every item the changelog lists as added, changed or deprecated between them. A score difference caused only by those items is labelled as methodology, not as progress or regression. Reports without a catalog version predate 1.0.0 of the changelog: say so.
 1. Use the previous verdict as the starting point and re-assess **every** item with the current evidence.
 2. Record in the **Evolution** section: previous score → current, items that improved, items that regressed (always with the cause) and items added to or removed from the catalog.
 3. An item only gets worse if the evidence stopped existing or if the previous assessment was wrong; in that case, say explicitly that it is an assessment correction.
@@ -104,7 +105,7 @@ The **score is the first piece of information** in the report and the **classifi
 |---|---|
 | Date | YYYY-MM-DD |
 | Assessed commit | `<short sha>` (branch `<branch>`) |
-| Catalog | application-assessment v3 — <N> items (<N applicable>, <N N/A>) |
+| Catalog | application-assessment v3 · catalog <version> (`<pillar fingerprint>`) — <N> items (<N applicable>, <N N/A>) |
 | Scope | <detected stack, assessed components, what was left out> |
 | Previous run | <file and previous score, or "first run"> |
 
