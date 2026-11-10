@@ -1,5 +1,6 @@
 {
   "name": "cainitech",
+  "description": "Claude plugins that work like an experienced team: application health checks with a 0–100 score, a task workflow from idea to merge, and interface polish.",
   "owner": {
     "name": "cainitech",
     "url": "https://github.com/CaioGiasson"
