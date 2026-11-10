@@ -32,6 +32,7 @@ Cases tagged `threat:T<n>` cover an abuse case of the [threat model](THREAT-MODE
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec`, `slow` cases, plugin arm only, 1 run | 10 of 14 passed. The 4 failures were eval defects, fixed afterwards: `refine-triggers-and-records` and `refine-pt-br-language` asked questions and stopped (no one answers in a single-turn run); `build-out-of-scope-request` refused a fixture whose implementation prompt lacked the required subsections (it did flag the out-of-scope requests); `approve-dry-run` matched a git command in the grader, most likely `git merge-base` (fixed regex; not confirmed, the trace was not kept) | US$ 4.54 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | the 4 `spec` cases fixed above, plugin arm only, 1 run | 4 of 4 passed | US$ 1.60 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec:review` cases after the isolated reviewer, plugin arm only, 1 run | 2 of 3 passed. The subagent got only the reference (`isolated-reviewer` passed) and refused a change with no criteria. `review-missing-critical-test` failed: the review rated the untested refund 🟡, because Phase 5 called a missing test Important while Phase 8 calls it a Blocker on a critical flow (fixed in the skill) | US$ 1.83 |
+| 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `review-missing-critical-test` after the fix, plugin arm only, 1 run | passed (3 of 3 graders); the reply kept every How to fix block | US$ 0.86 |
 
 ## Fixtures
 
