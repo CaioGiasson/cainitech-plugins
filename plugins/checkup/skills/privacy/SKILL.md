@@ -28,6 +28,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 ## PHASE 0 — Preparation
 
 1. Read **in full**:
+   - `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` — communication style (apply it to every message and every text you write);
    - `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` — methodology, statuses, weights, score, classification and report format (follow it to the letter);
    - `${CLAUDE_PLUGIN_ROOT}/skills/privacy/references/checklist.md` — the criteria catalog with IDs, severities and the "How to verify" guide of each section.
 2. Read the context of the assessed repository: `AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md` (if they exist).
@@ -65,6 +66,7 @@ Show a summary of the inventory (stack, components, applicable and N/A condition
 - A divergence between the privacy notice and the behavior observed in the code is always a finding of the item's severity or higher; cite the excerpt of the notice and the file:line that contradicts it.
 - Cite the legal basis (article/resolution) of each finding; it is already in the catalog.
 - A legal document without formal review does not fail technical items, but record the limitation in "Methodology and limitations".
+- This assessment is not legal advice. LGPD compliance depends on context the repository does not show (contracts, processes, legal bases chosen by the controller). State in "Methodology and limitations" that every legal conclusion needs validation by a lawyer or the DPO, and mark findings that depend on a legal interpretation with `legal validation needed`.
 
 ---
 

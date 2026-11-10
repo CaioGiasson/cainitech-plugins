@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "pillar",
+  "pillar": "security",
+  "repository": "loja-online",
+  "date": "2026-10-14",
+  "commit": { "sha": "a3f9c21", "branch": "main", "dirty": false },
+  "catalog": {
+    "source": "application-assessment v3",
+    "version": "1.0.0",
+    "fingerprints": { "security": "a2369a69e155" }
+  },
+  "score": 56.1,
+  "classification": "Silver",
+  "totals": {
+    "critical": { "compliant": 20, "partial": 9, "nonCompliant": 14, "notApplicable": 5, "earned": 73.5, "possible": 129 },
+    "important": { "compliant": 36, "partial": 17, "nonCompliant": 28, "notApplicable": 8, "earned": 89, "possible": 162 },
+    "minor": { "compliant": 7, "partial": 2, "nonCompliant": 4, "notApplicable": 3, "earned": 8, "possible": 13 },
+    "earned": 170.5,
+    "possible": 304
+  },
+  "items": [
+    {
+      "id": "SEC-3.02",
+      "title": "BOLA/IDOR",
+      "severity": "Critical",
+      "status": "nonCompliant",
+      "basis": "confirmed",
+      "confidence": "high",
+      "humanValidation": "required",
+      "evidence": [
+        {
+          "location": "src/modules/orders/orders.controller.ts:58",
+          "command": "rg \"findById\\(req.params\" src/",
+          "description": "orders.findById(req.params.id) with no userId filter; 6 hits, 5 without an ownership check"
+        }
+      ],
+      "reproduction": "Log in as test user A, create an order, log in as test user B and call GET /orders/<A's order id>: 200 with A's data.",
+      "recommendation": "Fetch by { id, userId } in the repository layer and answer 404 when nothing is found; add a cross-access negative test.",
+      "retestCriterion": "A negative cross-access test exists and passes in CI for all listed routes.",
+      "effort": "S",
+      "scoreGain": 1.0
+    },
+    {
+      "id": "SEC-1.01",
+      "title": "Asset inventory",
+      "severity": "Critical",
+      "status": "compliant",
+      "evidence": [
+        { "location": "docs/architecture/assets.md", "description": "versioned inventory of services, databases and domains, reviewed 2026-09" }
+      ]
+    }
+  ],
+  "backlog": [
+    { "priority": 1, "title": "Check order ownership on every /orders route", "itemIds": ["SEC-3.02"], "severity": "Critical", "effort": "S", "scoreGain": 1.0 }
+  ],
+  "previousRun": null,
+  "limitations": [
+    "Excerpt: a real report lists all 153 items.",
+    "Evidence-based assessment from reading the repository; not a pentest, an audit, a certification or legal advice."
+  ]
+}

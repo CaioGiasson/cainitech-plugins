@@ -1,0 +1,2 @@
+# Scripts e fixtures rodam em bash (Linux, macOS, WSL2): sempre LF
+*.sh text eol=lf

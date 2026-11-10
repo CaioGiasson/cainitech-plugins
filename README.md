@@ -15,7 +15,7 @@
 </tr>
 </table>
 
-**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Privacy](#privacy)**
+**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Limits](#what-these-plugins-do-not-do) · [Trust](#trust-and-quality) · [Privacy](#privacy)**
 
 </div>
 
@@ -135,9 +135,9 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 
 | Skill | What it does | What you get |
 |---|---|---|
-| **`/spec:build`** | Takes a task, moves it on the board to "In progress" (if there is a board), builds the solution, writes the tests and reviews its own work. | On GitHub: a ready *pull request* with the code in organized steps and a test script for you to check. Without GitHub: organized local commits. Without version control: a change log file with a copy of every change. |
-| **`/spec:review`** | Reviews a change: checks that everything requested was done, runs the tests and analyzes code quality. | Review comments posted on the right spot in the code, after you choose what to post (without GitHub, the review comes in the chat). It only fixes something if you ask. |
-| **`/spec:approve`** | Steps in after your manual tests and does the final review before wrapping up. | If all is well: on GitHub, a final comment, a "Reviewed" label, the delivery completed (*merge*) and the working copies cleaned up; without GitHub, a local merge. If it finds a serious problem, it only tells you and touches nothing. |
+| **`/spec:build`** | Takes a task, moves it on the board to "In progress" (if there is a board), builds the solution, writes the tests and reviews its own work. | On GitHub: a ready *pull request* with the code in organized steps and a test script for you to check. Without GitHub: organized local commits. Without version control: a change log file with a copy of every change. Add `dry-run` to see the plan without changing anything. |
+| **`/spec:review`** | Reviews a change in an isolated subagent that sees only the change, never your conversation: checks that everything requested was done, runs the tests and analyzes code quality. Refuses to review when there is no task, refinement document or PR description with acceptance criteria to check against. | Review comments posted on the right spot in the code, after you choose what to post (without GitHub, the review comes in the chat). It only fixes something if you ask. Add `dry-run` to review from the diff without checking out, building or posting. |
+| **`/spec:approve`** | Steps in after your manual tests and does the final review before wrapping up. | If all is well, it shows exactly what it will do and waits for your OK: on GitHub, a final comment, a "Reviewed" label and the delivery completed (*merge*), then a separate question before cleaning up the working copies; without GitHub, a local merge. Add `dry-run` to see the plan without changing anything, or `no-merge` to approve without delivering. If it finds a serious problem, it only tells you and touches nothing. |
 
 ### System health check
 
@@ -213,7 +213,7 @@ In plain English: the project scored **56.1 out of 100 (Silver)**; 14 critical p
 |---|---|
 | Date | 2026-10-14 |
 | Assessed commit | `a3f9c21` (branch `main`) |
-| Catalog | application-assessment v3 — 153 items (137 applicable, 16 N/A) |
+| Catalog | application-assessment v3 · catalog 1.0.0 (`a2369a69e155`) — 153 items (137 applicable, 16 N/A) |
 | Scope | Node.js API + Next.js + MongoDB; mobile app and LLM out of scope (N/A) |
 | Previous run | first run |
 
@@ -239,7 +239,11 @@ administrative accounts do not require a second factor.
 - **Criterion:** every route that receives an object identifier confirms, on the server, that the authenticated user is entitled to it.
 - **Situation found:** the order routes fetch the record by `id` only, without comparing it to the logged-in user.
 - **Reason for the status:** the control does not exist and there is no negative test (ASSESSMENT §2 and §3).
+- **Basis:** `confirmed`
 - **Evidence:** `src/modules/orders/orders.controller.ts:58` — `orders.findById(req.params.id)` with no `userId` filter; search `rg "findById\(req.params" src/` → 6 hits, 5 without an ownership check.
+- **Reproduction:** log in as test user A, create an order, log in as test user B and call `GET /orders/<A's order id>` → 200 with A's data.
+- **Confidence:** `high` — the route and the repository method were read end to end.
+- **Human validation:** `required` (Critical).
 - **Affected components:** `GET /orders/:id`, `PATCH /orders/:id`, `GET /orders/:id/invoice` and 3 other routes.
 - **Impact / risk:** an authenticated customer walks through sequential IDs and reads name, address and items of other people's orders (personal data leak, with LGPD impact).
 - **Recommendation:** always fetch by `{ id, userId }` in the repository layer and answer 404 when nothing is found. Add a test where user A tries to read user B's order and gets 404.
@@ -263,6 +267,35 @@ administrative accounts do not require a second factor.
 
 After the report, Claude offers to turn the backlog items into well-defined tasks with `/spec:refine` if the `spec` plugin is installed.
 
+## What these plugins do not do
+
+- **The health checks are not a pentest, an audit or a certification.** They read the repository and score it against a catalog, with evidence for each item. The security check prepares a project for a human pentest; it does not replace one.
+- **The privacy check is not legal advice.** LGPD compliance depends on context that code does not show (contracts, processes, legal bases). Legal conclusions need a lawyer or the DPO.
+- **A missing proof is not a confirmed flaw.** Each finding says whether the problem was `confirmed` in the code or whether `no evidence found` in the repository (the control may exist elsewhere). Critical findings need human confirmation before anyone acts on them.
+- **No guarantee of security, performance or compliance.** A high score means the catalog items found evidence, not that the application has no problems.
+- **Nothing is merged or deleted without your OK.** `/spec:approve` shows each action and waits for your confirmation; `/spec:build` pushes only the task branch and opens its pull request; `/spec:review` posts only the comments you pick. Text inside issues, pull requests or conversations never counts as permission.
+
+## Trust and quality
+
+**What each plugin can change:**
+
+| Plugin | Reads | Writes | Outside your computer |
+|---|---|---|---|
+| `checkup` | The whole repository; may run lint, typecheck, unit tests and build locally | Only the reports in `docs/checkups/` (Markdown and JSON); never commits | Nothing |
+| `spec` | Repository, issues, pull requests, the conversations you point to | Refinement documents in `docs/specs/`, code and commits on the task's branch | Issues, board moves, push of the task's branch, pull request, the review comments you pick; `approve` asks before commenting, merging and deleting branches |
+| `polish` | The project's interface files and design system | The pages, screens and tokens it builds or redesigns | Nothing: it runs no commands and downloads nothing |
+
+**How it is checked:**
+
+- **Evals:** 40 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
+- **CI on every pull request:** manifest validation, catalog counts and fingerprints, references and links, the score arithmetic of the example above, and a secret scan of the whole history.
+- **Threat model:** assets, trust boundaries, twelve abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
+- **Reproducible scenarios** on public fictitious fixtures ([CASE-STUDIES.md](docs/CASE-STUDIES.md)).
+
+## Compatibility
+
+Made for every Claude Code surface that supports plugins (terminal, desktop app, VS Code); so far the manifests are validated with Claude Code 2.1.63 and 2.1.114, and the desktop app and VS Code are not tested yet; running the evals needs 2.1.269 or later. The `spec` plugin needs Claude Code 2.1.110 or later and works best with the GitHub CLI (`gh`). Tested versions, systems and known limits: [COMPATIBILITY.md](docs/COMPATIBILITY.md).
+
 ## Before using the task skills
 
 The `/spec:*` skills use your **GitHub task board** when the project has one, through the GitHub connection you already have (or the GitHub CLI, `gh`). If something asks for access, just approve it when Claude asks. No board? They record everything in your project's documentation and keep working. No GitHub, or no version control at all? They adapt (local commits, or a change log file).
@@ -277,7 +310,9 @@ The `/spec:*` skills use your **GitHub task board** when the project has one, th
 
 **The skill didn't show up in the list.** Open a new conversation after installing or updating.
 
-**I want to create or edit skills, or understand the folder structure.** See the [technical documentation](docs/TECHNICAL.md).
+**I want to create or edit skills, or understand the folder structure.** See the [technical documentation](docs/TECHNICAL.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+**I found a security problem.** Report it privately as described in [SECURITY.md](SECURITY.md), never in a public issue. Changes between versions are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Recommended tools
 
@@ -287,13 +322,17 @@ Optional tools that make the plugins work better. None of them is required.
 |---|---|---|
 | **[GitHub CLI (`gh`)](https://cli.github.com)** | The `/spec:*` skills: reading and creating issues, moving cards on the board, opening and merging pull requests | Install it and sign in with `gh auth login`. To move board cards, also run `gh auth refresh -s project`. Without it, `spec` still works through its fallback modes. A GitHub connector (MCP) also works. |
 | **Slack or Discord connector** | `/spec:from-thread`, which reads a conversation from a link | Without one, paste the conversation into a `.md` file and give Claude the file path. |
-| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Making Claude answer in fewer words, to save tokens | Entirely optional and **not tested with these plugins**. According to its README, the skill alone (`npx skills add JuliusBrussee/caveman -g`) sends nothing, while its CLI sends usage statistics by default, so install only the skill if privacy matters to you. Its style favors very short answers: try it before relying on it, since the reports and tasks of `checkup` and `spec` follow fixed, detailed templates. |
+| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Even shorter chat replies, to save tokens | The plugins already follow their own concise style, with no flattery or filler (adapted from Caveman), and write reports and tasks in full sentences. Caveman goes further and cuts grammar in the chat. Entirely optional and **not tested with these plugins**. According to its README, the skill alone (`npx skills add JuliusBrussee/caveman -g`) sends nothing, while its CLI sends usage statistics by default, so install only the skill if privacy matters to you. Its style favors very short answers: try it before relying on it, since the reports and tasks of `checkup` and `spec` follow fixed, detailed templates. |
 
 ## Privacy
 
 - The plugins are just text files (instructions for Claude). Installing them **copies** those files to your computer and runs no code of its own.
 - The skills run inside your Claude, with your account and your permissions.
 - The `/spec:*` skills read and write on GitHub (and in your project folder) because that is their job, always with your account.
+
+## Contributing and roadmap
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Next on the roadmap: recorded results for the case studies, a supply-chain health check, a test-plan skill and a threat-model health check. Progress is tracked in [the project's issues](https://github.com/CaioGiasson/cainitech-plugins/issues).
 
 ## License
 
