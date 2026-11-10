@@ -32,6 +32,9 @@ jobs:
       - name: Validações estruturais (catálogos, referências, skills, estilo, links, arquivos proibidos)
         run: python3 -X utf8 scripts/validate.py
 
+      - name: Suítes de eval em dia com o gerador
+        run: python3 -X utf8 scripts/generate_evals.py --check
+
       - name: Procurar segredos no histórico (gitleaks, versão e checksum fixos)
         env:
           GITLEAKS_VERSION: 8.30.1

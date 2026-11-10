@@ -56,6 +56,7 @@ cainitech-plugins/
 │   └── TECNICO.md                  # este documento
 ├── scripts/
 │   ├── validate.py                 # validações estruturais (CI e local)
+│   ├── generate_evals.py           # fonte única das suítes de eval (casos, fixtures, graders)
 │   └── fixture.sh                  # cria o repositório fictício de um caso de eval, para demonstrações
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md

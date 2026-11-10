@@ -56,6 +56,7 @@ cainitech-plugins/
 │   └── TECNICO.md                  # Portuguese version
 ├── scripts/
 │   ├── validate.py                 # structural validations (CI and local)
+│   ├── generate_evals.py           # single source of the eval suites (cases, fixtures, graders)
 │   └── fixture.sh                  # creates the fictitious repository of an eval case, for demos
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
