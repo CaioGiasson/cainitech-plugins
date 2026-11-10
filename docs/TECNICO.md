@@ -10,7 +10,7 @@ Um **marketplace de plugins** do Claude Code chamado `cainitech`, com três plug
 |---|---|---|
 | `checkup` | `security`, `performance`, `privacy`, `ai-readiness`, `full` | Avaliações somente leitura de uma aplicação: 512 critérios, nota de 0 a 100, classificação e backlog priorizado. |
 | `spec` | `refine`, `from-thread`, `build`, `review`, `approve` | Fluxo de tarefas da ideia ao merge. Usa o quadro do GitHub Projects quando o projeto tem um, sempre registra o trabalho na documentação do projeto e se adapta a GitHub / Git sem GitHub / outro controle de versão / nenhum controle de versão. |
-| `polish` | `ui` | Acabamento de interface para sites e landing pages: layout, tipografia, texto, movimento e checklist de revisão. Só texto: não roda comandos nem baixa nada. Adaptado do taste-skill (MIT, veja `plugins/polish/THIRD_PARTY_NOTICES.md`). |
+| `polish` | `ui` | Faz sites e webapps deixarem de parecer gerados por IA. Trabalha por meio de um design system: usa o do projeto, melhora o que existe ou cria um pequeno, para que os componentes sejam reusados. Só texto: não roda comandos nem baixa nada. Regras de site adaptadas do taste-skill (MIT, veja `plugins/polish/THIRD_PARTY_NOTICES.md`). |
 
 As skills são chamadas como `/<plugin>:<skill>` (por exemplo `/checkup:security`, `/spec:refine`).
 
@@ -42,7 +42,7 @@ cainitech-plugins/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # aviso MIT do taste-skill, origem da adaptação
 │       └── skills/
-│           └── ui/                 # SKILL.md + references/ (copy, layout, motion, checklist)
+│           └── ui/                 # SKILL.md + references/ (design-system, visual-tells, site, app, copy, motion, checklist)
 ├── docs/
 │   ├── TECHNICAL.md                # versão em inglês deste documento
 │   └── TECNICO.md                  # este documento

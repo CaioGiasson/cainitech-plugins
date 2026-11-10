@@ -4,7 +4,7 @@
 
 # Your Claude, with a team's way of working
 
-**Three Claude plugins that teach it to work like an experienced team: from idea to task, from task to code, from code to review, a health check for your whole application, plus design taste for the websites it builds. You ask in plain language. It delivers.**
+**Three Claude plugins that teach it to work like an experienced team: from idea to task, from task to code, from code to review, a health check for your whole application, plus interface polish so the sites and web apps it builds stop looking AI-made. You ask in plain language. It delivers.**
 
 <table>
 <tr>
@@ -110,7 +110,7 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 | **`spec`** | **[From idea to task](#from-idea-to-ready-task)** | Turn loose conversation into a clear, recorded task | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[From code to delivery](#from-code-to-delivery)** | Build, review and finish | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[System health check](#system-health-check)** | Measure project health, changing nothing | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
-| **`polish`** | **[Interface polish](#interface-polish)** | Build or review websites and landing pages that don't look AI-made | `/polish:ui` |
+| **`polish`** | **[Interface polish](#interface-polish)** | Make sites and web apps stop looking AI-made, on a reusable design system | `/polish:ui` |
 
 **A task's full path:** `/spec:from-thread` or `/spec:refine` → `/spec:build` → `/spec:review` → you test → `/spec:approve`.
 
@@ -153,13 +153,13 @@ How to read the score:
 
 ### Interface polish
 
-**Rules only: it runs no commands and downloads nothing.** Neutral: it brings no brand or design system of its own, and your project's design system always wins. For public websites and landing pages; app screens and dashboards are out of scope.
+**Rules only: it runs no commands and downloads nothing.** Neutral: it brings no brand, palette or framework of its own. It works through your project's design system: uses it when it is healthy, improves it when it is inconsistent, and creates a small one when there is none, so components are reused instead of re-invented on every screen.
 
 | Skill | What it does | What you get |
 |---|---|---|
-| **`/polish:ui`** | Builds, redesigns or reviews a website or landing page: the kind of business sets the page plan, one section per screen, equal edges, plain copy without the tells of AI writing, quiet motion. Add `review` to only assess a page. | A page that reads as a professional company made it, plus a report of every assumed fact and every photo or asset the client still has to supply. In `review` mode, a checklist of what fails and how to fix it. |
+| **`/polish:ui`** | Builds, redesigns or reviews websites and web app screens (landing pages, dashboards, tables, forms, settings). First it audits the design system, then it removes the visual and writing habits that give AI-made interfaces away, deciding each choice from your product instead of from the usual template. Just describe what you want; add `review` to only assess, or `system` to work on the design system alone. | An interface that reads as made for your product, built from shared tokens and components, plus a short report: what changed in the design system, why each main choice was made, what was assumed and what material you still need to supply. |
 
-<sub>Adapted from <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), without its scripts, hooks or downloads.</sub>
+<sub>Site rules adapted from <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), without its scripts, hooks or downloads.</sub>
 
 ## What a health-check result looks like
 

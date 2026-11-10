@@ -18,7 +18,7 @@
     {
       "name": "polish",
       "source": "./plugins/polish",
-      "description": "Interface polish for websites and landing pages that read as a professional company built them: layout, type, copy, motion and a review checklist."
+      "description": "Makes websites and web apps stop looking AI-generated: builds, redesigns or reviews pages and screens through a design system, using the project's own, improving it, or creating one when there is none."
     }
   ]
 }

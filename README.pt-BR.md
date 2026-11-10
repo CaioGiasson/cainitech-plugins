@@ -4,7 +4,7 @@
 
 # Seu Claude, com jeito de time
 
-**Três plugins que ensinam o Claude a trabalhar como um time experiente: da ideia à tarefa, da tarefa ao código, do código à revisão, um check-up de toda a sua aplicação e bom gosto de design para os sites que ele constrói. Você pede em português. Ele entrega.**
+**Três plugins que ensinam o Claude a trabalhar como um time experiente: da ideia à tarefa, da tarefa ao código, do código à revisão, um check-up de toda a sua aplicação e acabamento de interface para que os sites e webapps que ele constrói deixem de parecer feitos por IA. Você pede em português. Ele entrega.**
 
 <table>
 <tr>
@@ -110,7 +110,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 | **`spec`** | **[Da ideia à tarefa](#da-ideia-à-tarefa-pronta)** | Transformar conversa solta em tarefa clara e registrada | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[Do código à entrega](#do-código-à-entrega)** | Programar, revisar e finalizar | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[Check-up do sistema](#check-up-do-sistema)** | Medir a saúde do projeto, sem alterar nada | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
-| **`polish`** | **[Acabamento de interface](#acabamento-de-interface)** | Criar ou revisar sites e landing pages que não pareçam feitos por IA | `/polish:ui` |
+| **`polish`** | **[Acabamento de interface](#acabamento-de-interface)** | Fazer sites e webapps deixarem de parecer feitos por IA, sobre um design system reutilizável | `/polish:ui` |
 
 **O caminho completo de uma tarefa:** `/spec:from-thread` ou `/spec:refine` → `/spec:build` → `/spec:review` → você testa → `/spec:approve`.
 
@@ -153,13 +153,13 @@ Como ler a nota:
 
 ### Acabamento de interface
 
-**Só regras: não roda comandos nem baixa nada.** Neutra: não traz marca nem design system próprio, e o design system do seu projeto sempre prevalece. Feita para sites e landing pages; telas de app e dashboards ficam de fora.
+**Só regras: não roda comandos nem baixa nada.** Neutra: não traz marca, paleta nem framework próprio. Ela trabalha por meio do design system do seu projeto: usa quando está saudável, melhora quando está inconsistente e cria um pequeno quando não existe, para que os componentes sejam reusados em vez de reinventados a cada tela.
 
 | Skill | O que faz | O que você recebe |
 |---|---|---|
-| **`/polish:ui`** | Cria, redesenha ou revisa um site ou landing page: o tipo de negócio define o plano da página, uma seção por tela, bordas iguais, texto direto sem os vícios de escrita de IA, movimento discreto. Acrescente `review` para só avaliar uma página. | Uma página com cara de empresa profissional, mais um relatório com cada dado assumido e cada foto ou material que o cliente ainda precisa enviar. No modo `review`, um checklist do que falha e como corrigir. |
+| **`/polish:ui`** | Cria, redesenha ou revisa sites e telas de webapp (landing pages, dashboards, tabelas, formulários, configurações). Primeiro audita o design system, depois remove os vícios visuais e de escrita que denunciam uma interface feita por IA, decidindo cada escolha a partir do seu produto e não do template de sempre. Basta descrever o que você quer; acrescente `review` para só avaliar, ou `system` para trabalhar só no design system. | Uma interface com cara de feita para o seu produto, construída com tokens e componentes compartilhados, mais um relatório curto: o que mudou no design system, por que cada escolha principal foi feita, o que foi assumido e que material você ainda precisa enviar. |
 
-<sub>Adaptado do <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), sem os scripts, hooks e downloads dele.</sub>
+<sub>Regras de site adaptadas do <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), sem os scripts, hooks e downloads dele.</sub>
 
 ## Como é o resultado de um check-up
 

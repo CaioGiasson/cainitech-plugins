@@ -3,11 +3,15 @@
 Say what it is and what it does, in words a stranger understands in five seconds. Every sentence is
 one you would say out loud to a customer. No metaphors, poetry, invented terms or ad wording.
 
+Sections "Five rules" to "Sizes and shapes" are for site pages; "Words in an app" is for app
+screens; the rest applies to both. Where the brand has its own voice or style guide, it wins over
+the stylistic defaults here; "Nothing invented" always holds.
+
 The examples below are in English; write the page in the brief's language and apply the same rules
 there. The tells list carries English and Portuguese (pt-BR) entries; for another language, look
 for that language's equivalents of each tell.
 
-## Five rules
+## Five rules for site pages
 
 1. **The h1 names the category, and for a brand nobody knows, the buyer or the place,** in 2 to 8
    words: "Payroll app for restaurants", "Bakery on Mill Street, Leith". A game: its name and
@@ -46,6 +50,24 @@ for that language's equivalents of each tell.
 - **Numbers** sit in sentences with their unit ("4.5 hours a week").
 - **Form words:** a label says what goes in; an error names the field and what to type; the sent
   line names what was sent ("Your table request is in. We reply within a day.").
+
+## Words in an app
+
+- **One name per thing.** The same object and the same action carry the same word on every
+  screen, and the word is the user's, not the system's.
+- **Buttons name the action and its object** ("Save changes", "Add member", "Delete 3 files");
+  never "OK", "Submit" or "Yes" alone. The same action has the same label everywhere.
+- **Titles say where the user is;** headings name what the block holds. No greeting or slogan as
+  a page title.
+- **Errors** say what happened in plain words, whether the user's work is safe, and what to do
+  next. No codes alone, no blame, no "Oops".
+- **Empty states** say in one sentence what belongs here and offer the first action.
+- **Confirmations** name the consequence, not "Are you sure?".
+- **Help text** is short, sits where it is needed and says something the label does not.
+- Sentence case; no exclamation marks; no cheerfulness about routine actions; numbers, dates and
+  currency in the product's locale.
+- **Sample data** is realistic: uneven numbers, names of different lengths and origins that fit
+  the product's market, some missing values.
 
 ## Nothing invented
 
@@ -138,7 +160,9 @@ copy the client wrote, selling on a sales page (the test is whether it stands on
 
 ## Contacts and links
 
-- Print what the brief gives exactly as given; invent nothing (house rule 9).
+- Print what the brief gives exactly as given. Never invent an address, phone number, company
+  registration number, email or social account; without real data use a form, or a `mailto:` on a
+  `.example` domain, and say so in the report.
 - No map iframe loads with the page; a "Get directions" link opens a map search for the street the
   brief gives.
 - Links go where their label says; never "here", never two labels to one target.

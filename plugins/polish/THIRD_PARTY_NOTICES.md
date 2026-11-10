@@ -1,7 +1,7 @@
 # Third-party notices
 
-The `ui` skill of this plugin is a modified, text-only adaptation of the
-`design-taste-frontend` skill (version 2.5.1) of **taste-skill**
+Parts of the `ui` skill of this plugin (the site, copy and motion references)
+are a modified, text-only adaptation of the `design-taste-frontend` skill (version 2.5.1) of **taste-skill**
 (https://github.com/Leonxlnx/taste-skill), distributed under the MIT License
 reproduced below.
 
@@ -9,7 +9,10 @@ Changes made in this adaptation: rewritten and condensed; the automatic `Stop`
 hook, every script (`scripts/`, `assets/layout/*.mjs`), the bundled asset kit,
 the live photo and icon searches, the external CDN dependencies and the
 reference-site study material were removed; contact rules were changed to print
-only what the brief gives; Portuguese copy tells were added.
+only what the brief gives; taste rules were turned into defaults that yield to
+the project's brand and design system; Portuguese copy tells were added. The
+design-system, visual-tells and app references and the skill procedure are
+original to this repository.
 
 ---
 
