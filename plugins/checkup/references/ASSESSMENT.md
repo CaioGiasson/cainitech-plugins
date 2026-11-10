@@ -86,7 +86,7 @@ Before assessing, read `${CLAUDE_PLUGIN_ROOT}/references/CATALOG-CHANGELOG.md` a
    - **improved** and **regressed** items, each with the old and new status and its cause: `evidence changed` (cite what changed, ideally the commit), `assessment correction` (the previous verdict was wrong; say why) or `catalog change` (the item changed between catalog versions);
    - **added** and **removed** item IDs between catalog versions (removed items are listed, never dropped silently);
    - `methodologyChange: true` when the catalog version or fingerprint differs (step 0).
-4. An item only gets worse if the evidence stopped existing or if the previous assessment was wrong; in that case, say explicitly that it is an assessment correction. A regression without one of the three causes is not allowed.
+4. An item only gets worse if the evidence stopped existing, the previous assessment was wrong (say explicitly that it is an assessment correction) or the item changed in the catalog. A regression without one of the three causes is not allowed.
 5. Show the delta as a table in the Evolution section: `ID | Before | After | Cause`.
 
 ## 7. Where to save
