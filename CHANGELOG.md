@@ -20,7 +20,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 ### Compatibility
 
-Score rules, weights and catalog items are unchanged: reports from 1.0.0 and 1.1.0 remain comparable. A run with `.checkup.json` can differ from one without it only through N/A items it applies, and the report shows them.
+Score rules, weights and catalog items are unchanged: reports from 1.0.0 and 1.1.0 remain comparable. A run with `.checkup.json` can differ from one without it through the N/A items and the excluded paths it applies (accepted risks keep their points); the report lists every entry, and the delta marks those changes as `config change`.
 
 ## 1.1.0 — 2026-11-09
 
