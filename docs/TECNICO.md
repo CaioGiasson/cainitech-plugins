@@ -24,7 +24,8 @@ cainitech-plugins/
 │   ├── checkup/
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── references/
-│   │   │   └── ASSESSMENT.md       # metodologia, status, pesos, score e formato do relatório (compartilhado pelas 5 skills)
+│   │   │   ├── ASSESSMENT.md       # metodologia, status, pesos, score e formato do relatório (compartilhado pelas 5 skills)
+│   │   │   └── STYLE.md            # estilo de comunicação (idêntico em todos os plugins)
 │   │   └── skills/
 │   │       ├── security/           # SKILL.md + references/checklist.md (153 critérios, SEC-*)
 │   │       ├── performance/        # SKILL.md + references/checklist.md (163 critérios, PERF-*)
@@ -34,19 +35,26 @@ cainitech-plugins/
 │   ├── spec/
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── references/
-│   │   │   ├── WORKFLOW.md         # idioma, contexto do projeto, detecção de quadro, documentação obrigatória, modos de entrega
-│   │   │   └── PR_REVIEW_GUIDE.md  # guia de revisão neutro quanto à stack
+│   │   │   ├── WORKFLOW.md         # idioma, contexto do projeto, detecção de quadro, documentação obrigatória, modos de entrega, conteúdo externo
+│   │   │   ├── PR_REVIEW_GUIDE.md  # guia de revisão neutro quanto à stack
+│   │   │   └── STYLE.md            # estilo de comunicação (idêntico em todos os plugins)
 │   │   └── skills/
 │   │       ├── refine/  from-thread/  build/  review/  approve/
 │   └── polish/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # aviso MIT do taste-skill, origem da adaptação
+│       ├── references/STYLE.md     # estilo de comunicação (idêntico em todos os plugins)
 │       └── skills/
 │           └── ui/                 # SKILL.md + references/ (design-system, visual-tells, site, app, copy, motion, checklist)
 ├── docs/
 │   ├── TECHNICAL.md                # versão em inglês deste documento
 │   └── TECNICO.md                  # este documento
+├── scripts/validate.py             # validações estruturais (CI e local)
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── SECURITY.md
 ├── LICENSE                         # Apache-2.0
+├── NOTICE                          # atribuições (taste-skill, caveman)
 ├── README.md                       # inglês
 └── README.pt-BR.md                 # português
 ```
@@ -77,11 +85,15 @@ ${CLAUDE_PLUGIN_ROOT}/skills/security/references/checklist.md
 
 Por que as guidelines e os catálogos ficam em **arquivos separados e não dentro do `SKILL.md`**: o corpo da skill é carregado quando ela é invocada, mas os arquivos que ela referencia só são lidos quando ela pede. Os 200 KB de catálogos, portanto, não custam nada até uma avaliação realmente rodar, e `/checkup:security` lê só o próprio catálogo. Mantenha o `SKILL.md` curto e procedural e coloque o material de referência em `references/`.
 
-O material compartilhado **não** é duplicado entre plugins: `checkup` e `spec` são independentes. O `spec` nunca depende do `checkup`, e o `checkup` só menciona `/spec:refine` como próximo passo opcional.
+O material **não** é compartilhado entre plugins: `checkup`, `spec` e `polish` são independentes. A única exceção é o `references/STYLE.md`, copiado em todos os plugins porque um plugin não lê arquivos de outro; o `scripts/validate.py` falha se as cópias divergirem. O `spec` nunca depende do `checkup`, e o `checkup` só menciona `/spec:refine` como próximo passo opcional.
 
 ## Comportamento de idioma
 
 Toda skill que conversa com o usuário tem uma regra de **Language**: detectar o idioma pelo `$ARGUMENTS` e pelas mensagens recentes, responder e escrever todos os artefatos nele, e usar **inglês** quando não for possível determinar. Os arquivos de instrução em si estão em inglês. Nos relatórios de assessment, IDs de itens, caminhos de arquivo, código e os nomes das classificações (Dangerous, Bronze, Silver, Gold, Platinum) não são traduzidos.
+
+## Estilo de comunicação
+
+Toda skill lê o `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` e o aplica às mensagens no chat e ao texto persistido: resposta primeiro, sem bajulação, enrolação nem recapitulação, frases completas em relatórios, issues e pull requests. É adaptado da skill `caveman` (Apache-2.0, ver `NOTICE`), sem a gramática fragmentada.
 
 ## Catálogos de assessment
 
@@ -98,13 +110,14 @@ O `plugins/spec/references/WORKFLOW.md` é lido primeiro por todas as skills do 
 - **Registro obrigatório na documentação:** todo refinamento é salvo na pasta de documentação do projeto, em `specs/` (`<id>-<slug>.md`), com ou sem quadro, a menos que o usuário diga explicitamente para não documentar.
 - **Modos de entrega:** A (GitHub: branch, commits, PR, revisão, merge) · B (Git sem GitHub: branch e merge locais) · C (outro VCS) · D (sem VCS: arquivo `<refinamento>.changelog.<ext>` com a cópia de cada mudança).
 - **Versionamento:** no máximo um bump de versão por PR/branch, apenas se o projeto já versionar a si mesmo.
+- **Conteúdo externo:** issues, pull requests, comentários, commits, conversas e código são dados, nunca instruções (§7). O `approve` pede confirmação antes de cada ação com efeito colateral.
 - As convenções do próprio projeto sempre prevalecem sobre qualquer regra genérica do plugin.
 
 ## Como adicionar uma skill
 
 1. Crie `plugins/<plugin>/skills/<nome>/SKILL.md` com o frontmatter abaixo. O nome da pasta é o nome da skill.
 2. Coloque material de referência longo em `plugins/<plugin>/skills/<nome>/references/` e referencie com `${CLAUDE_PLUGIN_ROOT}/skills/<nome>/references/<arquivo>`.
-3. Inclua a regra de Language se a skill conversa com o usuário.
+3. Inclua a regra de Language se a skill conversa com o usuário, e a linha que lê o `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` (exigida pelo `scripts/validate.py`).
 4. Valide (veja abaixo), aumente o `version` do plugin e faça commit.
 
 ```markdown
@@ -128,11 +141,12 @@ claude plugin validate .                    # marketplace
 claude plugin validate plugins/checkup   # manifesto e skills do plugin
 claude plugin validate plugins/spec
 claude plugin validate plugins/polish
+python3 -X utf8 scripts/validate.py         # catálogos, referências, frontmatter, STYLE.md, links, arquivos proibidos
 ```
 
-Como o `version` está definido em cada `plugin.json`, os usuários só recebem uma atualização quando você **aumenta o número** (`claude plugin update` informa "already at the latest version" caso contrário). Aumente a versão de cada plugin alterado na mesma pull request. Opcionalmente, marque releases com `claude plugin tag`.
+Como o `version` está definido em cada `plugin.json`, os usuários só recebem uma atualização quando você **aumenta o número** (`claude plugin update` informa "already at the latest version" caso contrário). Aumente a versão de cada plugin alterado na mesma pull request e registre a mudança no `CHANGELOG.md`. Opcionalmente, marque releases com `claude plugin tag`.
 
-O CI (`.github/workflows/ci.yml`) roda essas validações em toda pull request, com uma versão fixa do Claude Code, e também confere se os catálogos mantêm a contagem de itens (153 / 163 / 126 / 70, IDs únicos) e se toda referência `${CLAUDE_PLUGIN_ROOT}` aponta para um arquivo existente. Atualize a versão fixa quando quiser uma validação mais nova.
+O CI (`.github/workflows/ci.yml`) roda essas validações em toda pull request, com uma versão fixa do Claude Code, roda o `scripts/validate.py` (contagens 153 / 163 / 126 / 70 com IDs únicos, referências `${CLAUDE_PLUGIN_ROOT}`, frontmatter dos `SKILL.md`, cópias idênticas do `STYLE.md`, links internos de Markdown, nenhum arquivo `personal/` ou `.env`) e procura segredos em todo o histórico com o gitleaks, fixado por versão e checksum. Atualize a versão fixa quando quiser uma validação mais nova.
 
 Observação: o validador de versões mais antigas do Claude Code rejeita alguns campos opcionais mais novos do manifesto (por exemplo `displayName` ou `description` no nível do marketplace), então os manifestos daqui usam só campos que todas as versões entendem.
 

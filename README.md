@@ -15,7 +15,7 @@
 </tr>
 </table>
 
-**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Privacy](#privacy)**
+**[Value](#why-it-matters-for-the-business) · [Install](#how-to-install) · [Before and after](#before-and-after) · [Catalog](#skill-catalog) · [How to use](#how-to-use) · [Update](#how-to-update) · [FAQ](#faq) · [Limits](#what-these-plugins-do-not-do) · [Privacy](#privacy)**
 
 </div>
 
@@ -137,7 +137,7 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 |---|---|---|
 | **`/spec:build`** | Takes a task, moves it on the board to "In progress" (if there is a board), builds the solution, writes the tests and reviews its own work. | On GitHub: a ready *pull request* with the code in organized steps and a test script for you to check. Without GitHub: organized local commits. Without version control: a change log file with a copy of every change. |
 | **`/spec:review`** | Reviews a change: checks that everything requested was done, runs the tests and analyzes code quality. | Review comments posted on the right spot in the code, after you choose what to post (without GitHub, the review comes in the chat). It only fixes something if you ask. |
-| **`/spec:approve`** | Steps in after your manual tests and does the final review before wrapping up. | If all is well: on GitHub, a final comment, a "Reviewed" label, the delivery completed (*merge*) and the working copies cleaned up; without GitHub, a local merge. If it finds a serious problem, it only tells you and touches nothing. |
+| **`/spec:approve`** | Steps in after your manual tests and does the final review before wrapping up. | If all is well, it shows exactly what it will do and waits for your OK: on GitHub, a final comment, a "Reviewed" label and the delivery completed (*merge*), then a separate question before cleaning up the working copies; without GitHub, a local merge. Add `dry-run` to see the plan without changing anything, or `no-merge` to approve without delivering. If it finds a serious problem, it only tells you and touches nothing. |
 
 ### System health check
 
@@ -239,6 +239,7 @@ administrative accounts do not require a second factor.
 - **Criterion:** every route that receives an object identifier confirms, on the server, that the authenticated user is entitled to it.
 - **Situation found:** the order routes fetch the record by `id` only, without comparing it to the logged-in user.
 - **Reason for the status:** the control does not exist and there is no negative test (ASSESSMENT §2 and §3).
+- **Basis:** `confirmed`
 - **Evidence:** `src/modules/orders/orders.controller.ts:58` — `orders.findById(req.params.id)` with no `userId` filter; search `rg "findById\(req.params" src/` → 6 hits, 5 without an ownership check.
 - **Affected components:** `GET /orders/:id`, `PATCH /orders/:id`, `GET /orders/:id/invoice` and 3 other routes.
 - **Impact / risk:** an authenticated customer walks through sequential IDs and reads name, address and items of other people's orders (personal data leak, with LGPD impact).
@@ -263,6 +264,14 @@ administrative accounts do not require a second factor.
 
 After the report, Claude offers to turn the backlog items into well-defined tasks with `/spec:refine` if the `spec` plugin is installed.
 
+## What these plugins do not do
+
+- **The health checks are not a pentest, an audit or a certification.** They read the repository and score it against a catalog, with evidence for each item. The security check prepares a project for a human pentest; it does not replace one.
+- **The privacy check is not legal advice.** LGPD compliance depends on context that code does not show (contracts, processes, legal bases). Legal conclusions need a lawyer or the DPO.
+- **A missing proof is not a confirmed flaw.** Each finding says whether the problem was `confirmed` in the code or whether `no evidence found` in the repository (the control may exist elsewhere). Critical findings need human confirmation before anyone acts on them.
+- **No guarantee of security, performance or compliance.** A high score means the catalog items found evidence, not that the application has no problems.
+- **Nothing is merged, deleted or published without your OK.** `/spec:approve` shows each action and waits for your confirmation; text inside issues, pull requests or conversations never counts as permission.
+
 ## Before using the task skills
 
 The `/spec:*` skills use your **GitHub task board** when the project has one, through the GitHub connection you already have (or the GitHub CLI, `gh`). If something asks for access, just approve it when Claude asks. No board? They record everything in your project's documentation and keep working. No GitHub, or no version control at all? They adapt (local commits, or a change log file).
@@ -277,7 +286,9 @@ The `/spec:*` skills use your **GitHub task board** when the project has one, th
 
 **The skill didn't show up in the list.** Open a new conversation after installing or updating.
 
-**I want to create or edit skills, or understand the folder structure.** See the [technical documentation](docs/TECHNICAL.md).
+**I want to create or edit skills, or understand the folder structure.** See the [technical documentation](docs/TECHNICAL.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+**I found a security problem.** Report it privately as described in [SECURITY.md](SECURITY.md), never in a public issue. Changes between versions are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Recommended tools
 
@@ -287,7 +298,7 @@ Optional tools that make the plugins work better. None of them is required.
 |---|---|---|
 | **[GitHub CLI (`gh`)](https://cli.github.com)** | The `/spec:*` skills: reading and creating issues, moving cards on the board, opening and merging pull requests | Install it and sign in with `gh auth login`. To move board cards, also run `gh auth refresh -s project`. Without it, `spec` still works through its fallback modes. A GitHub connector (MCP) also works. |
 | **Slack or Discord connector** | `/spec:from-thread`, which reads a conversation from a link | Without one, paste the conversation into a `.md` file and give Claude the file path. |
-| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Making Claude answer in fewer words, to save tokens | Entirely optional and **not tested with these plugins**. According to its README, the skill alone (`npx skills add JuliusBrussee/caveman -g`) sends nothing, while its CLI sends usage statistics by default, so install only the skill if privacy matters to you. Its style favors very short answers: try it before relying on it, since the reports and tasks of `checkup` and `spec` follow fixed, detailed templates. |
+| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Even shorter chat replies, to save tokens | The plugins already follow their own concise style, with no flattery or filler (adapted from Caveman), and write reports and tasks in full sentences. Caveman goes further and cuts grammar in the chat. Entirely optional and **not tested with these plugins**. According to its README, the skill alone (`npx skills add JuliusBrussee/caveman -g`) sends nothing, while its CLI sends usage statistics by default, so install only the skill if privacy matters to you. Its style favors very short answers: try it before relying on it, since the reports and tasks of `checkup` and `spec` follow fixed, detailed templates. |
 
 ## Privacy
 

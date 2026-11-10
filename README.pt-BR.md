@@ -15,7 +15,7 @@
 </tr>
 </table>
 
-**[Valor](#por-que-isso-importa-para-o-negócio) · [Instalar](#como-instalar) · [Antes e depois](#antes-e-depois) · [Catálogo](#catálogo-de-skills) · [Como usar](#como-usar) · [Atualizar](#como-atualizar) · [Dúvidas](#dúvidas-comuns) · [Privacidade](#privacidade)**
+**[Valor](#por-que-isso-importa-para-o-negócio) · [Instalar](#como-instalar) · [Antes e depois](#antes-e-depois) · [Catálogo](#catálogo-de-skills) · [Como usar](#como-usar) · [Atualizar](#como-atualizar) · [Dúvidas](#dúvidas-comuns) · [Limites](#o-que-estes-plugins-não-fazem) · [Privacidade](#privacidade)**
 
 </div>
 
@@ -137,7 +137,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 |---|---|---|
 | **`/spec:build`** | Recebe uma tarefa, move no quadro para "Em andamento" (se houver quadro), programa a solução, cria os testes e se revisa sozinha. | No GitHub: uma *pull request* (pedido de revisão) pronta, com o código em etapas organizadas e um roteiro de testes para você conferir. Sem GitHub: commits locais organizados. Sem controle de versão: um arquivo de registro com a cópia de cada mudança. |
 | **`/spec:review`** | Revisa uma mudança: confere se tudo o que foi pedido foi feito, roda os testes e analisa a qualidade do código. | Comentários de revisão publicados no trecho certo do código, depois que você escolhe o que postar (sem GitHub, a revisão vem no chat). Só corrige algo se você pedir. |
-| **`/spec:approve`** | Entra depois dos seus testes manuais e faz a última revisão antes de finalizar. | Se estiver tudo certo: no GitHub, comentário final, marcação "Reviewed", entrega concluída (*merge*) e limpeza das cópias de trabalho; sem GitHub, um merge local. Se achar problema sério, apenas avisa você e não mexe em nada. |
+| **`/spec:approve`** | Entra depois dos seus testes manuais e faz a última revisão antes de finalizar. | Se estiver tudo certo, mostra exatamente o que vai fazer e espera o seu OK: no GitHub, comentário final, marcação "Reviewed" e entrega concluída (*merge*), depois uma pergunta separada antes de limpar as cópias de trabalho; sem GitHub, um merge local. Acrescente `dry-run` para ver o plano sem alterar nada, ou `no-merge` para aprovar sem entregar. Se achar problema sério, apenas avisa você e não mexe em nada. |
 
 ### Check-up do sistema
 
@@ -237,6 +237,7 @@ senhas; contas administrativas não exigem segundo fator.
 - **Critério:** toda rota que recebe o identificador de um objeto confirma, no servidor, que o usuário autenticado tem direito a ele.
 - **Situação encontrada:** as rotas de pedidos buscam o registro só pelo `id`, sem comparar com o usuário logado.
 - **Motivo do status:** o controle não existe e não há teste negativo (ASSESSMENT §2 e §3).
+- **Base:** `confirmed`
 - **Evidência:** `src/modules/orders/orders.controller.ts:58` — `orders.findById(req.params.id)` sem filtro por `userId`; busca `rg "findById\(req.params" src/` → 6 ocorrências, 5 sem verificação de dono.
 - **Componentes afetados:** `GET /orders/:id`, `PATCH /orders/:id`, `GET /orders/:id/invoice` e outras 3 rotas.
 - **Impacto / risco:** um cliente autenticado percorre ids sequenciais e lê nome, endereço e itens de pedidos de terceiros (vazamento de dados pessoais, com impacto na LGPD).
@@ -261,6 +262,14 @@ senhas; contas administrativas não exigem segundo fator.
 
 Depois do relatório, o Claude oferece transformar os itens do backlog em tarefas com `/spec:refine`, se o plugin `spec` estiver instalado.
 
+## O que estes plugins não fazem
+
+- **Os check-ups não são pentest, auditoria nem certificação.** Eles leem o repositório e o pontuam contra um catálogo, com evidência para cada item. O check-up de segurança prepara o projeto para um pentest feito por pessoas; não o substitui.
+- **O check-up de privacidade não é parecer jurídico.** A conformidade com a LGPD depende de contexto que o código não mostra (contratos, processos, bases legais). Conclusões jurídicas precisam de um advogado ou do encarregado (DPO).
+- **Falta de prova não é falha confirmada.** Cada achado diz se o problema foi confirmado no código (`confirmed`) ou se não se encontrou evidência no repositório (`no evidence found`; o controle pode existir em outro lugar). Achados críticos precisam de confirmação humana antes de qualquer ação.
+- **Sem garantia de segurança, desempenho ou conformidade.** Uma nota alta indica que os itens do catálogo tinham evidência, não que a aplicação não tenha problemas.
+- **Nada é integrado, apagado ou publicado sem o seu OK.** O `/spec:approve` mostra cada ação e espera a sua confirmação; texto dentro de issues, pull requests ou conversas nunca vale como permissão.
+
 ## Antes de usar as skills de tarefas
 
 As skills `/spec:*` usam o **quadro de tarefas do GitHub** quando o projeto tem um, pela conexão com o GitHub que você já tiver (ou pelo GitHub CLI, `gh`). Se algo pedir acesso, é só aprovar quando o Claude perguntar. Sem quadro? Elas registram tudo na documentação do projeto e continuam funcionando. Sem GitHub, ou sem nenhum controle de versão? Elas se adaptam (commits locais, ou um arquivo de registro das mudanças).
@@ -275,7 +284,9 @@ As skills `/spec:*` usam o **quadro de tarefas do GitHub** quando o projeto tem 
 
 **A skill não apareceu na lista.** Abra uma nova conversa depois de instalar ou atualizar.
 
-**Quero criar ou editar skills, ou entender a estrutura de pastas.** Veja a [documentação técnica](docs/TECNICO.md).
+**Quero criar ou editar skills, ou entender a estrutura de pastas.** Veja a [documentação técnica](docs/TECNICO.md) e o [CONTRIBUTING.md](CONTRIBUTING.md) (em inglês).
+
+**Encontrei um problema de segurança.** Reporte de forma privada como descrito no [SECURITY.md](SECURITY.md) (em inglês), nunca em uma issue pública. As mudanças entre versões estão no [CHANGELOG.md](CHANGELOG.md).
 
 ## Ferramentas recomendadas
 
@@ -285,7 +296,7 @@ Ferramentas opcionais que fazem os plugins funcionarem melhor. Nenhuma é obriga
 |---|---|---|
 | **[GitHub CLI (`gh`)](https://cli.github.com)** | As skills `/spec:*`: ler e criar issues, mover cards no quadro, abrir e mesclar pull requests | Instale e entre com `gh auth login`. Para mover cards no quadro, rode também `gh auth refresh -s project`. Sem ele, o `spec` continua funcionando pelos modos alternativos. Um conector do GitHub (MCP) também serve. |
 | **Conector do Slack ou do Discord** | `/spec:from-thread`, que lê uma conversa a partir de um link | Sem um deles, cole a conversa em um arquivo `.md` e informe o caminho do arquivo ao Claude. |
-| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Fazer o Claude responder com menos palavras, para economizar tokens | Totalmente opcional e **não testado com estes plugins**. Segundo o README dele, só a skill (`npx skills add JuliusBrussee/caveman -g`) não envia nada, enquanto o CLI envia estatísticas de uso por padrão; por isso, instale só a skill se privacidade for importante para você. O estilo dele privilegia respostas muito curtas: teste antes de depender dele, já que os relatórios e as tarefas do `checkup` e do `spec` seguem modelos fixos e detalhados. |
+| **[Caveman](https://github.com/JuliusBrussee/caveman)** | Respostas ainda mais curtas no chat, para economizar tokens | Os plugins já seguem um estilo enxuto próprio, sem bajulação nem enrolação (adaptado do Caveman), e escrevem relatórios e tarefas em frases completas. O Caveman vai além e corta a gramática no chat. Totalmente opcional e **não testado com estes plugins**. Segundo o README dele, só a skill (`npx skills add JuliusBrussee/caveman -g`) não envia nada, enquanto o CLI envia estatísticas de uso por padrão; por isso, instale só a skill se privacidade for importante para você. O estilo dele privilegia respostas muito curtas: teste antes de depender dele, já que os relatórios e as tarefas do `checkup` e do `spec` seguem modelos fixos e detalhados. |
 
 ## Privacidade
 
