@@ -21,7 +21,7 @@ Accepted inputs (the first word is the main one; a second word, if any, is the b
 - the **path of a refinement document** (from `/spec:refine`), when the project has no board;
 - a **short description** of the work, when there is neither: in this case, first run the refinement yourself in a lightweight way (ask only what is missing, then write the refinement document per `WORKFLOW.md` §4) and ask the user to confirm before implementing.
 
-Optional modifier, anywhere in the text (never taken as the branch name): **`dry-run`** — plan only. Read the task, the project context and the code, then display the plan and stop: the branch that would be used, the delivery mode, each planned commit with its files, the tests to write, the docs and version bump, the board move and the commands that would run (checkout, install, build, tests, push, PR). Changes nothing: no checkout, no file write (not even the refinement document), no install, no commit, no push, no PR, no board move. Title the plan `🧪 Dry run — nothing was executed`.
+Optional modifier, as a standalone word anywhere in the text (never taken as the branch name; a reference that only contains it, such as `fix/dry-run-flag`, is a reference): **`dry-run`** — plan only. Read the task, the project context and the code, then display the plan and stop: the branch that would be used, the delivery mode, each planned commit with its files, the tests to write, the docs and version bump, the board move and the commands that would run (checkout, install, build, tests, push, PR). Changes nothing: no checkout, no file write (not even the refinement document), no install, no commit, no push, no PR, no board move. Title the plan `🧪 Dry run — nothing was executed`.
 
 ## Shared rules
 

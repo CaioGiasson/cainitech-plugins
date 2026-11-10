@@ -14,7 +14,7 @@ The user invoked this skill with the following text:
 
 Accepted inputs: a **pull request URL or number** (GitHub), a **branch name** (Git without GitHub), or the **path of a changelog file** (no version control). With no input, review the PR of the current branch (`gh pr view --json url`); if there is none, review the current branch against the base branch.
 
-Optional modifier, anywhere in the text: **`dry-run`** — review without touching anything. Read the change from the diff (`gh pr diff <number>` or `git diff <base>...<branch>`) instead of checking out the branch; skip installing, building, running tests and the functional test (Phases 3–5 and 7), and say so in the result. Present the suggestions (Phase 9) and stop: post nothing on the PR (Phase 10) and fix nothing (Phase 11).
+Optional modifier, as a standalone word anywhere in the text (a reference that only contains it, such as the branch `fix/dry-run-flag`, is a reference): **`dry-run`** — review without touching anything. Read the change from the diff (`gh pr diff <number>` or `git diff <base>...<branch>`) instead of checking out the branch; skip installing, building, running tests and the functional test (Phases 3–5 and 7), and say so in the result. Present the suggestions (Phase 9) and stop: post nothing on the PR (Phase 10) and fix nothing (Phase 11).
 
 ## Shared rules
 

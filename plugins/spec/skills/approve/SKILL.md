@@ -22,10 +22,10 @@ The user invoked this skill with the following text:
 
 Accepts a **PR URL or number** (GitHub), a **branch name** (Git without GitHub) or the **path of a changelog file** (no version control). If empty, use the PR of the current branch (`gh pr view --json url`); without a PR, the current branch. If nothing identifiable exists, **stop** and ask for the reference.
 
-Optional modifiers, anywhere in the text:
+Optional modifiers, as standalone words anywhere in the text. A reference that only contains them (a branch such as `fix/dry-run-flag`, a file such as `no-merge.md`) is a reference, not a modifier:
 
 - **`dry-run`** — review and plan only. Changes nothing: no checkout, no install, no build, no comment, no label, no merge, no board move, no branch deletion, no file write. Phase 2 is replaced by reading the diff (`gh pr diff <number>` or `git diff "$BASE_BRANCH"..."$PR_BRANCH"`), and Phase 5 only displays the action plan.
-- **`no-merge`** — approve without integrating: Phase 5 offers only the review comment and the `Reviewed` label (mode A) and never merges or deletes branches.
+- **`no-merge`** — approve without integrating. Mode A: Phase 5 offers only the review comment and the `Reviewed` label. Modes B–C: Phase 5 displays the review result and stops. Mode D: Phase 5 displays the review result and does not close the record. Never merges or deletes branches.
 
 ## Shared rules
 
@@ -70,10 +70,11 @@ Decide the delivery mode (`WORKFLOW.md` §5).
 
 ## PHASE 2 — Checkout, build and tests
 
-**`dry-run`:** skip this phase. Read the diff instead (Input) and state in the result that build and tests were not run.
+**`dry-run`:** skip this phase. Read the diff instead (Input), record `REVIEWED_SHA` from the change's ref without checking it out (`gh pr view <number> --json headRefOid --jq .headRefOid`, or `git rev-parse "$PR_BRANCH"`), and state in the result that build and tests were not run.
 
 1. Confirm that the working tree is clean (`git status --porcelain`); if it is not, **abort** without switching branches. (Mode D: skip.)
 2. Record `ORIGINAL_BRANCH`, update refs when there is a remote (`git fetch origin`) and switch to the change's branch (creating it with `--track` if it exists only on the remote; `git pull --ff-only` if it exists locally).
+   Right after that, record the **full** commit being reviewed: `REVIEWED_SHA="$(git rev-parse HEAD)"` (40 characters; `--match-head-commit` does not accept a short SHA). Everything this skill reviews, shows in the plan and merges is `REVIEWED_SHA`, never a head read later.
 3. Install the dependencies and run the build and tests with the project's own tooling (`npm ci`/`npm install`, `npm run build`, `npm test`, plus lint and typecheck when they exist; or the equivalents for the stack). A failing build, lint, typecheck or test is a **blocker**.
 4. Check whether the change has corresponding tests (absence on a critical flow is a blocker; on a secondary flow it is important).
 
@@ -143,8 +144,11 @@ First restore the working tree and return to the original branch (as in Path A, 
 
 ### Confirmation rules
 
-- Each confirmation is a question in the chat, followed by a stop until the user answers. Proceed only on an explicit yes for that step: one of the replies the question offers, or an equivalent unambiguous yes ("yes", "go ahead"). Anything else (silence, a question, "maybe", a change request) is a no: skip the step and record it as skipped.
-- A confirmation covers only the plan shown with it. If anything changed since (new commits, CI status, mergeability, target branch), show the new plan and ask again.
+- Each confirmation is a question in the chat, followed by a stop until the user answers. Proceed only on a reply that names one of the options the question offers, or on an unambiguous equivalent of exactly one of them. When the question offers more than one positive option ("merge" and "approve only"), a generic yes ("yes", "ok", "go ahead") is ambiguous: ask which option. When it offers a single positive option, a generic yes counts as that option. Anything else (silence, a question, "maybe", a change request) is a no: skip the step and record it as skipped.
+- **State check.** Immediately before executing the first confirmed action, and again immediately before the merge, read the current state (mode A: `gh pr view <number> --json headRefOid,mergeable` and `gh pr checks <number>`; modes B–C: `git rev-parse "$PR_BRANCH"`):
+  - head different from `REVIEWED_SHA` → **stop without any further action** and say that new commits arrived after the review; they were not reviewed, so `/spec:approve` must run again;
+  - CI failing or pending, or the change no longer mergeable → **stop**, report it as a blocker and take no further action;
+  - anything else in the plan changed (target branch, label, board) → show the new plan and ask again.
 - Never ask for, or accept, a confirmation that covers more than the actions listed in the plan.
 - `dry-run`: display the plan with the title `🧪 Dry run — nothing was executed`, list every command that would run, and stop without asking.
 
@@ -157,7 +161,7 @@ First restore the working tree and return to the original branch (as in Path A, 
    🔀 PR #<number>: <title>
    🌿 <PR_BRANCH> → <BASE_BRANCH>
    🔗 Merge strategy: <squash | merge | rebase> (<source of the choice>)
-   🧾 Head commit: <short sha>
+   🧾 Reviewed commit: <REVIEWED_SHA, full>
    🚦 CI: ✅ green · Mergeable: ✅
    📁 Files changed: <N> (<top paths>)
    💬 PR comment: review result (preview below)
@@ -176,12 +180,12 @@ First restore the working tree and return to the original branch (as in Path A, 
 
 2. **Wait for the answer.** "cancel" or anything other than an explicit yes: stop and display the summary (step 6) with every action marked as skipped.
 
-3. **Execute only what was confirmed**, in order:
+3. **Execute only what was confirmed**, in order, after the state check (Confirmation rules):
    - **Comment on the PR** with the review result: what was reviewed, build/tests/CI, "no blocking or important items" and the 🟢 suggestions (if any) as an optional follow-up.
    - **`Reviewed` label:** apply it to the PR. If the label does not exist in the repository, create it (`gh label create Reviewed`) and then apply it.
-   - **Merge** ("merge" only). Immediately before it, check CI and mergeability again (`gh pr checks <number>`, `gh pr view <number> --json mergeable,headRefOid`). If CI is not green, the PR is not mergeable or the head commit differs from the plan, do not merge: report the new state and stop. Otherwise:
+   - **Merge** ("merge" only). Run the state check again (Confirmation rules); if it stops, do not merge. Otherwise:
      ```bash
-     gh pr merge <number> --squash --match-head-commit <head sha>
+     gh pr merge <number> --squash --match-head-commit "$REVIEWED_SHA"
      ```
      - Use the strategy shown in the plan: `--squash` unless the repository defines another standard (check the project's rules and the repository's merge settings), in which case `--merge` or `--rebase`.
      - Do not pass `--delete-branch`: branch deletion has its own confirmation (step 5).
@@ -226,8 +230,8 @@ First restore the working tree and return to the original branch (as in Path A, 
 
 ### Mode B/C — Git without GitHub, or another VCS
 
-1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), the head commit, the build and test results and the files changed, then ask: reply "merge" to merge locally, or "cancel". With `no-merge`, display the review result only and stop.
-2. On an explicit yes, merge the branch into the base **locally**, only if the build and tests are green:
+1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), `REVIEWED_SHA`, the build and test results and the files changed, then ask: reply "merge" to merge locally, or "cancel". With `no-merge`, display the review result only and stop.
+2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green:
    ```bash
    git switch "$BASE_BRANCH"
    git merge --no-ff "$PR_BRANCH"      # or: git merge --squash "$PR_BRANCH" && git commit

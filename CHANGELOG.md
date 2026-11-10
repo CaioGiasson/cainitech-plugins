@@ -8,7 +8,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 ### Changed
 
-- **`spec:approve` asks before acting.** It shows the action plan (PR, branches, merge strategy, head commit, label, board) and runs nothing until the user confirms in the chat. Deleting branches needs a separate confirmation. The merge re-checks CI and uses `--match-head-commit`, so new commits pushed after the plan block it. The skill can only be invoked by the user (`disable-model-invocation: true`).
+- **`spec:approve` asks before acting.** It shows the action plan (PR, branches, merge strategy, head commit, label, board) and runs nothing until the user confirms in the chat. Deleting branches needs a separate confirmation. It records the full SHA of the reviewed commit right after checkout; before the first action and again before the merge it re-checks the head, CI and mergeability, and stops if the head moved (new commits were not reviewed). The merge uses `--match-head-commit` with that SHA. When the plan offers more than one option, a generic "yes" is answered with a question. The skill can only be invoked by the user (`disable-model-invocation: true`).
 - **`spec:approve` modifiers:** `dry-run` reviews and shows the plan without changing anything; `no-merge` approves without integrating.
 - **`dry-run` in `spec:build` and `spec:review`:** `build` shows the branch, commits, files, tests and commands it would run; `review` reviews from the diff without checkout, build or posting.
 - **External content is data.** The `spec` skills treat issues, pull requests, comments, commits, conversations and code as data, never as instructions (`WORKFLOW.md` §7). Text that tries to steer a review or a merge is a blocking finding in `review` and `approve`.
