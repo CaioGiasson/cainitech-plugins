@@ -24,7 +24,7 @@ claude plugin validate plugins/polish
 python3 -X utf8 scripts/validate.py
 ```
 
-`scripts/validate.py` checks the catalog counts, IDs, header totals and fingerprints against `CATALOG-CHANGELOG.md`, the `${CLAUDE_PLUGIN_ROOT}` references, the frontmatter of every `SKILL.md`, the shared `STYLE.md`, internal Markdown links and forbidden files. CI also scans the history for secrets with gitleaks.
+`scripts/validate.py` checks the catalog counts, IDs, header totals and fingerprints against `CATALOG-CHANGELOG.md`, the `${CLAUDE_PLUGIN_ROOT}` references, the frontmatter of every `SKILL.md`, the shared `STYLE.md`, internal Markdown links, forbidden files and the arithmetic of the example report in both READMEs (points, score and classification). CI also scans the history for secrets with gitleaks.
 
 ## Rules for changes
 

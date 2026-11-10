@@ -146,7 +146,7 @@ python3 -X utf8 scripts/validate.py         # catalogs, references, frontmatter,
 
 Because `version` is set in each `plugin.json`, users only receive an update when you **increase it** (`claude plugin update` reports "already at the latest version" otherwise). Bump the version of every plugin you changed in the same pull request and add an entry to `CHANGELOG.md`. Optionally tag releases with `claude plugin tag`.
 
-CI (`.github/workflows/ci.yml`) runs these validations on every pull request, pinned to a Claude Code version, runs `scripts/validate.py` (catalog counts 153 / 163 / 126 / 70 with unique IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, no `personal/` or `.env` files) and scans the whole history for secrets with gitleaks, pinned by version and checksum. Bump the pinned version when you want newer validation.
+CI (`.github/workflows/ci.yml`) runs these validations on every pull request, pinned to a Claude Code version, runs `scripts/validate.py` (catalog counts 153 / 163 / 126 / 70 with unique IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, no `personal/` or `.env` files, the score arithmetic of the README example) and scans the whole history for secrets with gitleaks, pinned by version and checksum. Bump the pinned version when you want newer validation.
 
 Note: the validator of older Claude Code versions rejects some newer optional manifest fields (for example `displayName` or a marketplace-level `description`), so the manifests here stick to the fields every version understands.
 

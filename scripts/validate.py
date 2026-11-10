@@ -129,6 +129,57 @@ def check_forbidden_paths():
             errors.append(f"{path}: arquivo proibido no repositório (contexto pessoal ou segredos)")
 
 
+def classification(score):
+    for limit, name in ((25, "Dangerous"), (50, "Bronze"), (70, "Silver"), (90, "Gold")):
+        if score < limit:
+            return name
+    return "Platinum"
+
+
+def check_readme_examples():
+    """Confere o exemplo de relatório dos READMEs contra as regras de pontuação do ASSESSMENT.md (§4 e §5)."""
+    weights = (3, 2, 1)
+    _, blocks = catalog_items("security")
+    catalog_totals = [sum(1 for b in blocks if re.search(rf"^\*\*{name}\*\*", b, re.M)) for name in ("Critical", "Important", "Minor")]
+    number = r"(\d+(?:[.,]\d+)?)"
+    for readme, labels in (("README.md", ("Critical", "Important", "Minor")), ("README.pt-BR.md", ("Crítico", "Importante", "Menor"))):
+        text = read(readme)
+        earned_total = possible_total = 0
+        counts_total = [0, 0, 0, 0]
+        for label, weight, catalog_count in zip(labels, weights, catalog_totals):
+            row = re.search(rf"^\| {label} \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| {number} / (\d+) \|$", text, re.M)
+            if not row:
+                errors.append(f"{readme}: linha '{label}' do resumo do exemplo não encontrada")
+                return
+            compliant, partial, non_compliant, not_applicable = (int(n) for n in row.groups()[:4])
+            earned = compliant * weight + partial * weight / 2
+            possible = (compliant + partial + non_compliant) * weight
+            if float(row.group(5).replace(",", ".")) != earned or int(row.group(6)) != possible:
+                errors.append(f"{readme}: pontos de '{label}' deveriam ser {earned:g} / {possible}")
+            if compliant + partial + non_compliant + not_applicable != catalog_count:
+                errors.append(f"{readme}: '{label}' soma {compliant + partial + non_compliant + not_applicable} itens, o catálogo tem {catalog_count}")
+            earned_total += earned
+            possible_total += possible
+            counts_total = [a + b for a, b in zip(counts_total, (compliant, partial, non_compliant, not_applicable))]
+        score = round(100 * earned_total / possible_total, 1)
+        total = re.search(rf"^\| \*\*Total\*\* \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| \*\*{number} / (\d+) = {number}\*\* \|$", text, re.M)
+        if not total:
+            errors.append(f"{readme}: linha Total do resumo do exemplo não encontrada")
+            return
+        stated = [float(g.replace(",", ".")) for g in total.groups()]
+        if stated != counts_total + [earned_total, possible_total, score]:
+            errors.append(f"{readme}: linha Total deveria ser {counts_total} e {earned_total:g} / {possible_total} = {score}")
+        expected = classification(score)
+        counts_line = re.search(r"^(\d+) compliant · (\d+) (?:partial|parciais) · (\d+) (?:non-compliant|não compliant) · (\d+) N/A", text, re.M)
+        if not counts_line or [int(n) for n in counts_line.groups()] != counts_total:
+            errors.append(f"{readme}: a linha de contagens da resposta no chat deveria ser {counts_total}")
+        for match in re.finditer(r"^# [^\n]*?[Ss]core[^\n]*?: " + number + r" / 100(?: — (\w+))?$", text, re.M):
+            if float(match.group(1).replace(",", ".")) != score or (match.group(2) and match.group(2) != expected):
+                errors.append(f"{readme}: '{match.group(0)}' deveria mostrar {score} e {expected}")
+        if not re.search(rf"^## (?:Classification|Classificação): {expected}$", text, re.M):
+            errors.append(f"{readme}: classificação do exemplo deveria ser {expected}")
+
+
 if "--fingerprints" in sys.argv:
     for skill in CATALOGS:
         print(f"{skill}: {fingerprint(catalog_items(skill)[1])}")
@@ -140,6 +191,7 @@ check_skills()
 check_style_copies()
 check_markdown_links()
 check_forbidden_paths()
+check_readme_examples()
 
 if errors:
     print("\n".join(errors))

@@ -18,7 +18,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 - `SECURITY.md`, `CONTRIBUTING.md`, a pull request template and this changelog.
 - "What these plugins do not do" section in both READMEs.
-- `scripts/validate.py`, run locally and in CI: catalog counts and IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links and forbidden files (`personal/`, `.env`).
+- `scripts/validate.py`, run locally and in CI: catalog counts and IDs, `${CLAUDE_PLUGIN_ROOT}` references, `SKILL.md` frontmatter, identical `STYLE.md` copies, internal Markdown links, forbidden files (`personal/`, `.env`) and the score arithmetic of the README example.
 - CI secret scan of the whole history with gitleaks 8.30.1, pinned by checksum.
 - **Catalog versioning:** `plugins/checkup/references/CATALOG-CHANGELOG.md` records the catalog version and a fingerprint per pillar. `scripts/validate.py` fails when an item changes without a new version, and every report records the catalog version; the Evolution section flags methodology changes between runs.
 
