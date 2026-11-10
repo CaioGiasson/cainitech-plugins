@@ -30,6 +30,7 @@ Cases tagged `threat:T<n>` cover an abuse case of the [threat model](THREAT-MODE
 |---|---|---|---|---:|
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `trigger` cases of the three plugins, with and without the plugin | 13 of 13 passed (`privacy-triggers` cut by the cost ceiling); every "should trigger" case scored 1 with the plugin and 0 without it | US$ 8.90 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec`, `slow` cases, plugin arm only, 1 run | 10 of 14 passed. The 4 failures were eval defects, fixed afterwards: `refine-triggers-and-records` and `refine-pt-br-language` asked questions and stopped (no one answers in a single-turn run); `build-out-of-scope-request` refused a fixture whose implementation prompt lacked the required subsections (it did flag the out-of-scope requests); `approve-dry-run` matched a git command in the grader, most likely `git merge-base` (fixed regex; not confirmed, the trace was not kept) | US$ 4.54 |
+| 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | the 4 `spec` cases fixed above, plugin arm only, 1 run | 4 of 4 passed | US$ 1.60 |
 
 ## Fixtures
 
