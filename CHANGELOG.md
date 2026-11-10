@@ -16,7 +16,7 @@ Versions follow [Semantic Versioning](https://semver.org). Each plugin has its o
 
 - **Skills in layers.** `SKILL.md` files keep the dispatch and the steps that always run; the rest is read when the skill reaches it: `spec:review` keeps its review rules in `references/REVIEWER.md`, read only by the isolated reviewer, and posting and fixes in `POSTING.md` and `FIXES.md`; `spec:refine` reads the issue templates only when there is a board; `spec:build` reads the delivery of its mode and `spec:approve` the integration plan of its mode; the code examples of the review guide moved to `PR_REVIEW_EXAMPLES.md`. In the session that runs `/spec:review`, the skill and the files it reads drop from about 58 KB to about 20 KB; the review rules load in the reviewer's own context.
 - **Report JSON schema 1.1.0:** adds `tools`, `config`, the item `exception` and the delta cause `config change`. Reports in schema 1.0.0 remain valid.
-- The marketplace manifest has a `description` (required by `claude plugin validate --strict`).
+- The marketplace manifest has `metadata.description` (asked for by `claude plugin validate --strict` and understood by older Claude Code versions).
 
 ### Compatibility
 
