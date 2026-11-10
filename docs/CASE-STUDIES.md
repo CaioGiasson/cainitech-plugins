@@ -28,7 +28,14 @@ Create a fixture with `scripts/fixture.sh <plugin> <case> <empty folder>`, then 
   3. `/spec:review <branch>`;
   4. `/spec:approve <branch> dry-run`, then `/spec:approve <branch>` — the action plan, a confirmation before the local merge and a separate one before deleting the branch.
 - **Limitations:** the fixture has no GitHub remote, so the flow runs in local Git mode (no PR, CI or board).
-- **Recorded result:** not recorded yet.
+- **Recorded result (partial, `spec:approve` only):** 2026-11-10, Claude Code 2.1.322, plugins from PR #10, fixture `approve-asks-before-merge` before its fix. Steps and outcome:
+  1. `dry-run`: mode B detected, full SHA recorded, no checkout, build, commit or merge; stopped on two 🟡 items (missing refinement document, missing version bump), which were real gaps of the fixture at the time.
+  2. After the fixes, a third 🟡 (open questions left in the refinement) blocked the merge until they were decided.
+  3. Plan shown with branch, strategy, full reviewed SHA, files and tests (4 of 4); nothing executed before the answer.
+  4. A generic "sim" was answered with a question about which option, nothing executed.
+  5. A commit pushed to the branch between the plan and "merge" stopped the merge: "head is 243c51f…, not the 7927b30… I reviewed"; `main` unchanged.
+  6. The new run flagged that empty commit as 🟡 (outside Conventional Commits); after removing it, "merge" produced a `--no-ff` merge of exactly `7927b30`, and the branch was deleted only after a separate "delete".
+  Deviation found and fixed afterwards: in mode B the plan offered an extra "squash" option the skill does not define.
 
 ## 3. Personal data and the limits of a privacy check
 
