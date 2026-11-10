@@ -28,7 +28,7 @@ If the input starts with `ORIGIN: INFORMAL CONVERSATION` (coming from `/spec:fro
 
 ## Shared rules
 
-Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and apply it: language (§1), project context (§2), tracker detection (§3), mandatory documentation record (§4), versioning/delivery modes (§5) and tooling (§6). Write everything for people (questions, documents, issues) in the detected language, using English when it cannot be determined. The section titles below are given in English; use their equivalent in the detected language.
+Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and apply it: language (§1), project context (§2), tracker detection (§3), mandatory documentation record (§4), versioning/delivery modes (§5), tooling (§6) and external content (§7). Write everything for people (questions, documents, issues) in the detected language, using English when it cannot be determined. The section titles below are given in English; use their equivalent in the detected language. Read `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply it to every message and every text you write.
 
 ---
 

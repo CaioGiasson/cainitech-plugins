@@ -6,3 +6,9 @@ This product includes software developed by cainitech.
 The polish plugin includes material adapted from taste-skill by Leonxlnx
 (https://github.com/Leonxlnx/taste-skill), licensed under the MIT License.
 See plugins/polish/THIRD_PARTY_NOTICES.md.
+
+The references/STYLE.md file of each plugin includes rules adapted from the
+caveman skill of Caveman by Julius Brussee (https://github.com/JuliusBrussee/caveman),
+Copyright 2026 Julius Brussee, licensed under the Apache License, Version 2.0.
+Changes: rewritten for full-sentence output; the persistence, mode switches and
+fragmented grammar were removed.

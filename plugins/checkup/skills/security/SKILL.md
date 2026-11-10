@@ -28,6 +28,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 ## PHASE 0 — Preparation
 
 1. Read **in full**:
+   - `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` — communication style (apply it to every message and every text you write);
    - `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` — methodology, statuses, weights, score, classification and report format (follow it to the letter);
    - `${CLAUDE_PLUGIN_ROOT}/skills/security/references/checklist.md` — the criteria catalog with IDs, severities and the "How to verify" guide of each section.
 2. Read the context of the assessed repository: `AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md` (if they exist).

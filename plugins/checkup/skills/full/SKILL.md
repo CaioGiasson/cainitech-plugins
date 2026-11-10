@@ -27,7 +27,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 
 ## PHASE 0 — Common preparation
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` in full (§9 covers the consolidated report).
+1. Read `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` in full (§9 covers the consolidated report) and `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` (communication style: apply it to every message and every text you write).
 2. Record the assessed commit (`git rev-parse --short HEAD`, branch); **all pillars assess the same commit**. If the repository has no git history, say so and record the date instead. If there are uncommitted changes, warn the user.
 3. Read the repository context (`AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md`).
 4. Look for earlier reports in `docs/checkups/` (per pillar and consolidated) for the Evolution section.

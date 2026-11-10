@@ -546,7 +546,7 @@ It is not urgent, but it would be a good refactor for the future.
 -   **Be specific**: vague comments do not help
 -   **Explain the why**: help the person understand the reason
 -   **Suggest solutions**: do not just point out problems
--   **Acknowledge good work**: give positive feedback too
+-   **No praise or filler**: every comment states a problem, its impact and the fix (`STYLE.md`)
 -   **Learn together**: use the review to learn as well
 
 ## 🎯 When to approve

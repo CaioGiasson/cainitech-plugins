@@ -46,6 +46,8 @@ chat, the plan and the report. Interface copy is written in the product's langua
 determine the language, use **English**. Code identifiers, token names and file names follow the
 conventions the codebase already uses.
 
+Read `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply it to every message and every text you write. Interface copy is not covered by it: it follows `${CLAUDE_PLUGIN_ROOT}/skills/ui/references/copy.md`.
+
 ## Safety limits
 
 These win over every other rule of this skill.
