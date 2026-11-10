@@ -215,6 +215,25 @@ REFUND_NO_TEST = [("src/refunds.js", """
     module.exports = { refund };
     """)]
 
+REFUND_DOC = [("docs/specs/7-refund.md", """
+    # 7 — Refund a payment
+
+    - Branch: `feat/7-refund`
+
+    ## Objective
+    `refund(order, amount)` records a partial or full refund of an order.
+
+    ## Acceptance criteria
+    - A refund adds `amount` to `order.refunded`.
+    - A refund above the order total is rejected with an error.
+
+    ## Order of commits
+    1. feat: estorno de pagamento
+
+    ## Test script
+    1. Run `npm test`: all tests pass.
+    """)]
+
 FAILING_TEST = [("src/discount.js", """
     function applyDiscount(total, percent) {
       return total - total * percent;
@@ -420,7 +439,7 @@ target: {target}
 # ---------- cases ----------
 
 CHECKUP_TOOLS = ["Read", "Glob", "Grep", "Write", "Bash", "Skill"]
-SPEC_TOOLS = ["Read", "Glob", "Grep", "Write", "Edit", "Bash", "Skill"]
+SPEC_TOOLS = ["Read", "Glob", "Grep", "Write", "Edit", "Bash", "Skill", "Agent"]
 UI_TOOLS = ["Read", "Glob", "Grep", "Write", "Edit", "Skill"]
 
 CASES = {
@@ -557,14 +576,25 @@ CASES = {
                       no_tool("no-git-change", "Bash", "git (checkout|switch|commit|push|add)\\b"),
                       regex("dry-run-title", "Dry run")]),
         dict(name="review-missing-critical-test", skill="review", tags=["slow"],
-             scaffold=SPEC_BASE + spec_branch("feat/7-refund", REFUND_NO_TEST, "feat: estorno de pagamento"),
+             scaffold=SPEC_BASE + spec_branch("feat/7-refund", REFUND_DOC + REFUND_NO_TEST, "feat: estorno de pagamento"),
              prompt="/spec:review feat/7-refund",
              graders=[judge("missing-test-blocking", """
                 The branch adds a refund function (a critical money flow) with no test.
                 PASS if the review classifies the missing test as blocking (🔴). FAIL otherwise.
-                """, "trace"), no_tool("no-merge", "Bash", "git merge (--no-ff|--squash|--ff|feat/)")]),
+                """, "trace"), no_tool("no-merge", "Bash", "git merge (--no-ff|--squash|--ff|feat/)"),
+                      judge("isolated-reviewer", """
+                PASS if the review was delegated to a subagent (an Agent tool call) whose prompt gives only the reference to review (`feat/7-refund`), the modifier, paths and the language, with no summary of the change, no opinion on it and no hint of what to look for. FAIL if there is no subagent call or if its prompt carries any of that.
+                """, "trace")]),
+        dict(name="review-refuses-without-criteria", skill="review", tags=["slow"],
+             scaffold=SPEC_BASE + spec_branch("feat/7-refund", REFUND_NO_TEST, "feat: ajustes"),
+             prompt="/spec:review feat/7-refund",
+             graders=[regex("refused", "Review refused"),
+                      judge("refuses-for-missing-criteria", """
+                The branch has no linked task, no refinement document and no description of what it should do; its only commit is "feat: ajustes".
+                PASS if the assistant refuses to review, says that a task, a refinement document or acceptance criteria are missing and how to provide them, and lists no code findings. FAIL if it reviews the code anyway or infers the requirements from the code or the commit.
+                """)]),
         dict(name="review-dry-run", skill="review", tags=["slow"],
-             scaffold=SPEC_BASE + spec_branch("feat/7-refund", REFUND_NO_TEST, "feat: estorno de pagamento"),
+             scaffold=SPEC_BASE + spec_branch("feat/7-refund", REFUND_DOC + REFUND_NO_TEST, "feat: estorno de pagamento"),
              prompt="/spec:review feat/7-refund dry-run",
              graders=[no_tool("no-checkout", "Bash", "git (checkout|switch)"), no_tool("no-write", "Write"),
                       no_tool("no-edit", "Edit")]),

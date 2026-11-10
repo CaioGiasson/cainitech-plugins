@@ -42,6 +42,25 @@ test("lists only the user's orders", () => {
 EOF_FIXTURE
 git add -A && git commit -q -m "feat: orders-service"
 git switch -q -c feat/7-refund
+mkdir -p docs/specs
+cat > docs/specs/7-refund.md <<'EOF_FIXTURE'
+# 7 — Refund a payment
+
+- Branch: `feat/7-refund`
+
+## Objective
+`refund(order, amount)` records a partial or full refund of an order.
+
+## Acceptance criteria
+- A refund adds `amount` to `order.refunded`.
+- A refund above the order total is rejected with an error.
+
+## Order of commits
+1. feat: estorno de pagamento
+
+## Test script
+1. Run `npm test`: all tests pass.
+EOF_FIXTURE
 mkdir -p src
 cat > src/refunds.js <<'EOF_FIXTURE'
 // Estorno de pagamento: fluxo crítico de dinheiro
