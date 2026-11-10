@@ -1,6 +1,6 @@
 # Third-party notices
 
-The `frontend` skill of this plugin is a modified, text-only adaptation of the
+The `ui` skill of this plugin is a modified, text-only adaptation of the
 `design-taste-frontend` skill (version 2.5.1) of **taste-skill**
 (https://github.com/Leonxlnx/taste-skill), distributed under the MIT License
 reproduced below.

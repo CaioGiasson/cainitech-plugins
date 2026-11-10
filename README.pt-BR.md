@@ -73,11 +73,11 @@ Você não precisa aprender comandos. Precisa do **aplicativo Claude** (aba **Co
 1. Abra o aplicativo Claude e entre na aba **Code**.
 2. Cole esta mensagem no chat e envie:
 
-   > Instale os plugins do marketplace CaioGiasson/cainitech-plugins: rode `claude plugin marketplace add CaioGiasson/cainitech-plugins`, depois `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` e `claude plugin install design@cainitech`, e me avise quando terminar.
+   > Instale os plugins do marketplace CaioGiasson/cainitech-plugins: rode `claude plugin marketplace add CaioGiasson/cainitech-plugins`, depois `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` e `claude plugin install polish@cainitech`, e me avise quando terminar.
 
 3. Espere o Claude confirmar e abra uma **nova conversa**. As skills já aparecem quando você digita `/`.
 
-Uma mensagem. Só isso. Quer só os check-ups, só o fluxo de tarefas ou só as regras de design? Peça apenas o `checkup`, o `spec` ou o `design`.
+Uma mensagem. Só isso. Quer só os check-ups, só o fluxo de tarefas ou só as regras de interface? Peça apenas o `checkup`, o `spec` ou o `polish`.
 
 **Prefere clicar?** Com o marketplace adicionado (passo 2), clique no botão **+** ao lado da caixa de mensagem, escolha **Plugins** e depois **Add plugin** para instalar, ou **Manage plugins** para ligar, desligar, atualizar ou remover um plugin.
 
@@ -87,7 +87,7 @@ Uma mensagem. Só isso. Quer só os check-ups, só o fluxo de tarefas ou só as 
 
 Quando sair uma nova versão, abra **+ → Plugins → Manage plugins**, escolha o plugin e clique em **Update now**. Ou envie esta mensagem ao Claude na aba **Code**:
 
-> Atualize os plugins da cainitech: rode `claude plugin marketplace update cainitech`, depois `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` e `claude plugin update design@cainitech`.
+> Atualize os plugins da cainitech: rode `claude plugin marketplace update cainitech`, depois `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` e `claude plugin update polish@cainitech`.
 
 Skills novas e melhorias chegam na hora (abra uma nova conversa para carregá-las).
 
@@ -110,7 +110,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 | **`spec`** | **[Da ideia à tarefa](#da-ideia-à-tarefa-pronta)** | Transformar conversa solta em tarefa clara e registrada | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[Do código à entrega](#do-código-à-entrega)** | Programar, revisar e finalizar | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[Check-up do sistema](#check-up-do-sistema)** | Medir a saúde do projeto, sem alterar nada | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
-| **`design`** | **[Design de sites](#design-de-sites)** | Criar ou revisar páginas que não pareçam feitas por IA | `/design:frontend` |
+| **`polish`** | **[Acabamento de interface](#acabamento-de-interface)** | Criar ou revisar sites e landing pages que não pareçam feitos por IA | `/polish:ui` |
 
 **O caminho completo de uma tarefa:** `/spec:from-thread` ou `/spec:refine` → `/spec:build` → `/spec:review` → você testa → `/spec:approve`.
 
@@ -151,13 +151,13 @@ Como ler a nota:
 | 25 a 49 | 🥉 Bronze |
 | 0 a 24 | 🚨 Dangerous |
 
-### Design de sites
+### Acabamento de interface
 
-**Só regras: não roda comandos nem baixa nada.** Neutra: não traz marca nem design system próprio, e o design system do seu projeto sempre prevalece.
+**Só regras: não roda comandos nem baixa nada.** Neutra: não traz marca nem design system próprio, e o design system do seu projeto sempre prevalece. Feita para sites e landing pages; telas de app e dashboards ficam de fora.
 
 | Skill | O que faz | O que você recebe |
 |---|---|---|
-| **`/design:frontend`** | Cria, redesenha ou revisa um site ou landing page: o tipo de negócio define o plano da página, uma seção por tela, bordas iguais, texto direto sem os vícios de escrita de IA, movimento discreto. Acrescente `review` para só avaliar uma página. | Uma página com cara de empresa profissional, mais um relatório com cada dado assumido e cada foto ou material que o cliente ainda precisa enviar. No modo `review`, um checklist do que falha e como corrigir. |
+| **`/polish:ui`** | Cria, redesenha ou revisa um site ou landing page: o tipo de negócio define o plano da página, uma seção por tela, bordas iguais, texto direto sem os vícios de escrita de IA, movimento discreto. Acrescente `review` para só avaliar uma página. | Uma página com cara de empresa profissional, mais um relatório com cada dado assumido e cada foto ou material que o cliente ainda precisa enviar. No modo `review`, um checklist do que falha e como corrigir. |
 
 <sub>Adaptado do <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), sem os scripts, hooks e downloads dele.</sub>
 

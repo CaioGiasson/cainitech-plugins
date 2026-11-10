@@ -73,11 +73,11 @@ You don't need to learn commands. You need the **Claude app** (**Code** tab). If
 1. Open the Claude app and go to the **Code** tab.
 2. Paste this message into the chat and send it:
 
-   > Install the plugins from the marketplace CaioGiasson/cainitech-plugins: run `claude plugin marketplace add CaioGiasson/cainitech-plugins`, then `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` and `claude plugin install design@cainitech`, and tell me when it's done.
+   > Install the plugins from the marketplace CaioGiasson/cainitech-plugins: run `claude plugin marketplace add CaioGiasson/cainitech-plugins`, then `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` and `claude plugin install polish@cainitech`, and tell me when it's done.
 
 3. Wait for Claude to confirm and open a **new conversation**. The skills now show up when you type `/`.
 
-One message. That's it. Want only the health checks, only the task workflow or only the design rules? Ask for just `checkup`, `spec` or `design`.
+One message. That's it. Want only the health checks, only the task workflow or only the interface rules? Ask for just `checkup`, `spec` or `polish`.
 
 **Prefer clicking?** Once the marketplace is added (step 2), click the **+** button next to the prompt box, choose **Plugins** and then **Add plugin** to install, or **Manage plugins** to turn a plugin on or off, update it or remove it.
 
@@ -87,7 +87,7 @@ One message. That's it. Want only the health checks, only the task workflow or o
 
 When a new version is released, open **+ → Plugins → Manage plugins**, choose the plugin and click **Update now**. Or send this to Claude in the **Code** tab:
 
-> Update the cainitech plugins: run `claude plugin marketplace update cainitech`, then `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` and `claude plugin update design@cainitech`.
+> Update the cainitech plugins: run `claude plugin marketplace update cainitech`, then `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` and `claude plugin update polish@cainitech`.
 
 New skills and improvements arrive right away (start a new conversation to load them).
 
@@ -110,7 +110,7 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 | **`spec`** | **[From idea to task](#from-idea-to-ready-task)** | Turn loose conversation into a clear, recorded task | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[From code to delivery](#from-code-to-delivery)** | Build, review and finish | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[System health check](#system-health-check)** | Measure project health, changing nothing | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
-| **`design`** | **[Website design](#website-design)** | Build or review pages that don't look AI-made | `/design:frontend` |
+| **`polish`** | **[Interface polish](#interface-polish)** | Build or review websites and landing pages that don't look AI-made | `/polish:ui` |
 
 **A task's full path:** `/spec:from-thread` or `/spec:refine` → `/spec:build` → `/spec:review` → you test → `/spec:approve`.
 
@@ -151,13 +151,13 @@ How to read the score:
 | 25 to 49 | 🥉 Bronze |
 | 0 to 24 | 🚨 Dangerous |
 
-### Website design
+### Interface polish
 
-**Rules only: it runs no commands and downloads nothing.** Neutral: it brings no brand or design system of its own, and your project's design system always wins.
+**Rules only: it runs no commands and downloads nothing.** Neutral: it brings no brand or design system of its own, and your project's design system always wins. For public websites and landing pages; app screens and dashboards are out of scope.
 
 | Skill | What it does | What you get |
 |---|---|---|
-| **`/design:frontend`** | Builds, redesigns or reviews a website or landing page: the kind of business sets the page plan, one section per screen, equal edges, plain copy without the tells of AI writing, quiet motion. Add `review` to only assess a page. | A page that reads as a professional company made it, plus a report of every assumed fact and every photo or asset the client still has to supply. In `review` mode, a checklist of what fails and how to fix it. |
+| **`/polish:ui`** | Builds, redesigns or reviews a website or landing page: the kind of business sets the page plan, one section per screen, equal edges, plain copy without the tells of AI writing, quiet motion. Add `review` to only assess a page. | A page that reads as a professional company made it, plus a report of every assumed fact and every photo or asset the client still has to supply. In `review` mode, a checklist of what fails and how to fix it. |
 
 <sub>Adapted from <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), without its scripts, hooks or downloads.</sub>
 

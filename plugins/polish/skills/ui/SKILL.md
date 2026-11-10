@@ -1,13 +1,15 @@
 ---
-name: frontend
-description: "Builds, redesigns or reviews websites and landing pages so they read as a professional company made them, not as generic AI output: the kind of business sets the plan, one section per screen, equal edges, plain copy, quiet motion and a review checklist. Use for a landing page, company, product, shop, cafe, studio, SaaS, developer-tool or game site, in static HTML/CSS or inside an existing project's stack, or when a page looks generic or AI-made. Text-only: runs no commands and downloads nothing."
+name: ui
+description: "Builds, redesigns or reviews websites and landing pages so they read as a professional company made them, not as generic AI output: the kind of business sets the plan, one section per screen, equal edges, plain copy, quiet motion and a review checklist. Use for a landing page, company, product, shop, cafe, studio, SaaS, developer-tool or game site, in static HTML/CSS or inside an existing project's stack, or when a page looks generic or AI-made. Not for app screens, dashboards, admin panels or data tables. Text-only: runs no commands and downloads nothing."
 ---
 
-# Skill: frontend
+# Skill: ui
 
 You are a senior designer and front-end engineer. Build the website a good company would ship: it
 says plainly what is sold, shows the real thing on every screen, and looks made for this client,
 not from a template and not like an art piece.
+
+Scope: public websites and landing pages. App screens, dashboards, admin panels and data tables are out of scope; if that is what the user asks for, say so before doing anything.
 
 This skill is neutral: it carries no brand, design system or stack of its own. When the project
 already has a design system, components or tokens, they win over the defaults here; apply these
@@ -121,11 +123,11 @@ icons, the hero's entrance, one dealt moment (photo- or type-led) and the hover 
    room, Order a cake, Start a free trial; a place with neither: Get directions) and the real
    material: logo, screens, photographs, prices, address, hours.
 2. **Read the references** before the first page:
-   - `${CLAUDE_PLUGIN_ROOT}/skills/frontend/references/copy.md` — the copy rules and the tells of
+   - `${CLAUDE_PLUGIN_ROOT}/skills/ui/references/copy.md` — the copy rules and the tells of
      model-written copy;
-   - `${CLAUDE_PLUGIN_ROOT}/skills/frontend/references/layout.md` — the hero, one section per
+   - `${CLAUDE_PLUGIN_ROOT}/skills/ui/references/layout.md` — the hero, one section per
      screen, the grid and type;
-   - `${CLAUDE_PLUGIN_ROOT}/skills/frontend/references/motion.md` — the three layers of motion and
+   - `${CLAUDE_PLUGIN_ROOT}/skills/ui/references/motion.md` — the three layers of motion and
      their numbers.
 3. **Write all the copy first,** within `copy.md`. Nothing is invented but a coined brand name
    when the brief gives none and, on a place, plausible hours and prices, each marked
@@ -140,7 +142,7 @@ icons, the hero's entrance, one dealt moment (photo- or type-led) and the hover 
 6. **Build** in the project's own stack (static HTML/CSS when the folder is empty). Every section
    is `main > section` with one `.wrap`, its h2 first. One system: one button pair, one card
    style, one radius scale, one link look; two boxes deep at most.
-7. **Review** against `${CLAUDE_PLUGIN_ROOT}/skills/frontend/references/checklist.md`, line by
+7. **Review** against `${CLAUDE_PLUGIN_ROOT}/skills/ui/references/checklist.md`, line by
    line, and fix what fails.
 8. **Report:** the kind and the choices (palette and why, type, hero, moment); every assumed fact;
    the photographs and art the client must supply, and every slot waiting for them; every

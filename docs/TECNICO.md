@@ -10,7 +10,7 @@ Um **marketplace de plugins** do Claude Code chamado `cainitech`, com três plug
 |---|---|---|
 | `checkup` | `security`, `performance`, `privacy`, `ai-readiness`, `full` | Avaliações somente leitura de uma aplicação: 512 critérios, nota de 0 a 100, classificação e backlog priorizado. |
 | `spec` | `refine`, `from-thread`, `build`, `review`, `approve` | Fluxo de tarefas da ideia ao merge. Usa o quadro do GitHub Projects quando o projeto tem um, sempre registra o trabalho na documentação do projeto e se adapta a GitHub / Git sem GitHub / outro controle de versão / nenhum controle de versão. |
-| `design` | `frontend` | Gosto de design para sites e landing pages: layout, tipografia, texto, movimento e checklist de revisão. Só texto: não roda comandos nem baixa nada. Adaptado do taste-skill (MIT, veja `plugins/design/THIRD_PARTY_NOTICES.md`). |
+| `polish` | `ui` | Acabamento de interface para sites e landing pages: layout, tipografia, texto, movimento e checklist de revisão. Só texto: não roda comandos nem baixa nada. Adaptado do taste-skill (MIT, veja `plugins/polish/THIRD_PARTY_NOTICES.md`). |
 
 As skills são chamadas como `/<plugin>:<skill>` (por exemplo `/checkup:security`, `/spec:refine`).
 
@@ -38,11 +38,11 @@ cainitech-plugins/
 │   │   │   └── PR_REVIEW_GUIDE.md  # guia de revisão neutro quanto à stack
 │   │   └── skills/
 │   │       ├── refine/  from-thread/  build/  review/  approve/
-│   └── design/
+│   └── polish/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # aviso MIT do taste-skill, origem da adaptação
 │       └── skills/
-│           └── frontend/           # SKILL.md + references/ (copy, layout, motion, checklist)
+│           └── ui/                 # SKILL.md + references/ (copy, layout, motion, checklist)
 ├── docs/
 │   ├── TECHNICAL.md                # versão em inglês deste documento
 │   └── TECNICO.md                  # este documento
@@ -57,14 +57,14 @@ cainitech-plugins/
 claude plugin marketplace add CaioGiasson/cainitech-plugins
 claude plugin install checkup@cainitech
 claude plugin install spec@cainitech
-claude plugin install design@cainitech
+claude plugin install polish@cainitech
 ```
 
 Dentro de uma sessão, os equivalentes são `/plugin marketplace add CaioGiasson/cainitech-plugins` e `/plugin install checkup@cainitech`. No VS Code, digite `/plugins` para abrir **Manage plugins**. Use `--scope project` para habilitar um plugin para todas as pessoas que trabalham em determinado repositório.
 
 Atualizar: `claude plugin marketplace update cainitech` e depois `claude plugin update <plugin>@cainitech`. O auto-update vem desligado para marketplaces de terceiros; ligue em `/plugin` → **Marketplaces** → **Enable auto-update**.
 
-Desenvolvimento local sem instalar: `claude --plugin-dir ./plugins/checkup --plugin-dir ./plugins/spec --plugin-dir ./plugins/design`.
+Desenvolvimento local sem instalar: `claude --plugin-dir ./plugins/checkup --plugin-dir ./plugins/spec --plugin-dir ./plugins/polish`.
 
 ## Como uma skill encontra seus arquivos compartilhados
 
@@ -127,7 +127,7 @@ Crie `plugins/<nome>/.claude-plugin/plugin.json` e `plugins/<nome>/skills/…`, 
 claude plugin validate .                    # marketplace
 claude plugin validate plugins/checkup   # manifesto e skills do plugin
 claude plugin validate plugins/spec
-claude plugin validate plugins/design
+claude plugin validate plugins/polish
 ```
 
 Como o `version` está definido em cada `plugin.json`, os usuários só recebem uma atualização quando você **aumenta o número** (`claude plugin update` informa "already at the latest version" caso contrário). Aumente a versão de cada plugin alterado na mesma pull request. Opcionalmente, marque releases com `claude plugin tag`.

@@ -1,0 +1,13 @@
+{
+  "name": "polish",
+  "version": "1.0.0",
+  "description": "Interface polish for websites and landing pages that read as a professional company built them, not as generic AI output: layout, type, copy, motion and a review checklist. Text-only: runs no commands and downloads nothing.",
+  "author": {
+    "name": "cainitech",
+    "url": "https://github.com/CaioGiasson"
+  },
+  "homepage": "https://github.com/CaioGiasson/cainitech-plugins",
+  "repository": "https://github.com/CaioGiasson/cainitech-plugins",
+  "license": "Apache-2.0",
+  "keywords": ["polish", "ui", "design", "frontend", "landing-page", "website", "copywriting", "taste"]
+}
