@@ -24,6 +24,13 @@ The suites are generated: `scripts/generate_evals.py` is the single source of th
 
 Cases tagged `threat:T<n>` cover an abuse case of the [threat model](THREAT-MODEL.md). Cases tagged `trigger` are fast (a few turns, 3 runs); cases tagged `slow` run a whole skill once.
 
+## Results
+
+| Date | Claude Code | Scope | Result | Cost |
+|---|---|---|---|---:|
+| 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `trigger` cases of the three plugins, with and without the plugin | 13 of 13 passed (`privacy-triggers` cut by the cost ceiling); every "should trigger" case scored 1 with the plugin and 0 without it | US$ 8.90 |
+| 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec`, `slow` cases, plugin arm only, 1 run | 10 of 14 passed. The 4 failures were eval defects, fixed afterwards: `refine-triggers-and-records` and `refine-pt-br-language` asked questions and stopped (no one answers in a single-turn run); `build-out-of-scope-request` refused a fixture whose implementation prompt lacked the required subsections (it did flag the out-of-scope requests); `approve-dry-run` matched a git command in the grader, most likely `git merge-base` (fixed regex; not confirmed, the trace was not kept) | US$ 4.54 |
+
 ## Fixtures
 
 Each case that needs a repository has a `scaffold.sh` that creates it (files, a Git history, branches) in the empty workspace of the run. The fixtures are fictitious; secret-like values are assembled at run time, so no literal secret exists in this repository. Tests in the fixtures use the Node.js built-in test runner, with no dependencies to install.
@@ -58,7 +65,9 @@ claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit --m
 ## Known limits
 
 - The cases run in local Git mode (no GitHub): pending CI on GitHub, board moves and PR comments are not exercised.
-- Each case is a single turn: nothing answers the confirmations of `spec:approve`, so the steps after a confirmation (the merge itself, branch deletion) are not exercised by the evals. Test them by hand on a fixture before a release (see `docs/CASE-STUDIES.md`, scenario 2).
+- Each case is a single turn: nothing answers the confirmations of `spec:approve`, so the steps after a confirmation (the merge itself, branch deletion) are not exercised by the evals. Test them by hand on a fixture before a release (see `docs/CASE-STUDIES.md`, scenario 2). Skills that ask questions (`spec:refine`) are told in the prompt to decide with their defaults and record the assumptions, or they would stop waiting for an answer.
+- The eval sandbox makes `.git` read-only: `git switch` and `git merge` fail inside a run. `review` and `approve` fall back to reading the branch with `git archive` or `git diff`, so the checkout path itself is only exercised by hand.
+- To see why a `tool_used` grader failed, re-run the case with `--keep-temp`: the report keeps evidence only for LLM graders, and the run's `trace.jsonl` is deleted at the end unless that flag is set.
 - Cases that start with `/spec:build`, `/spec:review` or `/spec:approve` assume that the eval runner expands slash commands in the prompt, as a normal session does. If your build does not, run those cases by hand.
 - LLM-judged graders decide by majority of three votes; a borderline case can flip between runs. Pin `--model` and `--judge-model` when comparing results over time.
 - The suites are not run in CI: they need credentials and cost money per run. Run them before a release (see `CONTRIBUTING.md`).
