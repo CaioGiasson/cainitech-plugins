@@ -271,6 +271,15 @@ def check_report_example():
         errors.append(f"{REPORT_EXAMPLE}: fingerprint do catálogo desatualizado")
 
 
+def conditional(item_id):
+    """O item, ou a seção dele, tem condição (*If: …*)."""
+    pillars = {"SEC": "security", "PERF": "performance", "PRIV": "privacy", "AIR": "ai-readiness"}
+    text, _ = catalog_items(pillars[item_id.split("-")[0]])
+    section = re.search(rf"^## {re.escape(item_id.split('.')[0])}\. (.*)$", text, re.M)
+    item = re.search(rf"^#### {re.escape(item_id)} · (.*)$", text, re.M)
+    return any(m and "If:" in m.group(1) for m in (section, item))
+
+
 def check_config_example():
     """O exemplo de .checkup.json segue o schema, cita itens que existem e não aceita risco em item Critical."""
     schema = json.loads(read(CONFIG_SCHEMA))
@@ -285,8 +294,10 @@ def check_config_example():
         severities = {re.match(r"#### (\S+)", b).group(1): re.search(r"^\*\*(Critical|Important|Minor)\*\*", b, re.M).group(1) for b in blocks}
         if exception["id"] not in severities:
             errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} não existe no catálogo")
-        elif exception["type"] == "acceptedRisk" and severities[exception["id"]] == "Critical":
-            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} é Critical e não aceita acceptedRisk")
+        elif severities[exception["id"]] == "Critical":
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} é Critical e não aceita exceção")
+        elif exception["type"] == "notApplicable" and not conditional(exception["id"]):
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} não é condicional (If:) e não aceita notApplicable")
 
 
 def check_evals():

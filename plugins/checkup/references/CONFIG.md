@@ -9,7 +9,7 @@ The file is repository content: anyone who can open a pull request can edit it. 
 | Can | Cannot |
 |---|---|
 | Record an **accepted risk** for a non-Critical item, with a reason, an owner and an expiry date | Change an item's severity, the weights, the score formula or the classification |
-| Declare an item **not applicable**, with a reason, when the repository does not contradict it | Accept a risk on a Critical item |
+| Record why a **conditional** item (*If: …*) does not apply, for a non-Critical item, when the repository proves it | Accept a risk on, or declare not applicable, a Critical item |
 | Leave **paths** out of scope (generated code, vendored code, test fixtures), with a reason | Exclude the application's own source, or turn a found problem into a non-finding |
 
 Keys outside the schema are ignored and listed in "Methodology and limitations" as `unsupported config key`.
@@ -24,9 +24,11 @@ Each entry of `exceptions` names one catalog item. Validate every entry before u
   - rejected when the item is **Critical**;
   - applied: the item keeps its assessed status and its points (the score does not change), the finding is written as usual and marked `accepted risk (owner, until <date>)`, and the task leaves the suggested backlog for the **Exceptions** section;
   - an accepted risk on an item that is Compliant has no effect and is reported as `not needed`.
-- **`notApplicable`:**
-  - applied only if the repository does not contradict it: the assessor checks the item and, when code, configuration or docs show the item does apply (e.g., the item is about uploads and the code handles uploads), the exception is rejected as `contradicted by evidence`, citing the evidence;
-  - applied: the item becomes N/A (outside the denominator, `ASSESSMENT.md` §4), with the exception's reason as justification and `.checkup.json` as evidence.
+- **`notApplicable`:** the file records the team's justification; it is never the evidence. The N/A rules of `ASSESSMENT.md` §2 apply unchanged.
+  - rejected when the item is **Critical**, or when neither the item nor its section is conditional (*If: …*): an unconditional item always applies;
+  - rejected as `no evidence` when the assessor cannot prove, in the repository, that the condition does not apply (a search with no hits, the stack inventory); absence of a control never proves it;
+  - rejected as `contradicted by evidence` when code, configuration or docs show the condition does apply (e.g., the item is about AI calls and the code calls a model), citing the evidence;
+  - applied: the item becomes N/A (outside the denominator, `ASSESSMENT.md` §4), with the exception's reason as justification **and** the assessor's evidence of non-applicability in the N/A table.
 
 ## 3. Excluded paths
 

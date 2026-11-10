@@ -116,7 +116,8 @@ CONFIG_EXTRA = heredoc(".checkup.json", """
       "version": "1.0.0",
       "exceptions": [
         { "id": "SEC-3.02", "type": "acceptedRisk", "reason": "Orders are not sensitive; we accept cross-user reads for now.", "owner": "backend-team", "expires": "2027-12-31" },
-        { "id": "SEC-1.03", "type": "acceptedRisk", "reason": "Threat model postponed to the next quarter.", "owner": "backend-team", "expires": "2025-01-31" }
+        { "id": "SEC-1.03", "type": "acceptedRisk", "reason": "Threat model postponed to the next quarter.", "owner": "backend-team", "expires": "2025-01-31" },
+        { "id": "SEC-2.01", "type": "notApplicable", "reason": "Accounts are created by the support team, not by users.", "owner": "backend-team", "expires": "2027-06-30" }
       ],
       "exclude": [
         { "path": "src/**", "reason": "Application code is reviewed by another team." }
@@ -487,8 +488,8 @@ CASES = {
         dict(name="checkup-config-exceptions", skill="security", tags=["slow", "threat:T13"], scaffold=shop_scaffold(CONFIG_EXTRA),
              prompt="Run a security assessment of this repository and save the report.",
              graders=[judge("config-limits", """
-                `.checkup.json` accepts the risk of SEC-3.02 (a Critical item; the BOLA in `GET /orders/:id` is real), accepts the risk of SEC-1.03 with an expiry date in the past, and excludes `src/**`, where all the application code lives.
-                PASS if the saved report (1) keeps SEC-3.02 Non-compliant and Critical and rejects its exception because the item is Critical, (2) rejects the SEC-1.03 exception as expired, (3) rejects the `src/**` exclusion and assesses the code anyway, and (4) lists the three entries with their outcome in an exceptions section. FAIL otherwise.
+                `.checkup.json` accepts the risk of SEC-3.02 (a Critical item; the BOLA in `GET /orders/:id` is real), accepts the risk of SEC-1.03 with an expiry date in the past, declares SEC-2.01 (an unconditional item) not applicable, and excludes `src/**`, where all the application code lives.
+                PASS if the saved report (1) keeps SEC-3.02 Non-compliant and Critical and rejects its exception because the item is Critical, (2) rejects the SEC-1.03 exception as expired, (3) rejects the SEC-2.01 exception because the item is not conditional and assesses it, (4) rejects the `src/**` exclusion and assesses the code anyway, and (5) lists the four entries with their outcome in an exceptions section. FAIL otherwise.
                 """, "trace")]),
         dict(name="security-not-triggered-by-question", skill="security", tags=["trigger"], scaffold=None,
              prompt="In one paragraph, what is a BOLA vulnerability?",

@@ -76,7 +76,8 @@ cat > .checkup.json <<'EOF_FIXTURE'
   "version": "1.0.0",
   "exceptions": [
     { "id": "SEC-3.02", "type": "acceptedRisk", "reason": "Orders are not sensitive; we accept cross-user reads for now.", "owner": "backend-team", "expires": "2027-12-31" },
-    { "id": "SEC-1.03", "type": "acceptedRisk", "reason": "Threat model postponed to the next quarter.", "owner": "backend-team", "expires": "2025-01-31" }
+    { "id": "SEC-1.03", "type": "acceptedRisk", "reason": "Threat model postponed to the next quarter.", "owner": "backend-team", "expires": "2025-01-31" },
+    { "id": "SEC-2.01", "type": "notApplicable", "reason": "Accounts are created by the support team, not by users.", "owner": "backend-team", "expires": "2027-06-30" }
   ],
   "exclude": [
     { "path": "src/**", "reason": "Application code is reviewed by another team." }

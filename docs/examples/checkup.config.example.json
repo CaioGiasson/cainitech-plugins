@@ -10,10 +10,10 @@
       "reference": "https://github.com/acme/shop/issues/120"
     },
     {
-      "id": "PRIV-8.02",
+      "id": "PERF-11.02",
       "type": "notApplicable",
-      "reason": "B2B service: accounts belong to employees of client companies; the audience assessment is recorded in docs/privacy/audience.md (PRIV-8.01).",
-      "owner": "dpo@acme.example",
+      "reason": "The service calls no AI model; recommendations come from a rules table owned by the catalog team.",
+      "owner": "platform-team",
       "expires": "2027-06-30"
     }
   ],
