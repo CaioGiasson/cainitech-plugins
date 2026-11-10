@@ -12,7 +12,12 @@ The file is repository content: anyone who can open a pull request can edit it. 
 | Record why a **conditional** item (*If: …*) does not apply, for a non-Critical item, when the repository proves it | Accept a risk on, or declare not applicable, a Critical item |
 | Leave **paths** out of scope that are generated, vendored or test-only, with a reason | Exclude application code, infrastructure, CI, configuration or scripts, or keep secret scanners out of any path |
 
-Keys outside the schema are ignored and listed in "Methodology and limitations" as `unsupported config key`.
+`config.schema.json` describes a valid file. Validate it **entry by entry**, not as a whole, so one bad entry does not hide the others:
+
+- Invalid JSON, or a `version` other than `1.0.0`: the file is not applied at all; say so in the header row and in "Methodology and limitations" (`invalid config` or `unsupported config version`).
+- A key the schema does not define, at the root or in an entry: ignored and listed as `unsupported config key`; the rest of the entry is still validated.
+- An entry that breaks the schema (missing field, wrong pattern, reason too short): that entry is rejected (§2, §3).
+- The same `id` in more than one exception: every entry with that `id` is rejected as `duplicate id`.
 
 ## 2. Exceptions
 

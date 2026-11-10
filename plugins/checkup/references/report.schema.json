@@ -150,7 +150,7 @@
         "owner": { "type": "string" },
         "expires": { "type": "string" },
         "outcome": { "type": "string", "enum": ["applied", "rejected", "not needed"] },
-        "rejection": { "type": "string", "description": "why it was rejected: Critical item, expired, missing field, unknown id, contradicted by evidence" }
+        "rejection": { "type": "string", "description": "why it was rejected: Critical item, not conditional, no evidence, contradicted by evidence, expired, missing field, unknown id, duplicate id" }
       }
     },
     "exclusionOutcome": {
