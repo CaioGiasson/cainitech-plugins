@@ -30,15 +30,25 @@ Each case that needs a repository has a `scaffold.sh` that creates it (files, a 
 
 ## Running
 
-Requirements: Claude Code **2.1.269 or later**, git 2.31+, Node.js 20+ on the machine that runs the cases, and your normal Claude Code sign-in or an API key. Runs and judge calls are billed to your plan or API account. On Windows, run from WSL2: Claude Code refuses to grant Bash to eval runs on native Windows.
+Requirements: Claude Code **2.1.269 or later**, git 2.31+, Node.js 20+ on the machine that runs the cases, and your normal Claude Code sign-in or an API key. Runs and judge calls are billed to your plan or API account.
+
+**Windows:** eval runs that get Bash execute inside Claude Code's OS sandbox, and native Windows has no sandbox backend, so Claude Code refuses those runs. There is no flag to bypass it. The `checkup` and `spec` suites need Bash: run them under WSL2 or on Linux/macOS. This only affects the evals; the skills themselves run normally in Claude Code on Windows.
+
+**Tool grants:** a case's `allowed_tools` can only list read-only tools; `Bash`, `Write` and `Edit` reach the runs only through `--allow-tools` on the command line. Without the grant those tools are removed, the skills cannot work, and the "did not write" graders pass for the wrong reason. Use the grant of each plugin:
+
+| Plugin | Grant |
+|---|---|
+| `checkup` | `--allow-tools Bash Write` |
+| `spec` | `--allow-tools Bash Write Edit` |
+| `polish` | `--allow-tools Write Edit` |
 
 From a plugin folder:
 
 ```bash
 cd plugins/spec
-claude plugin eval . --scaffold --trust-plugin --tag trigger
-claude plugin eval . --scaffold --trust-plugin --case approve-dry-run --runs 1 --ablation none
-claude plugin eval . --scaffold --trust-plugin --max-cost-usd 20 --json results.json
+claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit --tag trigger
+claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit --case approve-dry-run --runs 1 --ablation none
+claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit --max-cost-usd 20 --json results.json
 ```
 
 - `--scaffold` is required: without it the fixtures are not created.
