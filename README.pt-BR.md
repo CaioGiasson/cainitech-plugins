@@ -4,12 +4,12 @@
 
 # Seu Claude, com jeito de time
 
-**Dois plugins que ensinam o Claude a trabalhar como um time experiente: da ideia à tarefa, da tarefa ao código, do código à revisão, mais um check-up de toda a sua aplicação. Você pede em português. Ele entrega.**
+**Três plugins que ensinam o Claude a trabalhar como um time experiente: da ideia à tarefa, da tarefa ao código, do código à revisão, um check-up de toda a sua aplicação e acabamento de interface para que os sites e webapps que ele constrói deixem de parecer feitos por IA. Você pede em português. Ele entrega.**
 
 <table>
 <tr>
-<td align="center" width="25%"><h3>2 plugins</h3>instale só o que precisa<br><sub><a href="#catálogo-de-skills">ver catálogo</a></sub></td>
-<td align="center" width="25%"><h3>10 skills</h3>prontas para usar<br><sub><a href="#catálogo-de-skills">ver catálogo</a></sub></td>
+<td align="center" width="25%"><h3>3 plugins</h3>instale só o que precisa<br><sub><a href="#catálogo-de-skills">ver catálogo</a></sub></td>
+<td align="center" width="25%"><h3>11 skills</h3>prontas para usar<br><sub><a href="#catálogo-de-skills">ver catálogo</a></sub></td>
 <td align="center" width="25%"><h3>512 critérios</h3>avaliados no check-up completo<br><sub><a href="#check-up-do-sistema">ver detalhes</a></sub></td>
 <td align="center" width="25%"><h3>1 mensagem</h3>para instalar, direto no chat<br><sub><a href="#como-instalar">ver instalação</a></sub></td>
 </tr>
@@ -73,11 +73,11 @@ Você não precisa aprender comandos. Precisa do **aplicativo Claude** (aba **Co
 1. Abra o aplicativo Claude e entre na aba **Code**.
 2. Cole esta mensagem no chat e envie:
 
-   > Instale os plugins do marketplace CaioGiasson/cainitech-plugins: rode `claude plugin marketplace add CaioGiasson/cainitech-plugins`, depois `claude plugin install checkup@cainitech` e `claude plugin install spec@cainitech`, e me avise quando terminar.
+   > Instale os plugins do marketplace CaioGiasson/cainitech-plugins: rode `claude plugin marketplace add CaioGiasson/cainitech-plugins`, depois `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` e `claude plugin install polish@cainitech`, e me avise quando terminar.
 
 3. Espere o Claude confirmar e abra uma **nova conversa**. As skills já aparecem quando você digita `/`.
 
-Uma mensagem. Só isso. Quer só os check-ups, ou só o fluxo de tarefas? Peça apenas o `checkup` ou apenas o `spec`.
+Uma mensagem. Só isso. Quer só os check-ups, só o fluxo de tarefas ou só as regras de interface? Peça apenas o `checkup`, o `spec` ou o `polish`.
 
 **Prefere clicar?** Com o marketplace adicionado (passo 2), clique no botão **+** ao lado da caixa de mensagem, escolha **Plugins** e depois **Add plugin** para instalar, ou **Manage plugins** para ligar, desligar, atualizar ou remover um plugin.
 
@@ -87,7 +87,7 @@ Uma mensagem. Só isso. Quer só os check-ups, ou só o fluxo de tarefas? Peça 
 
 Quando sair uma nova versão, abra **+ → Plugins → Manage plugins**, escolha o plugin e clique em **Update now**. Ou envie esta mensagem ao Claude na aba **Code**:
 
-> Atualize os plugins da cainitech: rode `claude plugin marketplace update cainitech`, depois `claude plugin update checkup@cainitech` e `claude plugin update spec@cainitech`.
+> Atualize os plugins da cainitech: rode `claude plugin marketplace update cainitech`, depois `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` e `claude plugin update polish@cainitech`.
 
 Skills novas e melhorias chegam na hora (abra uma nova conversa para carregá-las).
 
@@ -97,19 +97,30 @@ Em qualquer conversa na aba **Code**, digite `/` e escolha a skill na lista. As 
 
 > `/spec:refine` Quero que o cliente consiga baixar a fatura em PDF na tela de pagamentos.
 
+Mais exemplos, com a skill de interface:
+
+| Você digita | O que acontece |
+|---|---|
+| `/polish:ui` | Audita o projeto: encontra o design system, revisa as telas principais e lista as melhorias por impacto. |
+| `/polish:ui` minha tela de pedidos está com cara de feita por IA | Redesenha essa tela, reusando os componentes do projeto. |
+| `/polish:ui` landing page para uma padaria de bairro | Cria uma página nova a partir do seu briefing. |
+| `/polish:ui review` a página de preços | Só avalia e relata. Não altera nada. |
+| `/polish:ui system` | Cria o design system se não existir, ou organiza o que já existe. |
+
 Se preferir, só descreva o que quer. O Claude também sugere a skill certa.
 
 > As skills respondem no idioma em que você escreve. Se não conseguirem identificar, usam inglês.
 
 ## Catálogo de skills
 
-Dez skills em dois plugins. Cada uma diz o que faz e qual resultado você recebe.
+Onze skills em três plugins. Cada uma diz o que faz e qual resultado você recebe.
 
 | Plugin | Grupo | Para que serve | Skills |
 |---|---|---|---|
 | **`spec`** | **[Da ideia à tarefa](#da-ideia-à-tarefa-pronta)** | Transformar conversa solta em tarefa clara e registrada | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[Do código à entrega](#do-código-à-entrega)** | Programar, revisar e finalizar | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[Check-up do sistema](#check-up-do-sistema)** | Medir a saúde do projeto, sem alterar nada | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
+| **`polish`** | **[Acabamento de interface](#acabamento-de-interface)** | Fazer sites e webapps deixarem de parecer feitos por IA, sobre um design system reutilizável | `/polish:ui` |
 
 **O caminho completo de uma tarefa:** `/spec:from-thread` ou `/spec:refine` → `/spec:build` → `/spec:review` → você testa → `/spec:approve`.
 
@@ -149,6 +160,16 @@ Como ler a nota:
 | 50 a 69 | 🥈 Silver |
 | 25 a 49 | 🥉 Bronze |
 | 0 a 24 | 🚨 Dangerous |
+
+### Acabamento de interface
+
+**Só regras: não roda comandos nem baixa nada.** Neutra: não traz marca, paleta nem framework próprio. Ela trabalha por meio do design system do seu projeto: usa quando está saudável, melhora quando está inconsistente e cria um pequeno quando não existe, para que os componentes sejam reusados em vez de reinventados a cada tela.
+
+| Skill | O que faz | O que você recebe |
+|---|---|---|
+| **`/polish:ui`** | Cria, redesenha ou revisa sites e telas de webapp (landing pages, dashboards, tabelas, formulários, configurações). Primeiro audita o design system, depois remove os vícios visuais e de escrita que denunciam uma interface feita por IA, decidindo cada escolha a partir do seu produto e não do template de sempre. Basta descrever o que você quer; acrescente `review` para só avaliar, ou `system` para trabalhar só no design system. | Uma interface com cara de feita para o seu produto, construída com tokens e componentes compartilhados, mais um relatório curto: o que mudou no design system, por que cada escolha principal foi feita, o que foi assumido e que material você ainda precisa enviar. |
+
+<sub>Regras de site adaptadas do <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), sem os scripts, hooks e downloads dele.</sub>
 
 ## Como é o resultado de um check-up
 

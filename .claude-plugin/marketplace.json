@@ -14,6 +14,11 @@
       "name": "spec",
       "source": "./plugins/spec",
       "description": "From a loose idea to a merged change: refine tasks, implement them, review and approve — on GitHub or without it."
+    },
+    {
+      "name": "polish",
+      "source": "./plugins/polish",
+      "description": "Makes websites and web apps stop looking AI-generated: builds, redesigns or reviews pages and screens through a design system, using the project's own, improving it, or creating one when there is none."
     }
   ]
 }

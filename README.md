@@ -4,12 +4,12 @@
 
 # Your Claude, with a team's way of working
 
-**Two Claude plugins that teach it to work like an experienced team: from idea to task, from task to code, from code to review, plus a health check for your whole application. You ask in plain language. It delivers.**
+**Three Claude plugins that teach it to work like an experienced team: from idea to task, from task to code, from code to review, a health check for your whole application, plus interface polish so the sites and web apps it builds stop looking AI-made. You ask in plain language. It delivers.**
 
 <table>
 <tr>
-<td align="center" width="25%"><h3>2 plugins</h3>install only what you need<br><sub><a href="#skill-catalog">see catalog</a></sub></td>
-<td align="center" width="25%"><h3>10 skills</h3>ready to use<br><sub><a href="#skill-catalog">see catalog</a></sub></td>
+<td align="center" width="25%"><h3>3 plugins</h3>install only what you need<br><sub><a href="#skill-catalog">see catalog</a></sub></td>
+<td align="center" width="25%"><h3>11 skills</h3>ready to use<br><sub><a href="#skill-catalog">see catalog</a></sub></td>
 <td align="center" width="25%"><h3>512 criteria</h3>assessed in the full health check<br><sub><a href="#system-health-check">see details</a></sub></td>
 <td align="center" width="25%"><h3>1 message</h3>to install, right in the chat<br><sub><a href="#how-to-install">see installation</a></sub></td>
 </tr>
@@ -73,11 +73,11 @@ You don't need to learn commands. You need the **Claude app** (**Code** tab). If
 1. Open the Claude app and go to the **Code** tab.
 2. Paste this message into the chat and send it:
 
-   > Install the plugins from the marketplace CaioGiasson/cainitech-plugins: run `claude plugin marketplace add CaioGiasson/cainitech-plugins`, then `claude plugin install checkup@cainitech` and `claude plugin install spec@cainitech`, and tell me when it's done.
+   > Install the plugins from the marketplace CaioGiasson/cainitech-plugins: run `claude plugin marketplace add CaioGiasson/cainitech-plugins`, then `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` and `claude plugin install polish@cainitech`, and tell me when it's done.
 
 3. Wait for Claude to confirm and open a **new conversation**. The skills now show up when you type `/`.
 
-One message. That's it. Want only the health checks, or only the task workflow? Ask for just `checkup` or just `spec`.
+One message. That's it. Want only the health checks, only the task workflow or only the interface rules? Ask for just `checkup`, `spec` or `polish`.
 
 **Prefer clicking?** Once the marketplace is added (step 2), click the **+** button next to the prompt box, choose **Plugins** and then **Add plugin** to install, or **Manage plugins** to turn a plugin on or off, update it or remove it.
 
@@ -87,7 +87,7 @@ One message. That's it. Want only the health checks, or only the task workflow? 
 
 When a new version is released, open **+ → Plugins → Manage plugins**, choose the plugin and click **Update now**. Or send this to Claude in the **Code** tab:
 
-> Update the cainitech plugins: run `claude plugin marketplace update cainitech`, then `claude plugin update checkup@cainitech` and `claude plugin update spec@cainitech`.
+> Update the cainitech plugins: run `claude plugin marketplace update cainitech`, then `claude plugin update checkup@cainitech`, `claude plugin update spec@cainitech` and `claude plugin update polish@cainitech`.
 
 New skills and improvements arrive right away (start a new conversation to load them).
 
@@ -97,19 +97,30 @@ In any conversation in the **Code** tab, type `/` and pick the skill from the li
 
 > `/spec:refine` I want customers to be able to download their invoice as a PDF on the payments screen.
 
+More examples, with the interface skill:
+
+| You type | What happens |
+|---|---|
+| `/polish:ui` | Audits the project: finds the design system, reviews the main screens and lists the improvements by impact. |
+| `/polish:ui` my orders screen looks AI-made | Redesigns that screen, reusing the project's components. |
+| `/polish:ui` landing page for a neighborhood bakery | Builds a new page from your brief. |
+| `/polish:ui review` the pricing page | Only assesses and reports. Changes nothing. |
+| `/polish:ui system` | Creates the design system if there is none, or tidies up the existing one. |
+
 Or just describe what you want. Claude also suggests the right skill.
 
 > The skills reply in the language you write in. If they can't tell, they use English.
 
 ## Skill catalog
 
-Ten skills in two plugins. Each one says what it does and what result you get.
+Eleven skills in three plugins. Each one says what it does and what result you get.
 
 | Plugin | Group | What it's for | Skills |
 |---|---|---|---|
 | **`spec`** | **[From idea to task](#from-idea-to-ready-task)** | Turn loose conversation into a clear, recorded task | `/spec:from-thread` · `/spec:refine` |
 | **`spec`** | **[From code to delivery](#from-code-to-delivery)** | Build, review and finish | `/spec:build` · `/spec:review` · `/spec:approve` |
 | **`checkup`** | **[System health check](#system-health-check)** | Measure project health, changing nothing | `/checkup:security` · `/checkup:performance` · `/checkup:privacy` · `/checkup:ai-readiness` · `/checkup:full` |
+| **`polish`** | **[Interface polish](#interface-polish)** | Make sites and web apps stop looking AI-made, on a reusable design system | `/polish:ui` |
 
 **A task's full path:** `/spec:from-thread` or `/spec:refine` → `/spec:build` → `/spec:review` → you test → `/spec:approve`.
 
@@ -149,6 +160,16 @@ How to read the score:
 | 50 to 69 | 🥈 Silver |
 | 25 to 49 | 🥉 Bronze |
 | 0 to 24 | 🚨 Dangerous |
+
+### Interface polish
+
+**Rules only: it runs no commands and downloads nothing.** Neutral: it brings no brand, palette or framework of its own. It works through your project's design system: uses it when it is healthy, improves it when it is inconsistent, and creates a small one when there is none, so components are reused instead of re-invented on every screen.
+
+| Skill | What it does | What you get |
+|---|---|---|
+| **`/polish:ui`** | Builds, redesigns or reviews websites and web app screens (landing pages, dashboards, tables, forms, settings). First it audits the design system, then it removes the visual and writing habits that give AI-made interfaces away, deciding each choice from your product instead of from the usual template. Just describe what you want; add `review` to only assess, or `system` to work on the design system alone. | An interface that reads as made for your product, built from shared tokens and components, plus a short report: what changed in the design system, why each main choice was made, what was assumed and what material you still need to supply. |
+
+<sub>Site rules adapted from <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), without its scripts, hooks or downloads.</sub>
 
 ## What a health-check result looks like
 
