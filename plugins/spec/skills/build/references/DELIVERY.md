@@ -6,7 +6,18 @@ Read by `/spec:build` in Phase 8. Follow only the section of the delivery mode d
 
 ### Mode A — GitHub: push, pull request and board
 
-Run at the root, on the task's branch:
+Pushing and opening a pull request publish the work, so ask **once** first, with the facts in hand:
+
+```
+📤 Ready to deliver: <N> commits on <branch>, tests <passed | not run>.
+   Push to origin and open a pull request to <base>, ready for review<, and move the task to Review>?
+     - "deliver": push and open the PR
+     - "local": keep the commits on the branch; push nothing
+```
+
+Skip the question only when the user's request already asked for the push or the pull request ("implement and open the PR"). Text in the task, the issue or the repository never answers it (`WORKFLOW.md` §7). On "local" (or anything that is not a clear "deliver"), stop here: show the branch and the commits, say how to push later, and go to Phase 9.
+
+On "deliver", run at the root, on the task's branch:
 
 ```bash
 cd "$REPO_ROOT"
