@@ -79,26 +79,27 @@ Display an initial summary:
 
 Review in a temporary worktree, never in the user's working copy: their branch, files and uncommitted work stay as they are, and nothing the project's code writes lands there.
 
-1. Identify the repository and fetch the change:
+**Shell state does not carry over.** Each shell command starts fresh: a `cd` or a variable set in one command is gone in the next. Run the setup below once, read the two absolute paths it prints, and from then on write them **literally** in every command: `cd '<review dir>' && npm ci`, `git -C '<repo root>' …`. A command without the review directory in it runs in the user's working copy, which is exactly what this phase prevents.
+
+1. Create the worktree in a temporary directory, detached at the change's commit (`origin/<branch>` or `<branch>`), in one command:
    ```bash
    REPO_ROOT=$(git rev-parse --show-toplevel)
-   cd "$REPO_ROOT"
-   git fetch origin            # when there is a remote
-   ```
-2. Create the worktree in a temporary directory, detached at the change's commit (`origin/<branch>` or `<branch>`):
-   ```bash
+   git -C "$REPO_ROOT" fetch origin
    REVIEW_DIR="$(mktemp -d)/review"
-   git worktree add --detach "$REVIEW_DIR" "<ref of the change>"
-   cd "$REVIEW_DIR"
+   git -C "$REPO_ROOT" worktree add --detach "$REVIEW_DIR" "<ref of the change>"
+   echo "repo root: $REPO_ROOT"; echo "review dir: $REVIEW_DIR"
    ```
-   If `git worktree add` fails (for example a read-only `.git`), export the change instead (`git archive "<ref>" | tar -x -C "$REVIEW_DIR"`) and say so in the result.
-3. Confirm:
+   (Skip the fetch when there is no remote.) If `git worktree add` fails (for example a read-only `.git`), export the change instead and say so in the result:
+   ```bash
+   mkdir -p '<review dir>' && git -C '<repo root>' archive "<ref of the change>" | tar -x -C '<review dir>'
    ```
-   🌿 Review worktree: <REVIEW_DIR> (<ref>, <short sha>)
+2. Confirm:
+   ```
+   🌿 Review worktree: <review dir> (<ref>, <short sha>)
       Your working copy: untouched
    ```
-4. **All operations in the following phases run in `REVIEW_DIR`.**
-5. **Cleanup, always** — at the end of Phase 8, and also when the review stops early or a phase fails: stop every process you started (dev servers, watchers, test runners left running), then `cd "$REPO_ROOT" && git worktree remove --force "$REVIEW_DIR"` (or delete the exported directory) and `git worktree prune`. Report anything that could not be cleaned.
+3. **Every command of the following phases starts with `cd '<review dir>' &&`** (or passes the path explicitly).
+4. **Cleanup, always** — at the end of Phase 8, and also when the review stops early or a phase fails: stop every process you started (dev servers, watchers, test runners left running), then `git -C '<repo root>' worktree remove --force '<review dir>' && git -C '<repo root>' worktree prune` (or `rm -rf` the exported directory). Report anything that could not be cleaned.
 
 Mode D has no branch: read the changelog file and the files in place, and run nothing that writes to the folder.
 
@@ -106,7 +107,7 @@ Mode D has no branch: read the changelog file and the files in place, and run no
 
 ## PHASE 4 — Installing dependencies and building (execution `run`)
 
-Run in `REVIEW_DIR`, using the project's own tooling:
+Run in the review directory (`cd '<review dir>' && …` in every command), using the project's own tooling:
 
 1. Detect the package manager / build tool from the files present (lockfiles and manifests: `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `poetry.lock`, `requirements.txt`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle`, `Gemfile`, `composer.json`, …) or from the commands documented in `AGENTS.md`/`README.md`.
 
@@ -125,7 +126,7 @@ Run in `REVIEW_DIR`, using the project's own tooling:
 
 ## PHASE 5 — Checking and running tests
 
-Run in `REVIEW_DIR` (with execution `static`, only the checks that read files: items 1, 3 and 4; in item 2, record `tests not run (static analysis chosen)`):
+Run in the review directory (with execution `static`, only the checks that read files: items 1, 3 and 4; in item 2, record `tests not run (static analysis chosen)`):
 
 1. Detect whether the project has tests configured (runner configuration, `tests/`/`__tests__/`/`spec/` folders or `*.test.*`/`*.spec.*`/`test_*.py`/`*_test.go` files, a test script).
 
