@@ -380,6 +380,13 @@ def check_evals():
         for grader in graders:
             if not re.search(r"^type: (regex|tool_used|tool_order|file_exists|llm|baseline)$", frontmatter(files[grader]) or "", re.M):
                 errors.append(f"{grader}: 'type' ausente ou inválido")
+            if re.search(r"[\x00-\x08\x0b-\x1f]", files[grader]):
+                errors.append(f"{grader}: caractere de controle (escape perdido numa string sem r'')")
+            for field in re.findall(r"^(?:input_match|pattern): '(.*)'$", files[grader], re.M):
+                try:
+                    re.compile(field)
+                except re.error as exc:
+                    errors.append(f"{grader}: regex inválida ({exc})")
         script = re.search(r"scaffold_script: (\S+)", files.get(f"{case}/case.yaml", ""))
         if script and f"{case}/{script.group(1)}" not in files:
             errors.append(f"{case}/case.yaml: scaffold inexistente {script.group(1)}")
