@@ -3,6 +3,7 @@
 Uso: python3 -X utf8 scripts/validate.py [--fingerprints]
 """
 
+import datetime
 import glob
 import hashlib
 import json
@@ -290,6 +291,10 @@ def check_config_example():
         return
     pillars = {"SEC": "security", "PERF": "performance", "PRIV": "privacy", "AIR": "ai-readiness"}
     for exception in example.get("exceptions", []):
+        try:
+            datetime.date.fromisoformat(exception["expires"])
+        except ValueError:
+            errors.append(f"{CONFIG_EXAMPLE}: {exception['id']} expira numa data inexistente ({exception['expires']})")
         _, blocks = catalog_items(pillars[exception["id"].split("-")[0]])
         severities = {re.match(r"#### (\S+)", b).group(1): re.search(r"^\*\*(Critical|Important|Minor)\*\*", b, re.M).group(1) for b in blocks}
         if exception["id"] not in severities:
