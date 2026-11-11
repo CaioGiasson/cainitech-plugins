@@ -34,6 +34,7 @@ Cases tagged `threat:T<n>` cover an abuse case of the [threat model](THREAT-MODE
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `spec:review` cases after the isolated reviewer, plugin arm only, 1 run | 2 of 3 passed. The subagent got only the reference (`isolated-reviewer` passed) and refused a change with no criteria. `review-missing-critical-test` failed: the review rated the untested refund 🟡, because Phase 5 called a missing test Important while Phase 8 calls it a Blocker on a critical flow (fixed in the skill) | US$ 1.83 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | `review-missing-critical-test` after the fix, plugin arm only, 1 run | passed (3 of 3 graders); the reply kept every How to fix block | US$ 0.86 |
 | 2026-11-10 | 2.1.322 (WSL2, Ubuntu 22.04) | after 1.2.0 (skills in layers, tools, `.checkup.json`): `security-finds-bola`, `checkup-config-exceptions`, `review-missing-critical-test`, `review-refuses-without-criteria`, `approve-asks-before-merge`, `build-dry-run`, `refine-triggers-and-records`; plugin arm only, 1 run | 7 of 7 passed | US$ 8.61 |
+| 2026-11-11 | 2.1.322 (WSL2, Ubuntu 22.04) | 1.3.0, `checkup` block, plugin arm only, 1 run (commit `78d4df9`) | `security-finds-bola` passed (828 s). `checkup-static-mode` failed for eval reasons: the report-writing script quoted `npm test` and the `no-project-code` grader matched the text (no project command ran; fixed: the grader now matches only a command that starts with it), and the run hit the 1800 s limit after 99 tool calls (`checkup` slow cases now get 3600 s) | US$ 8.63 |
 
 ## Fixtures
 
@@ -70,6 +71,8 @@ claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit Age
 ## Known limits
 
 - The cases run in local Git mode (no GitHub): pending CI on GitHub, board moves and PR comments are not exercised.
+- A WSL2 terminal started from Git Bash inherits Windows folders in `PATH`; some of them (such as `WindowsApps`) cannot be listed, and the Bash sandbox refuses to start (`a PATH directory could not be examined … (EACCES)`). Drop them first: `export PATH="$(printf '%s' "$PATH" | tr ':' '
+' | grep -v '^/mnt/' | paste -sd:)"`.
 - Each case is a single turn: nothing answers the confirmations of `spec:approve`, so the steps after a confirmation (the merge itself, branch deletion) are not exercised by the evals. Test them by hand on a fixture before a release (see `docs/CASE-STUDIES.md`, scenario 2). Skills that ask questions (`spec:refine`) are told in the prompt to decide with their defaults and record the assumptions, or they would stop waiting for an answer.
 - The eval sandbox makes `.git` read-only: `git switch` and `git merge` fail inside a run. `review` and `approve` fall back to reading the branch with `git archive` or `git diff`, so the checkout path itself is only exercised by hand.
 - To see why a `tool_used` grader failed, re-run the case with `--keep-temp`: the report keeps evidence only for LLM graders, and the run's `trace.jsonl` is deleted at the end unless that flag is set.
