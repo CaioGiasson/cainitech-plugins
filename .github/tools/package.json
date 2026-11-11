@@ -1,0 +1,8 @@
+{
+  "name": "cainitech-plugins-ci-tools",
+  "private": true,
+  "description": "Ferramentas do CI com versões e integridade travadas no package-lock.json.",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "2.1.114"
+  }
+}

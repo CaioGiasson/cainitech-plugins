@@ -14,6 +14,10 @@ scaffold="$root/plugins/$1/evals/$2/scaffold.sh"
 target="$3"
 
 if [ ! -f "$scaffold" ]; then
+  # as suítes não são versionadas: gera a partir de scripts/generate_evals.py
+  python3 -X utf8 "$root/scripts/generate_evals.py" >/dev/null
+fi
+if [ ! -f "$scaffold" ]; then
   echo "Caso sem fixture: $scaffold" >&2
   exit 1
 fi

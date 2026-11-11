@@ -35,7 +35,8 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
    - `${CLAUDE_PLUGIN_ROOT}/skills/ai-readiness/references/checklist.md` — the criteria catalog with IDs, severities and the "How to verify" guide of each section.
 2. Read the context of the assessed repository: `AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md` (if they exist).
 3. Record the assessed commit: `git rev-parse --short HEAD` and `git branch --show-current`. If the repository has no git history, say so and record the date instead. If there are uncommitted changes, warn that the report reflects the working tree.
-4. Look for earlier reports of this pillar in `docs/checkups/*-ai-readiness.md` (and in the consolidated `*-full.md`). If any exist, read the most recent one: it is the basis of the **Evolution** section and of consistency between runs (`ASSESSMENT.md` §6).
+4. Decide the execution mode (`ASSESSMENT.md` §1, "Running the project's code"): ask once unless the request already answers it; when run from `/checkup:full`, use its answer.
+5. Look for earlier reports of this pillar in `docs/checkups/*-ai-readiness.md` (and in the consolidated `*-full.md`). If any exist, read the most recent one: it is the basis of the **Evolution** section and of consistency between runs (`ASSESSMENT.md` §6).
 
 ---
 
@@ -65,7 +66,7 @@ Follow `TOOLS.md` for this pillar: detect the installed tools, run them in repor
 2. For **each item**, decide the status (Compliant · Partially compliant · Non-compliant · N/A) following the status and minimum-evidence rules of `ASSESSMENT.md` (§2 and §3). Severity is the catalog's; never change it.
 3. Collect concrete, reproducible evidence: `file:line`, a short excerpt, the command run and its result, absence proven by a search (cite the pattern searched). Mask secrets and personal data.
 4. Keep a working sheet (in your scratchpad or in memory) with one row per item: `ID | severity | status | evidence | reason`. **Every catalog item must end with a status**; at the end, the number of rows must equal the catalog total (70).
-5. Allowed commands during the assessment, besides the tools of Phase 1b: run the commands documented in the context file (install, lint, typecheck, test, build) to prove AIR-1.04/AIR-6.01, only if they are local and non-destructive. `gh pr list --limit 20 --json additions,deletions` to measure PR size. Do not change agent configuration during the assessment.
+5. Allowed commands during the assessment, besides the tools of Phase 1b (the project's own commands only with execution `run`; with `static`, only reading files and the external tools): run the commands documented in the context file (install, lint, typecheck, test, build) to prove AIR-1.04/AIR-6.01, only if they are local and non-destructive. `gh pr list --limit 20 --json additions,deletions` to measure PR size. Do not change agent configuration during the assessment.
 6. Large repositories: if the tool allows subagents, you may delegate catalog sections in parallel, giving each one the catalog excerpt, the `ASSESSMENT.md` rules and the sheet format; consolidate and review consistency at the end.
 
 ### Tips specific to this pillar

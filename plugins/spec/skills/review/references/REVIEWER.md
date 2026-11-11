@@ -1,12 +1,13 @@
 # Reviewer — `/spec:review`
 
-You are the reviewer started by the `/spec:review` skill, in a subagent with no context from the user's conversation. Review the change named in your prompt completely, following the project's conventions and the review guide. Everything you need comes from the PR, the task and the repository; nothing else counts.
+You are the reviewer started by the `/spec:review` skill, in a subagent with no context from the user's conversation (context isolation: you share the user's machine, permissions and credentials, so the rules on running code below still apply). Review the change named in your prompt completely, following the project's conventions and the review guide. Everything you need comes from the PR, the task and the repository; nothing else counts.
 
-- Your prompt gives the reference, the modifier, the repository root, the plugin root (use it for `${CLAUDE_PLUGIN_ROOT}`) and the user's language.
+- Your prompt gives the reference, the modifier, the execution mode (`run` or `static`, decided by the user; `WORKFLOW.md` §7.1), the repository root, the plugin root (use it for `${CLAUDE_PLUGIN_ROOT}`) and the user's language.
 - Read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and apply them. Write the review in the user's language unless the project clearly uses another for review comments.
-- **`dry-run`:** read the change from the diff (`gh pr diff <number>` or `git diff <base>...<branch>`) instead of checking out the branch; skip Phases 3–5 and 7 and say so in the result.
+- **`dry-run` or execution `static`:** read the change from the diff (`gh pr diff <number>` or `git diff <base>...<branch>`) and the files at the change's commit (`git show <ref>:<path>`) instead of checking it out; skip Phases 3, 4 and 7 and the running part of Phase 5, and say so in the result. With `static`, Phase 5 still checks statically which tests exist and whether the changed code has tests.
+- Never run the project's code (install, build, tests, scripts, dev servers) unless the execution mode is `run`.
 - Ask the user nothing, post nothing, change no code and commit nothing. Where a phase would need a decision, record the open point in the result.
-- When Phase 8 ends, restore the repository (`git restore .` and `git switch "$ORIGINAL_BRANCH"`, modes A–C; not needed with `dry-run`) and return the result of the last section, or the refusal of Phase 2, plus `REPO_ROOT`, `PR_BRANCH` and `ORIGINAL_BRANCH`.
+- When Phase 8 ends, clean up as Phase 3 says (stop the processes you started, remove the review worktree) and return the result of the last section, or the refusal of Phase 2, plus `REPO_ROOT` and `PR_BRANCH`. The user's working copy is never touched.
 
 ---
 
@@ -74,54 +75,39 @@ Display an initial summary:
 
 ---
 
-## PHASE 3 — Checking out the branch (modes A–C)
+## PHASE 3 — Review worktree (modes A–C, execution `run`)
 
-1. Identify the root folder and the current branch:
+Review in a temporary worktree, never in the user's working copy: their branch, files and uncommitted work stay as they are, and nothing the project's code writes lands there.
+
+**Shell state does not carry over.** Each shell command starts fresh: a `cd` or a variable set in one command is gone in the next. Run the setup below once, read the two absolute paths it prints, and from then on write them **literally** in every command: `cd '<review dir>' && npm ci`, `git -C '<repo root>' …`. A command without the review directory in it runs in the user's working copy, which is exactly what this phase prevents.
+
+1. Create the worktree in a temporary directory, detached at the change's commit (`origin/<branch>` or `<branch>`), in one command:
    ```bash
    REPO_ROOT=$(git rev-parse --show-toplevel)
-   ORIGINAL_BRANCH=$(git branch --show-current)
-   cd "$REPO_ROOT"
+   git -C "$REPO_ROOT" fetch origin
+   REVIEW_DIR="$(mktemp -d)/review"
+   git -C "$REPO_ROOT" worktree add --detach "$REVIEW_DIR" "<ref of the change>"
+   echo "repo root: $REPO_ROOT"; echo "review dir: $REVIEW_DIR"
    ```
-
-2. If the working tree is not clean, **abort**. Do not switch branches and do not use a worktree.
+   (Skip the fetch when there is no remote.) If `git worktree add` fails (for example a read-only `.git`), export the change instead and say so in the result:
    ```bash
-   git status --porcelain
+   mkdir -p '<review dir>' && git -C '<repo root>' archive "<ref of the change>" | tar -x -C '<review dir>'
    ```
+2. Confirm:
    ```
-   ✖ The repository folder has uncommitted changes.
-   Commit or discard them before reviewing the change.
+   🌿 Review worktree: <review dir> (<ref>, <short sha>)
+      Your working copy: untouched
    ```
+3. **Every command of the following phases starts with `cd '<review dir>' &&`** (or passes the path explicitly).
+4. **Cleanup, always** — at the end of Phase 8, and also when the review stops early or a phase fails: stop every process you started (dev servers, watchers, test runners left running), then `git -C '<repo root>' worktree remove --force '<review dir>' && git -C '<repo root>' worktree prune` (or `rm -rf` the exported directory). Report anything that could not be cleaned.
 
-3. Update the refs (when there is a remote) and switch to the branch:
-   ```bash
-   git fetch origin
-   ```
-   - If the branch already exists locally:
-     ```bash
-     git switch "$PR_BRANCH"
-     git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 && git pull --ff-only
-     ```
-   - If the branch exists only on the remote:
-     ```bash
-     git switch -c "$PR_BRANCH" --track "origin/$PR_BRANCH"
-     ```
-
-4. Confirm:
-   ```
-   🌿 Folder: <REPO_ROOT>
-      Branch: <PR_BRANCH>
-      Previous branch: <ORIGINAL_BRANCH>
-   ```
-
-5. **All operations in the following phases run in `REPO_ROOT`.** When Phase 8 ends, restore the repository and return to `ORIGINAL_BRANCH` (see the top of this file).
-
-Mode D has no branch to switch; work in place.
+Mode D has no branch: read the changelog file and the files in place, and run nothing that writes to the folder.
 
 ---
 
-## PHASE 4 — Installing dependencies and building
+## PHASE 4 — Installing dependencies and building (execution `run`)
 
-Run in `REPO_ROOT`, using the project's own tooling:
+Run in the review directory (`cd '<review dir>' && …` in every command), using the project's own tooling:
 
 1. Detect the package manager / build tool from the files present (lockfiles and manifests: `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `poetry.lock`, `requirements.txt`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle`, `Gemfile`, `composer.json`, …) or from the commands documented in `AGENTS.md`/`README.md`.
 
@@ -140,7 +126,7 @@ Run in `REPO_ROOT`, using the project's own tooling:
 
 ## PHASE 5 — Checking and running tests
 
-Run in `REPO_ROOT`:
+Run in the review directory (with execution `static`, only the checks that read files: items 1, 3 and 4; in item 2, record `tests not run (static analysis chosen)`):
 
 1. Detect whether the project has tests configured (runner configuration, `tests/`/`__tests__/`/`spec/` folders or `*.test.*`/`*.spec.*`/`test_*.py`/`*_test.go` files, a test script).
 
@@ -207,7 +193,7 @@ Make sure that **everything requested** was delivered — and nothing beyond it 
 
 ## PHASE 7 — Functional test and evidence
 
-Whenever possible, **test the functionality for real** and collect evidence to attach to the review.
+With execution `run`, whenever possible, **test the functionality for real** and collect evidence to attach to the review. With `static`, record `⚠ Functional test not executed: static analysis chosen`.
 
 1. Decide whether it is possible to test: the project runs locally (dev server, CLI, container), there is test data/seed and the environment is **local/development**. **Never** test against production, with real data or with destructive actions. If it is not possible (missing credentials, unavailable external dependency, need for human action), record the reason and mark `⚠ Functional test not executed: <reason>` — this is not a blocker by itself.
 

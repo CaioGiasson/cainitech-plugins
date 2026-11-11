@@ -2,6 +2,34 @@
 
 Versions follow [Semantic Versioning](https://semver.org). Each plugin has its own `version` in `plugins/<plugin>/.claude-plugin/plugin.json`; an entry lists the plugins it changes.
 
+## 1.3.0 — 2026-11-11
+
+`checkup` 1.3.0 · `spec` 1.3.0 · `polish` 1.1.1
+
+Answers an external security and quality audit (findings F-01 to F-12).
+
+### Changed
+
+- **One question before running the project's code** (`spec` `WORKFLOW.md` §7.1, `checkup` `ASSESSMENT.md` §1). Installing, building and testing run code the repository controls, with the user's credentials. `review`, `approve`, `build` and the `checkup` pillars ask once per run: `run` (the repository is trusted) or `static` (run nothing from the project). The question is skipped when the request already says the repository is trusted. With `static`, every check that needed a command says it was not run; `approve` never merges; the external scanners of `checkup` still run.
+- **`spec:review` and `spec:approve` work in a temporary worktree** and remove it at the end, also when they stop early. The review, the install, the build and the tests no longer switch or touch the user's working copy; only the fixes the user asks for in `review` and the local merge of `approve` (modes B–C) switch branches there, after checking that it is clean. Shell state does not carry over between commands, so every command names the worktree path explicitly. The reviewer is described as isolated from the conversation, not from the machine.
+- **`spec:build` asks before pushing and opening the pull request**, once, at delivery, unless the request asked for it.
+- **`checkup:full` runs Security before the other pillars**: `PRIV-12.01` uses the Security result.
+- **Exception dates checked by command** (`CONFIG.md` §2): calendar date, after today, at most 12 months ahead; `config.schema.json` accepts only real month and day numbers.
+- **Eval suites are no longer committed** inside the plugins: `scripts/generate_evals.py` writes them on demand and `scripts/validate.py` checks them in memory and fails if they are committed. Installing a plugin no longer copies 190 test files with planted instructions and fake secrets. This is the only change in `polish` 1.1.1.
+- `docs/COMPATIBILITY.md` separates "manifest accepted", "skill run" and "end to end" per surface and system.
+
+### Added
+
+- Evals `review-asks-before-running` and `checkup-static-mode` (threat model T8); prompts of the cases that run project code state that the repository is trusted. 43 cases.
+- `scripts/validate.py`: rejects JSON Schema keywords outside the subset it implements, tests that its schema validator rejects a broken report, checks that the marketplace lists exactly the plugin folders with matching names and that each plugin's version appears in this changelog, and that exception dates exist.
+- CI installs Claude Code from `.github/tools/package-lock.json` (`npm ci`, integrity hashes) and also runs on pushes to `main`.
+- `docs/EVALS.md`: rules for reproducible runs (pinned models, kept traces, three runs of the abuse cases, commit and version per row).
+
+### Not changed, on purpose
+
+- No process sandbox: a plugin of instructions cannot provide one. `static` mode and a disposable container or VM are the documented answers for untrusted repositories (threat model T8).
+- No SAST/SCA in this repository's CI: it has no dependencies to scan. No evals in CI: they need an API key in GitHub.
+
 ## 1.2.0 — 2026-11-10
 
 `checkup` 1.2.0 · `spec` 1.2.0 · `polish` 1.1.0 (unchanged)

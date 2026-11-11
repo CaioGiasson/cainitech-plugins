@@ -44,7 +44,7 @@ cainitech-plugins/
 │   │   │   ├── PR_REVIEW_EXAMPLES.md # its code examples and model comments, read on demand
 │   │   │   └── STYLE.md            # communication style (identical in every plugin)
 │   │   └── skills/
-│   │       ├── refine/  from-thread/  build/  review/  approve/   # SKILL.md + references/ read on demand (review: REVIEWER.md for the isolated reviewer)
+│   │       ├── refine/  from-thread/  build/  review/  approve/   # SKILL.md + references/ read on demand (review: REVIEWER.md for the context-isolated reviewer)
 │   └── polish/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # MIT notice of taste-skill, the source of the adaptation
@@ -132,7 +132,7 @@ Every skill reads `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` and applies it to 
 1. Create `plugins/<plugin>/skills/<name>/SKILL.md` with the frontmatter below. The folder name is the skill name.
 2. Put long reference material in `plugins/<plugin>/skills/<name>/references/` and reference it with `${CLAUDE_PLUGIN_ROOT}/skills/<name>/references/<file>`.
 3. Add the Language rule if the skill talks to the user, and the line that reads `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` (required by `scripts/validate.py`).
-4. Add at least three eval cases in `plugins/<plugin>/evals/` tagged `skill:<name>` ([EVALS.md](EVALS.md)): one that should trigger, one similar prompt that should not, and one for its main rule or limit.
+4. Add at least three eval cases in `scripts/generate_evals.py` tagged `skill:<name>` ([EVALS.md](EVALS.md)): one that should trigger, one similar prompt that should not, and one for its main rule or limit.
 5. Validate (see below), bump the plugin `version`, commit.
 
 ```markdown

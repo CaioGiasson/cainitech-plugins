@@ -2,12 +2,14 @@ name: CI
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.head_ref }}
+  group: ci-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -19,8 +21,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Instalar o Claude Code (versão fixa)
-        run: npm install -g @anthropic-ai/claude-code@2.1.114
+      - name: Instalar o Claude Code (versão e integridade travadas no lockfile)
+        run: |
+          npm ci --prefix .github/tools --no-audit --no-fund
+          echo "$PWD/.github/tools/node_modules/.bin" >> "$GITHUB_PATH"
 
       - name: Validar marketplace e plugins
         run: |
@@ -31,9 +35,6 @@ jobs:
 
       - name: Validações estruturais (catálogos, referências, skills, estilo, links, arquivos proibidos)
         run: python3 -X utf8 scripts/validate.py
-
-      - name: Suítes de eval em dia com o gerador
-        run: python3 -X utf8 scripts/generate_evals.py --check
 
       - name: Procurar segredos no histórico (gitleaks, versão e checksum fixos)
         env:

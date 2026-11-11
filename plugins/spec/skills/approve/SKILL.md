@@ -72,10 +72,17 @@ Decide the delivery mode (`WORKFLOW.md` §5).
 
 **`dry-run`:** skip this phase. Read the diff instead (Input), record `REVIEWED_SHA` from the change's ref without checking it out (`gh pr view <number> --json headRefOid --jq .headRefOid`, or `git rev-parse "$PR_BRANCH"`), and state in the result that build and tests were not run.
 
-1. Confirm that the working tree is clean (`git status --porcelain`); if it is not, **abort** without switching branches. (Mode D: skip.)
-2. Record `ORIGINAL_BRANCH`, update refs when there is a remote (`git fetch origin`) and switch to the change's branch (creating it with `--track` if it exists only on the remote; `git pull --ff-only` if it exists locally).
-   Right after that, record the **full** commit being reviewed: `REVIEWED_SHA="$(git rev-parse HEAD)"` (40 characters; `--match-head-commit` does not accept a short SHA). Everything this skill reviews, shows in the plan and merges is `REVIEWED_SHA`, never a head read later.
-3. Install the dependencies and run the build and tests with the project's own tooling (`npm ci`/`npm install`, `npm run build`, `npm test`, plus lint and typecheck when they exist; or the equivalents for the stack). A failing build, lint, typecheck or test is a **blocker**.
+1. **Execution mode** (`WORKFLOW.md` §7.1): ask the question once, unless the request already answers it. With `static`, skip item 3 below (worktree, install, build, tests), read the change from the diff and the files at its commit, record `REVIEWED_SHA` as in `dry-run`, and treat the run as `no-merge`: a change whose build and tests were not run is never merged by this skill. Say so in the result.
+2. Update refs when there is a remote (`git fetch origin`) and fix the ref of the change: `CHANGE_REF` is `origin/<PR_BRANCH>` when there is a remote, otherwise `<PR_BRANCH>`. Record the **full** commit being reviewed: `git rev-parse "<CHANGE_REF>"` (40 characters: `--match-head-commit` does not accept a short SHA) and write it down as `REVIEWED_SHA`. Everything this skill reviews, shows in the plan and merges is `REVIEWED_SHA`, never a head read later, and every later state check reads the same `CHANGE_REF`.
+3. Check the commit out in a **temporary worktree**, never in the user's working copy (Mode D: skip; work in place and run nothing that writes to the folder). Shell state does not carry over between commands, so create it in one command, read the paths it prints, and write them literally afterwards (`cd '<review dir>' && npm ci`, `git -C '<repo root>' …`):
+   ```bash
+   REPO_ROOT=$(git rev-parse --show-toplevel)
+   REVIEW_DIR="$(mktemp -d)/approve"
+   git -C "$REPO_ROOT" worktree add --detach "$REVIEW_DIR" "<REVIEWED_SHA>"
+   echo "repo root: $REPO_ROOT"; echo "review dir: $REVIEW_DIR"
+   ```
+   If `git worktree add` fails, export the commit instead (`mkdir -p '<review dir>' && git -C '<repo root>' archive '<REVIEWED_SHA>' | tar -x -C '<review dir>'`) and say so. Install, build and test there with the project's own tooling, every command starting with `cd '<review dir>' &&` (`npm ci`/`npm install`, `npm run build`, `npm test`, plus lint and typecheck when they exist; or the equivalents for the stack). A failing build, lint, typecheck or test is a **blocker**.
+   **Cleanup, always** (after Phase 3, and whenever the skill stops early): stop the processes you started, then `git -C '<repo root>' worktree remove --force '<review dir>' && git -C '<repo root>' worktree prune` (or `rm -rf` the exported directory).
 4. Check whether the change has corresponding tests (absence on a critical flow is a blocker; on a secondary flow it is important).
 
 ---
@@ -108,11 +115,7 @@ For each 🔴 and 🟡 prepare the **How to fix** block (where, what and why, st
 
 ### Path A — there is at least one 🔴 or 🟡
 
-1. Return to the original branch without changing anything (`dry-run`: nothing to restore):
-   ```bash
-   git restore .        # only tracked files changed by install/build/tests
-   git switch "$ORIGINAL_BRANCH"
-   ```
+1. Make sure the review worktree of Phase 2 was cleaned up (`dry-run` and `static`: nothing to clean). The user's working copy was never touched.
 2. Inform the user, **in the chat only**:
    ```
    ⛔ Change not approved for merge — <N> blocking, <M> important
@@ -140,12 +143,12 @@ Go to Phase 5.
 
 ## PHASE 5 — Integration and cleanup (Path B only)
 
-First restore the working tree and return to the original branch (as in Path A, step 1). Then, by delivery mode.
+First make sure the review worktree was cleaned up (Path A, step 1). With execution `static`, follow `no-merge`. Then, by delivery mode.
 
 ### Confirmation rules
 
 - Each confirmation is a question in the chat, followed by a stop until the user answers. Proceed only on a reply that names one of the options the question offers, or on an unambiguous equivalent of exactly one of them. When the question offers more than one positive option ("merge" and "approve only"), a generic yes ("yes", "ok", "go ahead") is ambiguous: ask which option. When it offers a single positive option, a generic yes counts as that option. Anything else (silence, a question, "maybe", a change request) is a no: skip the step and record it as skipped.
-- **State check.** Immediately before executing the first confirmed action, and again immediately before the merge, read the current state (mode A: `gh pr view <number> --json headRefOid,mergeable` and `gh pr checks <number>`; modes B–C: `git rev-parse "$PR_BRANCH"`):
+- **State check.** Immediately before executing the first confirmed action, and again immediately before the merge, read the current state (mode A: `gh pr view <number> --json headRefOid,mergeable` and `gh pr checks <number>`; modes B–C: `git fetch origin` when there is a remote, then `git rev-parse "<CHANGE_REF>"`, the same ref used to record `REVIEWED_SHA`):
   - head different from `REVIEWED_SHA` → **stop without any further action** and say that new commits arrived after the review; they were not reviewed, so `/spec:approve` must run again;
   - CI failing or pending, or the change no longer mergeable → **stop**, report it as a blocker and take no further action;
   - anything else in the plan changed (target branch, label, board) → show the new plan and ask again.

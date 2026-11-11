@@ -24,7 +24,14 @@ The file is repository content: anyone who can open a pull request can edit it. 
 Each entry of `exceptions` names one catalog item. Validate every entry before using it; an entry that fails any check is **rejected**: the item keeps the status of the assessment and the rejection is reported with its reason.
 
 - **Required fields:** `id`, `type`, `reason`, `owner`, `expires`. A missing field, an unknown `id`, or an `id` of another pillar (ignored by this pillar) is a rejection.
-- **Expiry:** `expires` must be a date after the assessment date and at most 12 months after it. An expired exception is rejected as `expired` and reported, so it is renewed or removed.
+- **Expiry:** `expires` must be a real calendar date after the assessment date and at most 12 months after it. Check it with commands, not by reading:
+  ```bash
+  TODAY=$(date -u +%F)
+  LIMIT="$(( ${TODAY:0:4} + 1 ))${TODAY:4}"          # same day, one year later
+  [[ "$EXPIRES" > "$TODAY" && ! "$EXPIRES" > "$LIMIT" ]] && echo in-range   # ISO dates compare as strings
+  date -u -d "$EXPIRES" +%F 2>/dev/null || date -j -f %F "$EXPIRES" +%F      # GNU or macOS: must print the date back unchanged
+  ```
+  Record the commands and their output in "Methodology and limitations". An expired exception is rejected as `expired`, one beyond the limit as `expiry over 12 months`, an impossible date as `invalid date`; each is reported, so it is renewed or fixed.
 - **`acceptedRisk`:**
   - rejected when the item is **Critical**;
   - applied: the item keeps its assessed status and its points (the score does not change), the finding is written as usual and marked `accepted risk (owner, until <date>)`, and the task leaves the suggested backlog for the **Exceptions** section;

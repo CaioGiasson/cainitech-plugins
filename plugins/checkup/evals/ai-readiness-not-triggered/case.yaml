@@ -1,4 +1,0 @@
-schema_version: "1.1"
-name: ai-readiness-not-triggered
-context:
-  scaffold_script: scaffold.sh

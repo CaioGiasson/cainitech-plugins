@@ -42,11 +42,15 @@ Read by `/spec:approve` only on Path B (no 🔴 or 🟡), after Phase 5's confir
      - If the merge fails (branch protection, conflict, pending check): **do not force**; report the reason and stop.
    - **Board** ("merge" only): if the project has a board (`WORKFLOW.md` §3), move the task to **Done** (`WORKFLOW.md` §3.1). If the board does not do it automatically and it cannot be done, say so in the summary.
 
-4. **Update the local base** (only after a successful merge):
+4. **Update the local base** (only after a successful merge), without switching the user's branch:
    ```bash
-   git switch "$BASE_BRANCH"
-   git pull --ff-only origin "$BASE_BRANCH"
+   if [ "$(git branch --show-current)" = "$BASE_BRANCH" ] && [ -z "$(git status --porcelain)" ]; then
+     git pull --ff-only origin "$BASE_BRANCH"
+   else
+     git fetch origin "$BASE_BRANCH:$BASE_BRANCH"
+   fi
    ```
+   If the update fails (local commits on the base, for example), say so and leave it.
 
 5. **Branch cleanup — separate confirmation** (only after a successful merge):
    - Find the base branch (`main`/`master`) and the PR's branch (`PR_BRANCH`). **Never** delete `main`, `master`, `homolog`, the base branch or any branch other than `PR_BRANCH`.
@@ -57,7 +61,7 @@ Read by `/spec:approve` only on Path B (no 🔴 or 🟡), after Phase 5's confir
         remote: origin/<PR_BRANCH> <exists | does not exist>
      Reply "delete" to remove both, "local" for the local one only, or "keep".
      ```
-   - On "delete" or "local", delete the **local** branch: `git branch -d "$PR_BRANCH"`. Since a squash does not preserve history, `-d` may fail; in that case, confirm that the PR is `MERGED` (`gh pr view <number> --json state`) and only then use `git branch -D "$PR_BRANCH"`.
+   - On "delete" or "local", delete the **local** branch. If it is the branch checked out in the user's working copy (`git branch --show-current`), it cannot be deleted from there: when `git status --porcelain` is empty, say so and switch to the base first (`git switch "$BASE_BRANCH"`); otherwise skip the local deletion and say why. Then `git branch -d "$PR_BRANCH"`. Since a squash does not preserve history, `-d` may fail; in that case, confirm that the PR is `MERGED` (`gh pr view <number> --json state`) and only then use `git branch -D "$PR_BRANCH"`.
    - On "delete", also delete the **remote** branch if it still exists:
      ```bash
      git ls-remote --exit-code --heads origin "$PR_BRANCH" >/dev/null 2>&1 && git push origin --delete "$PR_BRANCH"
@@ -81,13 +85,13 @@ Read by `/spec:approve` only on Path B (no 🔴 or 🟡), after Phase 5's confir
 ### Mode B/C — Git without GitHub, or another VCS
 
 1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), `REVIEWED_SHA`, the build and test results and the files changed, then ask: reply "merge" to merge locally with that strategy, or "cancel". Offer no other strategy: the strategy comes from the project's convention, and changing it is the user's call, made by saying so. With `no-merge`, display the review result only and stop.
-2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green:
+2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green. The merge happens in the user's working copy: if `git status --porcelain` is not empty, **stop** and ask them to commit or stash first, and record `ORIGINAL_BRANCH="$(git branch --show-current)"` to return to it afterwards (`git switch "$ORIGINAL_BRANCH"`):
    ```bash
    git switch "$BASE_BRANCH"
-   git merge --no-ff "$PR_BRANCH"      # or: git merge --squash "$PR_BRANCH" && git commit
+   git merge --no-ff -m "Merge branch '<PR_BRANCH>'" '<REVIEWED_SHA>'      # or: git merge --squash '<REVIEWED_SHA>' && git commit
    ```
-   If the merge conflicts or fails: **do not force**; abort the merge (`git merge --abort`), report and stop.
-3. **Separate confirmation** before deleting the local branch: ask `🌿 Delete the local branch <PR_BRANCH>?` and offer "delete" or "keep". On "delete": `git branch -d "$PR_BRANCH"`; use `-D` only after confirming the merge result contains its changes.
+   Merge `REVIEWED_SHA`, the reviewed commit, never the branch name: the local branch may be behind or missing. If the merge conflicts or fails: **do not force**; abort the merge (`git merge --abort`), report and stop.
+3. **Separate confirmation** before deleting the local branch: ask `🌿 Delete the local branch <PR_BRANCH>?` and offer "delete" or "keep". On "delete": `git branch -d "$PR_BRANCH"`; use `-D` only after confirming the merge result contains its changes. Then return to `ORIGINAL_BRANCH`, unless it was the deleted branch: in that case stay on the base and say so.
 4. If there is a remote: **do not push** on your own. Tell the user the base branch is ahead of the remote and ask whether to push, and whether to delete the remote branch.
 5. Display the summary with each action marked as done, skipped or failed, and the current branch. For mode C, use that system's equivalents.
 
