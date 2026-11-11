@@ -75,5 +75,15 @@ claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit Age
 - To see why a `tool_used` grader failed, re-run the case with `--keep-temp`: the report keeps evidence only for LLM graders, and the run's `trace.jsonl` is deleted at the end unless that flag is set.
 - `spec:review` works inside a subagent. On 2.1.322 the run's `trace.jsonl` records the subagent's tool calls (lines with `parent_tool_use_id`), but it was not confirmed that `tool_used` graders count them; the LLM graders of the review cases read the whole trace.
 - Cases that start with `/spec:build`, `/spec:review` or `/spec:approve` assume that the eval runner expands slash commands in the prompt, as a normal session does. If your build does not, run those cases by hand.
-- LLM-judged graders decide by majority of three votes; a borderline case can flip between runs. Pin `--model` and `--judge-model` when comparing results over time.
+- LLM-judged graders decide by majority of three votes; a borderline case can flip between runs.
+
+## Reproducible runs
+
+For a result that goes into the table above or a release:
+
+- Pin the models: `--model <id> --judge-model <id>`, and write them in the row.
+- Keep the traces: `--keep-temp`, and copy `trace.jsonl` of every failing case next to the results folder before the temporary directory is cleaned.
+- Repeat the abuse cases: `--tag threat:T<n> --runs 3`; a case that passes 2 of 3 is reported as 2/3, not as passed.
+- Record the commit of this repository (`git rev-parse --short HEAD`), the Claude Code version and the system in the row.
+- A cause that was not confirmed by a trace is written as a hypothesis, and the case is run again after the fix before it counts as passed.
 - The suites are not run in CI: they need credentials and cost money per run. Run them before a release (see `CONTRIBUTING.md`).

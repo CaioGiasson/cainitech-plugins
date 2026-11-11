@@ -1,20 +1,30 @@
 # Compatibility
 
-What each version of the plugins was checked against. "Validated" means the manifests and structure pass `claude plugin validate` and `scripts/validate.py`; "run" means the skills were executed end to end; "not tested" means neither.
+What each version of the plugins was checked against, at three separate levels:
 
-## Plugins 1.2.0 (`polish` 1.1.0)
+- **Manifest accepted:** `claude plugin validate` and `scripts/validate.py` pass. Says nothing about behavior.
+- **Skill run:** the skill ran end to end, by an eval case or by hand, on a fixture.
+- **End to end:** the whole flow ran against real services (GitHub PR, CI, board, merge).
 
-| Component | Requirement | Status |
-|---|---|---|
-| Claude Code (plugins) | Any version with plugin marketplaces. Plugin manifests use only the fields every version understands | Validated with 2.1.63 (Windows 10) and 2.1.114 (CI, Ubuntu) |
-| Claude Code (`spec` plugin) | **2.1.110 or later.** `spec:approve` relies on the skill frontmatter field `disable-model-invocation: true` so that Claude cannot start it on its own. A version that ignores the field drops that protection without warning. The Claude Code changelog first mentions the field in 2.1.110 (a fix, so the field existed by then); the version that introduced it is not in the changelog | Required minimum (not tested on older versions); the confirmations inside `approve` do not depend on the field |
-| Claude Code (evals) | 2.1.269 or later (`claude plugin eval`) | Run on 2.1.322 (WSL2): `trigger` cases of the three plugins and `slow` cases of `spec`; `slow` cases of `checkup` and `polish` not run yet (see `docs/EVALS.md`) |
-| CLI (`claude`) | — | Validated; skills run by the evals on 2.1.322 (WSL2) and by hand (`spec`, see `docs/CASE-STUDIES.md`) |
-| Desktop app (Code tab) | Same plugin system as the CLI | Not tested |
-| VS Code extension | `/plugins` → Manage plugins | Not tested |
-| Windows | — | Validated (manifests); evals need WSL2 |
-| macOS, Linux | — | Linux validated in CI (manifests); macOS not tested |
-| Skills that run on the assessed project | The project's own toolchain (Node, Python, Go…) for build and tests | Depends on the project |
+## Plugins 1.3.0 (`polish` 1.1.1)
+
+| Surface / system | Manifest accepted | Skill run | End to end |
+|---|---|---|---|
+| CLI on Linux (Ubuntu, CI) | Yes, Claude Code 2.1.114 | No | No |
+| CLI on WSL2 (Ubuntu 22.04) | Yes, 2.1.322 | Yes, by the evals: `trigger` cases of the three plugins, `slow` cases of `spec`, the 1.2.0 and 1.3.0 cases of `checkup` listed in `docs/EVALS.md`; `slow` cases of `polish` not run | No |
+| CLI on Windows 10 (native) | Yes, 2.1.63 and 2.1.322 | `spec:approve` by hand (`docs/CASE-STUDIES.md`, scenario 2) | No |
+| Desktop app (Code tab) | Same plugin system as the CLI | Not tested | No |
+| VS Code extension | Same plugin system | Not tested | No |
+| macOS | Not tested | Not tested | No |
+
+Runs in local Git mode only: pushes, pull requests, comments, labels, board moves and merges on GitHub have not been exercised by an automated test (`docs/EVALS.md`, "Known limits").
+
+| Requirement | Detail |
+|---|---|
+| Claude Code (plugins) | Any version with plugin marketplaces. The manifests use only fields that 2.1.114 also accepts |
+| Claude Code (`spec`) | **2.1.110 or later.** `spec:approve` relies on `disable-model-invocation: true` so that Claude cannot start it on its own. A version that ignores the field drops that protection without warning; the confirmations inside `approve` do not depend on it. The changelog first mentions the field in 2.1.110 |
+| Claude Code (evals) | 2.1.269 or later (`claude plugin eval`); Bash grants need an OS sandbox, so Windows runs them under WSL2 |
+| Running the assessed project | The project's own toolchain (Node, Python, Go…), only when the user chooses `run` (`WORKFLOW.md` §7.1, `ASSESSMENT.md` §1) |
 
 ## External tools
 
