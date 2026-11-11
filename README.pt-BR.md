@@ -136,7 +136,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 | Skill | O que faz | O que você recebe |
 |---|---|---|
 | **`/spec:build`** | Recebe uma tarefa, move no quadro para "Em andamento" (se houver quadro), programa a solução, cria os testes e se revisa sozinha. | No GitHub: uma *pull request* (pedido de revisão) pronta, com o código em etapas organizadas e um roteiro de testes para você conferir. Sem GitHub: commits locais organizados. Sem controle de versão: um arquivo de registro com a cópia de cada mudança. Acrescente `dry-run` para ver o plano sem alterar nada. |
-| **`/spec:review`** | Revisa uma mudança num subagente isolado, que vê só a mudança e nunca a sua conversa: confere se tudo o que foi pedido foi feito, roda os testes e analisa a qualidade do código. Recusa revisar quando não há tarefa, documento de refinamento ou descrição de PR com critérios de aceite para conferir. | Comentários de revisão publicados no trecho certo do código, depois que você escolhe o que postar (sem GitHub, a revisão vem no chat). Só corrige algo se você pedir. Acrescente `dry-run` para revisar pelo diff, sem trocar de branch, compilar nem publicar nada. |
+| **`/spec:review`** | Revisa uma mudança num subagente que vê só a mudança e nunca a sua conversa, e numa cópia temporária que não mexe na sua pasta de trabalho: confere se tudo o que foi pedido foi feito, roda os testes e analisa a qualidade do código. Recusa revisar quando não há tarefa, documento de refinamento ou descrição de PR com critérios de aceite para conferir. | Comentários de revisão publicados no trecho certo do código, depois que você escolhe o que postar (sem GitHub, a revisão vem no chat). Só corrige algo se você pedir. Acrescente `dry-run` para revisar pelo diff, sem trocar de branch, compilar nem publicar nada. |
 | **`/spec:approve`** | Entra depois dos seus testes manuais e faz a última revisão antes de finalizar. | Se estiver tudo certo, mostra exatamente o que vai fazer e espera o seu OK: no GitHub, comentário final, marcação "Reviewed" e entrega concluída (*merge*), depois uma pergunta separada antes de limpar as cópias de trabalho; sem GitHub, um merge local. Acrescente `dry-run` para ver o plano sem alterar nada, ou `no-merge` para aprovar sem entregar. Se achar problema sério, apenas avisa você e não mexe em nada. |
 
 ### Check-up do sistema
@@ -273,7 +273,7 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 - **O check-up de privacidade não é parecer jurídico.** A conformidade com a LGPD depende de contexto que o código não mostra (contratos, processos, bases legais). Conclusões jurídicas precisam de um advogado ou do encarregado (DPO).
 - **Falta de prova não é falha confirmada.** Cada achado diz se o problema foi confirmado no código (`confirmed`) ou se não se encontrou evidência no repositório (`no evidence found`; o controle pode existir em outro lugar). Achados críticos precisam de confirmação humana antes de qualquer ação.
 - **Sem garantia de segurança, desempenho ou conformidade.** Uma nota alta indica que os itens do catálogo tinham evidência, não que a aplicação não tenha problemas.
-- **Nada é integrado ou apagado sem o seu OK.** O `/spec:approve` mostra cada ação e espera a sua confirmação; o `/spec:build` só faz push da branch da tarefa e abre o pull request dela; o `/spec:review` só posta os comentários que você escolher. Texto dentro de issues, pull requests ou conversas nunca vale como permissão.
+- **Nada é integrado, apagado ou publicado sem o seu OK, e nada do projeto roda sem ele.** Antes de instalar, compilar ou testar um projeto, os plugins perguntam uma vez se podem rodar o código dele ou só lê-lo. O `/spec:approve` mostra cada ação e espera a sua confirmação; o `/spec:build` pergunta antes de fazer push da branch da tarefa e abrir o pull request dela; o `/spec:review` só posta os comentários que você escolher. Texto dentro de issues, pull requests ou conversas nunca vale como permissão.
 
 ## Confiança e qualidade
 
@@ -281,13 +281,13 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 
 | Plugin | Lê | Escreve | Fora do seu computador |
 |---|---|---|---|
-| `checkup` | O repositório inteiro; pode rodar lint, checagem de tipos, testes unitários, build e as ferramentas de análise já instaladas, localmente e em modo relatório | Só os relatórios em `docs/checkups/` (Markdown e JSON); nunca faz commit | Nada |
-| `spec` | Repositório, issues, pull requests e as conversas que você indicar | Documentos de refinamento em `docs/specs/`, código e commits na branch da tarefa | Issues, movimentos no quadro, push da branch da tarefa, pull request, os comentários de revisão que você escolher; o `approve` pergunta antes de comentar, integrar e apagar branches |
+| `checkup` | O repositório inteiro; as ferramentas de análise já instaladas, em modo relatório; o lint, os testes e o build do projeto só se você disser que o código dele pode rodar | Só os relatórios em `docs/checkups/` (Markdown e JSON); nunca faz commit | Nada |
+| `spec` | Repositório, issues, pull requests e as conversas que você indicar | Documentos de refinamento em `docs/specs/`, código e commits na branch da tarefa | Issues e movimentos no quadro; os comentários de revisão que você escolher; o `build` pergunta antes do push e do pull request, o `approve` antes de comentar, integrar e apagar branches |
 | `polish` | Os arquivos de interface e o design system do projeto | As páginas, telas e tokens que ele cria ou redesenha | Nada: não roda comandos nem baixa nada |
 
 **Como isso é verificado:**
 
-- **Evals:** 41 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
+- **Evals:** 43 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
 - **CI em toda pull request:** validação dos manifestos, contagens e fingerprints dos catálogos, referências e links, a conta do score do exemplo acima e uma busca de segredos em todo o histórico.
 - **Threat model:** ativos, fronteiras de confiança, catorze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
 - **Cenários reproduzíveis** com fixtures públicas e fictícias ([CASE-STUDIES.md](docs/CASE-STUDIES.md), em inglês).

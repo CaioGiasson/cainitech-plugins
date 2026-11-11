@@ -44,7 +44,7 @@ cainitech-plugins/
 │   │   │   ├── PR_REVIEW_EXAMPLES.md # its code examples and model comments, read on demand
 │   │   │   └── STYLE.md            # communication style (identical in every plugin)
 │   │   └── skills/
-│   │       ├── refine/  from-thread/  build/  review/  approve/   # SKILL.md + references/ read on demand (review: REVIEWER.md for the isolated reviewer)
+│   │       ├── refine/  from-thread/  build/  review/  approve/   # SKILL.md + references/ read on demand (review: REVIEWER.md for the context-isolated reviewer)
 │   └── polish/
 │       ├── .claude-plugin/plugin.json
 │       ├── THIRD_PARTY_NOTICES.md  # MIT notice of taste-skill, the source of the adaptation

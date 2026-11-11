@@ -1,6 +1,6 @@
 {
   "name": "polish",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Makes websites and web apps stop looking AI-generated: builds, redesigns or reviews pages and screens through a design system, using the project's own, improving it, or creating one when there is none. Covers visual and copy tells of AI-made interfaces, sites, app screens, motion and a review checklist. Text-only: runs no commands and downloads nothing.",
   "author": {
     "name": "cainitech",
