@@ -197,12 +197,12 @@ Apply the project's conventions (Phase 2) throughout the implementation.
 
 ### 5.1 — Commit strategy (modes A–C)
 
-Commits are made **during** the implementation, not only at the end. Message format: `<prefix>: <description> (#<task number>)` when there is a number; one subject per commit; the project compiles at every commit. Follow `WORKFLOW.md` §5.1:
+Commits are made **during** the implementation, not only at the end. Message format: `<prefix>: <description> (#<task number>)` when there is a number; one subject per commit; the project compiles at every commit (checked by building with execution `run`; with `static`, by reading). Follow `WORKFLOW.md` §5.1:
 
 1. **If the task defines an "Order of commits":** follow it exactly — same order, same split, same scope. If a step is infeasible or wrong, adjust the minimum and record the reason in the final summary.
 2. **If the task (or the user's request) brings a list of adjustments** — bullets or running text — **unrelated to each other** (different screens, endpoints, bugs or modules): make **one commit per adjustment**. Adjustments that depend on each other or touch the same behavior stay in the same commit.
 3. **If no order is defined:** split into logical, atomic commits (e.g., model/migration → repository → use case → controller/route → tests → docs).
-4. Never `git add .` blindly: add only the files of the commit's change. Never use `--no-verify`.
+4. Never `git add .` blindly: add only the files of the commit's change. With execution `run`, never use `--no-verify`. With `static`, the repository's commit hooks (husky, lint-staged, pre-commit) are project code too: commit with them disabled (`git -c core.hooksPath=/dev/null commit …`) and say in the summary and in the PR that the hooks did not run.
 
 **Mode D:** make the changes in the same logical units and, after each one, append its entry (path, description and a copy of the change) to the changelog file, per `WORKFLOW.md` §5.2.
 
@@ -217,7 +217,7 @@ Update in the same PR/branch, in their own `docs:` commits (or together with the
 
 ### 5.3 — Versioning (one bump per PR)
 
-Apply the bump rule of `WORKFLOW.md` §5.1: only if the project versions itself; check first whether the branch already contains a bump and, if so, do not make another, even across several commits or fix rounds; otherwise make **exactly one**, in the last code commit, choosing the type by the task's scope (or as the task says). Use the project's tooling (e.g., `npm version <type> --no-git-tag-version`) and update the `CHANGELOG.md` entry if there is one. Commit: `chore: bump version to <x.y.z> (#<number>)`. If the project does not version itself, note `ℹ Project without versioning — bump skipped` and move on. Never create tags or publish packages.
+Apply the bump rule of `WORKFLOW.md` §5.1: only if the project versions itself; check first whether the branch already contains a bump and, if so, do not make another, even across several commits or fix rounds; otherwise make **exactly one**, in the last code commit, choosing the type by the task's scope (or as the task says). Use the project's tooling (e.g., `npm version <type> --no-git-tag-version`; with execution `static`, add `--ignore-scripts`, because `npm version` runs the `preversion`/`version` scripts, or edit the version field by hand) and update the `CHANGELOG.md` entry if there is one. Commit: `chore: bump version to <x.y.z> (#<number>)`. If the project does not version itself, note `ℹ Project without versioning — bump skipped` and move on. Never create tags or publish packages.
 
 ---
 
@@ -267,7 +267,7 @@ Review the whole implementation (code, tests and docs) against the project's con
 ### Fix loop
 
 - Fix all critical items found automatically, in their own commits (`fix:`/`refactor:`) — never rewriting history already pushed and **without a new version bump**. In mode D, append the fixes to the changelog file.
-- Run the tests again after each round of fixes (in `REPO_ROOT`).
+- With execution `run`, run the tests again after each round of fixes (in `REPO_ROOT`); with `static`, re-read them instead.
 - Repeat until there are no critical items — **at most 5 iterations**.
 - If critical items remain after 5 iterations: list them in the summary and wait for the user's guidance before continuing.
 
