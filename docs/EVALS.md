@@ -71,8 +71,7 @@ claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit Age
 ## Known limits
 
 - The cases run in local Git mode (no GitHub): pending CI on GitHub, board moves and PR comments are not exercised.
-- A WSL2 terminal started from Git Bash inherits Windows folders in `PATH`; some of them (such as `WindowsApps`) cannot be listed, and the Bash sandbox refuses to start (`a PATH directory could not be examined … (EACCES)`). Drop them first: `export PATH="$(printf '%s' "$PATH" | tr ':' '
-' | grep -v '^/mnt/' | paste -sd:)"`.
+- A WSL2 terminal started from Git Bash inherits Windows folders in `PATH`; some of them (such as `WindowsApps`) cannot be listed, and the Bash sandbox refuses to start (`a PATH directory could not be examined … (EACCES)`). Drop them first: `export PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '^/mnt/' | paste -sd:)"`.
 - Each case is a single turn: nothing answers the confirmations of `spec:approve`, so the steps after a confirmation (the merge itself, branch deletion) are not exercised by the evals. Test them by hand on a fixture before a release (see `docs/CASE-STUDIES.md`, scenario 2). Skills that ask questions (`spec:refine`) are told in the prompt to decide with their defaults and record the assumptions, or they would stop waiting for an answer.
 - The eval sandbox makes `.git` read-only: `git switch` and `git merge` fail inside a run. `review` and `approve` fall back to reading the branch with `git archive` or `git diff`, so the checkout path itself is only exercised by hand.
 - To see why a `tool_used` grader failed, re-run the case with `--keep-temp`: the report keeps evidence only for LLM graders, and the run's `trace.jsonl` is deleted at the end unless that flag is set.
