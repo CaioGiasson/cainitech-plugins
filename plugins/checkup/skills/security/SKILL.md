@@ -35,7 +35,8 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
    - `${CLAUDE_PLUGIN_ROOT}/skills/security/references/checklist.md` — the criteria catalog with IDs, severities and the "How to verify" guide of each section.
 2. Read the context of the assessed repository: `AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md` (if they exist).
 3. Record the assessed commit: `git rev-parse --short HEAD` and `git branch --show-current`. If the repository has no git history, say so and record the date instead. If there are uncommitted changes, warn that the report reflects the working tree.
-4. Look for earlier reports of this pillar in `docs/checkups/*-security.md` (and in the consolidated `*-full.md`). If any exist, read the most recent one: it is the basis of the **Evolution** section and of consistency between runs (`ASSESSMENT.md` §6).
+4. Decide the execution mode (`ASSESSMENT.md` §1, "Running the project's code"): ask once unless the request already answers it; when run from `/checkup:full`, use its answer.
+5. Look for earlier reports of this pillar in `docs/checkups/*-security.md` (and in the consolidated `*-full.md`). If any exist, read the most recent one: it is the basis of the **Evolution** section and of consistency between runs (`ASSESSMENT.md` §6).
 
 ---
 

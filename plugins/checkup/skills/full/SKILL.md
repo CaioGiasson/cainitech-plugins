@@ -29,7 +29,7 @@ Detect the user's language from `$ARGUMENTS` and their most recent messages, and
 
 1. Read `${CLAUDE_PLUGIN_ROOT}/references/ASSESSMENT.md` in full (§9 covers the consolidated report) and `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md` (communication style: apply it to every message and every text you write).
 2. Record the assessed commit (`git rev-parse --short HEAD`, branch); **all pillars assess the same commit**. If the repository has no git history, say so and record the date instead. If there are uncommitted changes, warn the user.
-3. Read the repository context (`AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md`).
+3. Read the repository context (`AGENTS.md`/`CLAUDE.md`, `README.md`, `tasks/lessons.md`), then decide the execution mode once for the four pillars (`ASSESSMENT.md` §1, "Running the project's code") and give it to each pillar.
 4. Look for earlier reports in `docs/checkups/` (per pillar and consolidated) for the Evolution section.
 5. Build **a single inventory** of the application (stack, frontend, database, integrations, authentication, personal data, third parties, CI/CD, infrastructure, agent context files, AI usage); it is shared by the four pillars and avoids repeated work.
 6. If the repository has `.checkup.json` at its root, read `${CLAUDE_PLUGIN_ROOT}/references/CONFIG.md`, validate the file once and give each pillar its own entries with the validation outcome and the applied exclusions. The consolidated report lists every entry, applied or rejected, in one Exceptions table.

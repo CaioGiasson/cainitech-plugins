@@ -42,11 +42,15 @@ Read by `/spec:approve` only on Path B (no 🔴 or 🟡), after Phase 5's confir
      - If the merge fails (branch protection, conflict, pending check): **do not force**; report the reason and stop.
    - **Board** ("merge" only): if the project has a board (`WORKFLOW.md` §3), move the task to **Done** (`WORKFLOW.md` §3.1). If the board does not do it automatically and it cannot be done, say so in the summary.
 
-4. **Update the local base** (only after a successful merge):
+4. **Update the local base** (only after a successful merge), without switching the user's branch:
    ```bash
-   git switch "$BASE_BRANCH"
-   git pull --ff-only origin "$BASE_BRANCH"
+   if [ "$(git branch --show-current)" = "$BASE_BRANCH" ] && [ -z "$(git status --porcelain)" ]; then
+     git pull --ff-only origin "$BASE_BRANCH"
+   else
+     git fetch origin "$BASE_BRANCH:$BASE_BRANCH"
+   fi
    ```
+   If the update fails (local commits on the base, for example), say so and leave it.
 
 5. **Branch cleanup — separate confirmation** (only after a successful merge):
    - Find the base branch (`main`/`master`) and the PR's branch (`PR_BRANCH`). **Never** delete `main`, `master`, `homolog`, the base branch or any branch other than `PR_BRANCH`.
@@ -81,7 +85,7 @@ Read by `/spec:approve` only on Path B (no 🔴 or 🟡), after Phase 5's confir
 ### Mode B/C — Git without GitHub, or another VCS
 
 1. **Action plan.** Display the branch, the base, the merge strategy (the project's convention; otherwise `--no-ff`), `REVIEWED_SHA`, the build and test results and the files changed, then ask: reply "merge" to merge locally with that strategy, or "cancel". Offer no other strategy: the strategy comes from the project's convention, and changing it is the user's call, made by saying so. With `no-merge`, display the review result only and stop.
-2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green:
+2. On an explicit yes, run the state check (Confirmation rules), then merge the branch into the base **locally**, only if the build and tests are green. The merge happens in the user's working copy: if `git status --porcelain` is not empty, **stop** and ask them to commit or stash first, and record `ORIGINAL_BRANCH="$(git branch --show-current)"` to return to it afterwards (`git switch "$ORIGINAL_BRANCH"`):
    ```bash
    git switch "$BASE_BRANCH"
    git merge --no-ff "$PR_BRANCH"      # or: git merge --squash "$PR_BRANCH" && git commit

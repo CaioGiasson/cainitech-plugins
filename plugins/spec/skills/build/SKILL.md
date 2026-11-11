@@ -55,6 +55,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` and ap
 
 4. **Mode D:** there is no tree to protect; warn once that the changes will be made directly in the folder and recorded in a changelog file (`WORKFLOW.md` §5.2).
 
+5. **Execution mode** (`WORKFLOW.md` §7.1): ask the question once, before the first install, build or test, unless the request already answers it. With `static`, the implementation and the tests are written but nothing from the project is run: Phase 6 does not run the tests, and the summary and the PR say `tests not run (static analysis chosen)`.
+
 ---
 
 ## PHASE 1 — Reading and validating the task
@@ -228,8 +230,8 @@ All commands in this phase run in `REPO_ROOT`.
 2. **If tests are configured:**
    - Read existing tests to learn the pattern: file structure, factories, naming of describes and its, mocking libraries.
    - Create the automated tests from the task's **test script** (and any others needed) for each change, following the pattern found. Prioritize tests of business logic and authorization rules — cover happy paths and edge cases.
-   - Run the tests, plus lint, typecheck and build when they exist (using the project's own scripts).
-   - If anything fails: fix the implementation or the tests until everything passes before continuing.
+   - With execution `run`: run the tests, plus lint, typecheck and build when they exist (using the project's own scripts). If anything fails, fix the implementation or the tests until everything passes before continuing.
+   - With execution `static`: run nothing; review the tests by reading them, and record that they were not run.
 
 3. **If no tests are configured:** skip creating tests and record in the final summary:
    ```
@@ -273,7 +275,7 @@ Review the whole implementation (code, tests and docs) against the project's con
 
 ## PHASE 8 — Delivery
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/build/references/DELIVERY.md` and follow only the section of the delivery mode from Phase 0: mode A pushes the task's branch and opens a pull request ready for review (never the `Reviewed` label, never a merge); mode B commits only, with no push unless the user asked; mode C uses the system's change unit; mode D completes the changelog file.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/build/references/DELIVERY.md` and follow only the section of the delivery mode from Phase 0: mode A asks once, then pushes the task's branch and opens a pull request ready for review (never the `Reviewed` label, never a merge); mode B commits only, with no push unless the user asked; mode C uses the system's change unit; mode D completes the changelog file.
 
 ---
 

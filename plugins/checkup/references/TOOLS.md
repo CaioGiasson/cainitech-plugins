@@ -27,7 +27,7 @@ Read by every `checkup` pillar in Phase 1, after the inventory. Established tool
 | performance | `lighthouse` | only against a local server the user started, `--output json` | client and rendering items (PERF-3) |
 | ai-readiness | lint, typecheck, tests | the commands documented in the context file | executable feedback items (AIR-1.04, AIR-6.01) |
 
-Run every tool of the pillar that is installed. Use the project's configuration (`.semgrep.yml`, `.gitleaks.toml`, `.trivyignore`) when it exists, and record it: an ignore file in the repository is part of the evidence, and a broad ignore is a finding of the related item.
+Run every tool of the pillar that is installed. With execution `static` (`ASSESSMENT.md` §1), skip the rows that run the project's own commands (project lint, build, `lighthouse`, the commands of the context file) and record them as `skipped — static analysis chosen`; the external scanners still run. Use the project's configuration (`.semgrep.yml`, `.gitleaks.toml`, `.trivyignore`) when it exists, and record it: an ignore file in the repository is part of the evidence, and a broad ignore is a finding of the related item.
 
 ## 3. Interpreting the output
 

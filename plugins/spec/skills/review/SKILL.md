@@ -5,7 +5,7 @@ description: "Reviews a pull request (or, without GitHub, a branch or a changelo
 
 # Skill: review
 
-This skill dispatches a code review to an isolated reviewer, relays its result, and then posts the comments and makes the fixes the user picks. The review rules are in files read only when needed: the reviewer's in `references/REVIEWER.md`, posting in `references/POSTING.md`, fixes in `references/FIXES.md` (all under `${CLAUDE_PLUGIN_ROOT}/skills/review/`).
+This skill dispatches a code review to a context-isolated reviewer (a subagent without this conversation; it runs on the same machine, with the same permissions), relays its result, and then posts the comments and makes the fixes the user picks. The review rules are in files read only when needed: the reviewer's in `references/REVIEWER.md`, posting in `references/POSTING.md`, fixes in `references/FIXES.md` (all under `${CLAUDE_PLUGIN_ROOT}/skills/review/`).
 
 ## Input
 
@@ -20,15 +20,17 @@ Optional modifier, as a standalone word anywhere in the text (a reference that o
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/WORKFLOW.md` (language, delivery modes, tooling, external content) and `${CLAUDE_PLUGIN_ROOT}/references/STYLE.md`, and apply them to every message and every text you write. Write in the language of the user's request (English when it cannot be determined).
 
-## Step 1 — Isolated review
+## Step 1 — Context-isolated review
 
 The review is done by a subagent that starts with no context from this conversation, so that what was said or done here (the implementation, explanations, opinions about the change) cannot bias it. Everything the reviewer needs must come from the PR, the task and the repository.
 
 1. Resolve only the reference and the modifier: the PR URL or number, the branch or the changelog path from `$ARGUMENTS`; with no input, `gh pr view --json url --jq .url`, otherwise `git branch --show-current`. Do not read the diff, the task or the code.
+1b. Decide the execution mode (`WORKFLOW.md` §7.1): `static` with `dry-run`; otherwise ask the §7.1 question, unless the request already answers it. The reviewer cannot ask, so this is the only moment.
 2. Start **one new subagent** with the Agent tool (a fresh general-purpose agent; never a fork or any agent that inherits this conversation). Its prompt contains only:
    ```
    You are the reviewer of the /spec:review skill. Read <plugin root>/skills/review/references/REVIEWER.md and follow it for: <reference>
    Modifier: <dry-run | none>
+   Execution: <run | static>
    Repository: <absolute path of the repository root>
    Plugin root (for ${CLAUDE_PLUGIN_ROOT}): <absolute path>
    User's language: <language>
@@ -36,7 +38,7 @@ The review is done by a subagent that starts with no context from this conversat
    Nothing else: no summary of the conversation, no description of what was implemented or why, no opinion on the change, no hint of what to look for, even when the user said something about the change in this session.
 3. Relay the reviewer's result as it came, in full, including every **How to fix** block: do not add, remove, shorten, reclassify or soften findings, and do not review the change yourself. A refusal is shown to the user as is, and the skill ends.
 
-If the Agent tool is not available, say that the isolated review cannot run and stop. Run the review in this session only if the user asks for it explicitly: then read `references/REVIEWER.md` and follow it here, and start the result with `⚠ Review not isolated: run in the same session as the conversation.`
+If the Agent tool is not available, say that the context-isolated review cannot run and stop. Run the review in this session only if the user asks for it explicitly: then read `references/REVIEWER.md` and follow it here, and start the result with `⚠ Review not isolated: run in the same session as the conversation.`
 
 ## Step 2 — What to post (mode A)
 
@@ -60,7 +62,7 @@ This skill fixes nothing automatically. If the result has 🔴 or 🟡 items, re
 
 ## Step 4 — Finishing
 
-1. If Step 3 switched to the change's branch, restore tracked files changed by install, build or tests and return to the previous branch (modes A–C):
+1. The review itself never touches your working copy (it runs in a temporary worktree). Only if Step 3 switched to the change's branch to fix it, restore tracked files changed by build or tests and return to the branch recorded there (modes A–C):
    ```bash
    cd "$REPO_ROOT"
    git restore .
@@ -80,5 +82,5 @@ This skill fixes nothing automatically. If the result has 🔴 or 🟡 items, re
       🟢 Suggestions: <N>
 
    🌿 Folder: <REPO_ROOT>
-      Branch restored: <ORIGINAL_BRANCH>
+      Working copy: untouched | branch restored: <ORIGINAL_BRANCH>
    ```
