@@ -753,5 +753,6 @@ def main():
         print(plugin, len(cases))
 
 
-main()
+if __name__ == "__main__":
+    main()
 

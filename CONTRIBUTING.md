@@ -28,7 +28,7 @@ python3 -X utf8 scripts/validate.py
 
 ## Evals
 
-Every skill has at least three eval cases in `plugins/<plugin>/evals/` ([docs/EVALS.md](docs/EVALS.md)). A pull request that changes a skill's behavior adds or updates its cases in `scripts/generate_evals.py` (the single source of the suites) and regenerates them with `python3 -X utf8 scripts/generate_evals.py`. Run the suites of the changed plugins before every release; they need Claude Code 2.1.269+ and are billed to your account, so CI does not run them.
+Every skill has at least three eval cases, defined in `scripts/generate_evals.py` and generated into `plugins/<plugin>/evals/`, which is not committed ([docs/EVALS.md](docs/EVALS.md)). A pull request that changes a skill's behavior adds or updates its cases in `scripts/generate_evals.py` (the single source of the suites) and regenerates them with `python3 -X utf8 scripts/generate_evals.py`. Run the suites of the changed plugins before every release; they need Claude Code 2.1.269+ and are billed to your account, so CI does not run them.
 
 ## Rules for changes
 

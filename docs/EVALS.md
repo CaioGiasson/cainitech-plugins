@@ -1,12 +1,12 @@
 # Evals
 
-Each plugin has an eval suite in `plugins/<plugin>/evals/`, in the format of [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals). The suites check that the skills trigger when they should, stay quiet when they should not, follow their safety rules and produce the expected results on small fixtures.
+Each plugin has an eval suite, generated into `plugins/<plugin>/evals/` (not versioned), in the format of [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals). The suites check that the skills trigger when they should, stay quiet when they should not, follow their safety rules and produce the expected results on small fixtures.
 
 ## Coverage
 
-41 cases, at least 3 per skill. `scripts/validate.py` fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
+41 cases, at least 3 per skill. `scripts/validate.py` checks the generator's output in memory and fails if a skill drops below 3, if a case has no grader or if a scaffold script is missing.
 
-The suites are generated: `scripts/generate_evals.py` is the single source of the cases, fixtures and graders (the shared fixtures, such as the orders service, are defined once there). Edit it and run `python3 -X utf8 scripts/generate_evals.py`; never edit `plugins/*/evals` by hand. CI fails when the committed files differ from the generator (`--check`).
+The suites are generated: `scripts/generate_evals.py` is the single source of the cases, fixtures and graders (the shared fixtures, such as the orders service, are defined once there). Edit it and run `python3 -X utf8 scripts/generate_evals.py` to write the suites before running them; never edit `plugins/*/evals` by hand. The generated suites are **not committed** (`.gitignore`, and `scripts/validate.py` fails if they are): they would ship to every user who installs a plugin, and their fixtures hold, on purpose, the planted instructions and fake secrets that a safety scan looks for.
 
 | Skill | Cases | What they check |
 |---|---:|---|
@@ -53,9 +53,10 @@ Requirements: Claude Code **2.1.269 or later**, git 2.31+, Node.js 20+ on the ma
 | `spec` | `--allow-tools Bash Write Edit Agent` |
 | `polish` | `--allow-tools Write Edit` |
 
-From a plugin folder:
+Generate the suites, then run from a plugin folder:
 
 ```bash
+python3 -X utf8 scripts/generate_evals.py
 cd plugins/spec
 claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit Agent --tag trigger
 claude plugin eval . --scaffold --trust-plugin --allow-tools Bash Write Edit Agent --case approve-dry-run --runs 1 --ablation none

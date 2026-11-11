@@ -1,4 +1,0 @@
-schema_version: "1.1"
-name: ui-review-changes-nothing
-context:
-  scaffold_script: scaffold.sh

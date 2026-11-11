@@ -6,6 +6,7 @@ Uso: python3 -X utf8 scripts/validate.py [--fingerprints]
 import datetime
 import glob
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -23,7 +24,7 @@ CONFIG_SCHEMA = "plugins/checkup/references/config.schema.json"
 CONFIG_EXAMPLE = "docs/examples/checkup.config.example.json"
 MIN_EVALS = 3
 USER_ONLY_SKILLS = ("plugins/spec/skills/approve/SKILL.md",)
-FORBIDDEN_PATHS = re.compile(r"^personal/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
+FORBIDDEN_PATHS = re.compile(r"^personal/|^plugins/[^/]+/evals/|(^|/)\.env(?!\.example$)(\.[^/]+)?$")
 
 errors = []
 
@@ -306,29 +307,34 @@ def check_config_example():
 
 
 def check_evals():
-    """Cada skill tem ao menos MIN_EVALS casos; cada caso tem prompt, tag da skill e ao menos um grader."""
+    """Cada skill tem ao menos MIN_EVALS casos; cada caso tem prompt, tag da skill, grader válido e scaffold.
+
+    As suítes não são versionadas: são verificadas em memória, a partir de scripts/generate_evals.py.
+    """
+    spec = importlib.util.spec_from_file_location("generate_evals", os.path.join(ROOT, "scripts", "generate_evals.py"))
+    generator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generator)
+    files = {f"plugins/{path}": content for path, content in generator.render().items()}
     skills = {p.replace(os.sep, "/").split("/")[-2]: p.replace(os.sep, "/").split("/")[1]
               for p in glob.glob("plugins/*/skills/*/SKILL.md", root_dir=ROOT)}
     per_skill = {skill: 0 for skill in skills}
-    for prompt in glob.glob("plugins/*/evals/*/prompt.md", root_dir=ROOT):
-        prompt = prompt.replace(os.sep, "/")
+    for prompt in sorted(p for p in files if p.endswith("/prompt.md")):
         case = os.path.dirname(prompt)
         plugin = prompt.split("/")[1]
-        meta = frontmatter(read(prompt)) or ""
-        tagged = re.findall(r"skill:([\w-]+)", meta)
+        tagged = re.findall(r"skill:([\w-]+)", frontmatter(files[prompt]) or "")
         if len(tagged) != 1 or skills.get(tagged[0]) != plugin:
             errors.append(f"{prompt}: precisa de exatamente uma tag skill:<skill do plugin {plugin}>")
         else:
             per_skill[tagged[0]] += 1
-        if not glob.glob(f"{case}/graders/*.md", root_dir=ROOT):
+        graders = [p for p in files if p.startswith(f"{case}/graders/") and p.endswith(".md")]
+        if not graders:
             errors.append(f"{case}: caso sem grader")
-        for grader in glob.glob(f"{case}/graders/*.md", root_dir=ROOT):
-            if not re.search(r"^type: (regex|tool_used|tool_order|file_exists|llm|baseline)$", frontmatter(read(grader)) or "", re.M):
+        for grader in graders:
+            if not re.search(r"^type: (regex|tool_used|tool_order|file_exists|llm|baseline)$", frontmatter(files[grader]) or "", re.M):
                 errors.append(f"{grader}: 'type' ausente ou inválido")
-        if os.path.exists(os.path.join(ROOT, case, "case.yaml")):
-            script = re.search(r"scaffold_script: (\S+)", read(f"{case}/case.yaml"))
-            if script and not os.path.exists(os.path.join(ROOT, case, script.group(1))):
-                errors.append(f"{case}/case.yaml: scaffold inexistente {script.group(1)}")
+        script = re.search(r"scaffold_script: (\S+)", files.get(f"{case}/case.yaml", ""))
+        if script and f"{case}/{script.group(1)}" not in files:
+            errors.append(f"{case}/case.yaml: scaffold inexistente {script.group(1)}")
     for skill, count in per_skill.items():
         if count < MIN_EVALS:
             errors.append(f"skill {skill}: {count} casos de eval, mínimo {MIN_EVALS}")
