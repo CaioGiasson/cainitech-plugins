@@ -2,6 +2,14 @@
 
 Versions follow [Semantic Versioning](https://semver.org). Each plugin has its own `version` in `plugins/<plugin>/.claude-plugin/plugin.json`; an entry lists the plugins it changes.
 
+## 1.3.1 — 2026-11-13
+
+`checkup` 1.3.1 · `spec` 1.3.0 (unchanged) · `polish` 1.1.1 (unchanged)
+
+### Fixed
+
+- **`checkup:full` waits for every pillar before consolidating.** The coordinator started the pillar subagents in the background and ended its turn; in a non-interactive run (`claude -p`, CI, the evals) the pillars still running were stopped and no consolidated report was written. The pillars now run in the foreground, the parallel ones in a single message, and the turn does not end while one is running.
+
 ## 1.3.0 — 2026-11-11
 
 `checkup` 1.3.0 · `spec` 1.3.0 · `polish` 1.1.1

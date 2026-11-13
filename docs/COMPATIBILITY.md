@@ -6,12 +6,12 @@ What each version of the plugins was checked against, at three separate levels:
 - **Skill run:** the skill ran end to end, by an eval case or by hand, on a fixture.
 - **End to end:** the whole flow ran against real services (GitHub PR, CI, board, merge).
 
-## Plugins 1.3.0 (`polish` 1.1.1)
+## Plugins 1.3 (`checkup` 1.3.1, `spec` 1.3.0, `polish` 1.1.1)
 
 | Surface / system | Manifest accepted | Skill run | End to end |
 |---|---|---|---|
 | CLI on Linux (Ubuntu, CI) | Yes, Claude Code 2.1.114 | No | No |
-| CLI on WSL2 (Ubuntu 22.04) | Yes, 2.1.322 | Yes, by the evals: `trigger` cases of the three plugins, `slow` cases of `spec`, the 1.2.0 and 1.3.0 cases of `checkup` listed in `docs/EVALS.md`; `slow` cases of `polish` not run | No |
+| CLI on WSL2 (Ubuntu 22.04) | Yes, 2.1.322 | Yes, by the evals: `trigger` cases of the three plugins, `slow` cases of `spec`, `slow` cases of `checkup` and `polish` (results in `docs/EVALS.md`) | No |
 | CLI on Windows 10 (native) | Yes, 2.1.63 and 2.1.322 | `spec:approve` by hand (`docs/CASE-STUDIES.md`, scenario 2) | No |
 | Desktop app (Code tab) | Same plugin system as the CLI | Not tested | No |
 | VS Code extension | Same plugin system | Not tested | No |
