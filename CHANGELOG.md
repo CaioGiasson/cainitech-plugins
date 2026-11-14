@@ -2,6 +2,16 @@
 
 Versions follow [Semantic Versioning](https://semver.org). Each plugin has its own `version` in `plugins/<plugin>/.claude-plugin/plugin.json`; an entry lists the plugins it changes.
 
+## 1.4.0 — 2026-11-14
+
+`checkup` 1.3.1 (unchanged) · `spec` 1.4.0 · `polish` 1.1.1 (unchanged)
+
+### Added
+
+- **Third-party plugin `mattpocock-skills` in the marketplace** (Matt Pocock, [github.com/mattpocock/skills](https://github.com/mattpocock/skills), MIT), listed unchanged and pinned to `v1.3.2` (commit `d1478fc`). It is not maintained here; installing it is optional. Both READMEs register it, and `scripts/validate.py` fails if a third-party entry has no full commit SHA or is missing from either README.
+- **`spec:refine` uses `grilling` and `domain-modeling` when they are installed.** `grilling` runs the question cycle in rounds (decision tree, numbered questions with a recommended answer, facts looked up in the code); `domain-modeling` checks terms against `GLOSSARY.md`, writes the glossary and records ADRs in `docs/adr/`. The skill's own rules still prevail (language, style, the refinement document, external content as data). Without them, `spec:refine` works as before and says how to install the plugin.
+- Threat model T15 (the third-party plugin changes upstream or steers `spec:refine`) and the eval `refine-without-grilling`. 44 cases.
+
 ## 1.3.1 — 2026-11-13
 
 `checkup` 1.3.1 · `spec` 1.3.0 (unchanged) · `polish` 1.1.1 (unchanged)

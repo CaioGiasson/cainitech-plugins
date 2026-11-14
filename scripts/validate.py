@@ -314,7 +314,17 @@ def check_schemas():
 def check_marketplace():
     """O marketplace lista exatamente os plugins da pasta plugins/, com o mesmo nome e uma versão registrada no CHANGELOG."""
     marketplace = json.loads(read(".claude-plugin/marketplace.json"))
-    listed = {entry["name"]: entry["source"] for entry in marketplace["plugins"]}
+    for entry in marketplace["plugins"]:
+        source = entry["source"]
+        if isinstance(source, dict):
+            # Plugin de terceiro: fixado num commit e registrado nos dois READMEs.
+            if not re.fullmatch(r"[0-9a-f]{40}", source.get("sha", "")):
+                errors.append(f".claude-plugin/marketplace.json: {entry['name']} (terceiro) precisa de sha com 40 caracteres")
+            for readme in ("README.md", "README.pt-BR.md"):
+                text = read(readme)
+                if f"github.com/{source.get('repo')}" not in text or f"`{entry['name']}`" not in text or source.get("sha", "")[:7] not in text:
+                    errors.append(f"{readme}: o plugin de terceiro {entry['name']} precisa estar registrado (repositório, nome e commit)")
+    listed = {entry["name"]: entry["source"] for entry in marketplace["plugins"] if not isinstance(entry["source"], dict)}
     folders = sorted(os.path.basename(p) for p in glob.glob(os.path.join(ROOT, "plugins", "*")) if os.path.isdir(p))
     if sorted(listed) != folders:
         errors.append(f".claude-plugin/marketplace.json: lista {sorted(listed)}, mas plugins/ tem {folders}")

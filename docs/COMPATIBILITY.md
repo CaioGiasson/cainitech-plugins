@@ -6,7 +6,7 @@ What each version of the plugins was checked against, at three separate levels:
 - **Skill run:** the skill ran end to end, by an eval case or by hand, on a fixture.
 - **End to end:** the whole flow ran against real services (GitHub PR, CI, board, merge).
 
-## Plugins 1.3 (`checkup` 1.3.1, `spec` 1.3.0, `polish` 1.1.1)
+## Plugins 1.4 (`checkup` 1.3.1, `spec` 1.4.0, `polish` 1.1.1)
 
 | Surface / system | Manifest accepted | Skill run | End to end |
 |---|---|---|---|

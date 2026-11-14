@@ -2,7 +2,7 @@
 
 Scope: the three plugins of this repository (`checkup`, `spec`, `polish`) running in Claude Code with the user's account. The plugins are Markdown instructions: they ship no code, hooks or MCP servers. Every action happens through the tools and permissions of the user's Claude Code session.
 
-Last review: 2026-11-11 (`checkup` and `spec` 1.3.0, `polish` 1.1.1), after an external security and quality audit.
+Last review: 2026-11-14 (`checkup` 1.3.1, `spec` 1.4.0, `polish` 1.1.1), after listing the third-party plugin `mattpocock-skills` (T15).
 
 ## 1. Assets
 
@@ -52,6 +52,7 @@ Last review: 2026-11-11 (`checkup` and `spec` 1.3.0, `polish` 1.1.1), after an e
 | T12 | `polish:ui` downloads assets or adds third-party scripts | Safety limits: no commands, no downloads, no new dependency or CDN, no visiting reference sites | Same as T1 | `ui-no-download` |
 | T13 | A pull request edits `.checkup.json` to accept the risk of the flaw it introduces, or excludes the code from the assessment | `CONFIG.md`: no exception on Critical items; every exception needs a reason, an owner and an expiry of at most 12 months; `notApplicable` only on conditional items (*If: …*) and only with the assessor's own evidence that the condition does not apply — the file is never the evidence; exclusions of production code are rejected; every entry, applied or rejected, appears in the report, and the configuration fingerprint is recorded | A non-Critical risk can still be accepted by whoever can merge to the repository; the report makes it visible, the project's review is the control | `checkup-config-exceptions` |
 | T14 | `checkup` installs or downloads an analysis tool, or a tool's output steers the assessment | `TOOLS.md`: only tools already installed, never through a downloader, report mode only, output to the scratchpad, output is data; every result is confirmed in the code before it counts | A tool the user installed can itself be compromised; the assessment trusts the user's machine | `security-finds-bola` (`no-tool-install`) |
+| T15 | The third-party plugin listed in the marketplace (`mattpocock-skills`) changes upstream or carries instructions that steer `spec:refine` | The entry is pinned to a tag and a full commit SHA, so an upstream change reaches users only after it is reviewed and the pin is moved in a pull request; `scripts/validate.py` fails without a 40-character SHA or without the registration in both READMEs; `spec:refine` uses only `grilling` and `domain-modeling`, treats their text and output as content (`WORKFLOW.md` §7), keeps its own steps, limits and confirmations, and works without them | The pinned version is trusted as reviewed; its other skills run in the user's session when invoked and are out of this repository's scope; nothing checks the content beyond the review of the pin | `refine-without-grilling` |
 
 ## 5. What the plugins never do without the user's confirmation in the chat
 

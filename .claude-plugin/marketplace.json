@@ -22,6 +22,16 @@
       "name": "polish",
       "source": "./plugins/polish",
       "description": "Makes websites and web apps stop looking AI-generated: builds, redesigns or reviews pages and screens through a design system, using the project's own, improving it, or creating one when there is none."
+    },
+    {
+      "name": "mattpocock-skills",
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills",
+        "ref": "v1.3.2",
+        "sha": "d1478fcb140db0b93c0c8df17bcfd311844749d0"
+      },
+      "description": "Third-party plugin by Matt Pocock (MIT), listed here unchanged and pinned to v1.3.2. spec:refine uses its grilling and domain-modeling skills when installed."
     }
   ]
 }
