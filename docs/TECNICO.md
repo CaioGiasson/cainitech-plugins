@@ -149,6 +149,8 @@ description: "Uma ou duas frases. Sempre entre aspas duplas: dois-pontos sem asp
 
 Crie `plugins/<nome>/.claude-plugin/plugin.json` e `plugins/<nome>/skills/…`, depois adicione uma entrada em `.claude-plugin/marketplace.json` com `"source": "./plugins/<nome>"`. O `name` da entrada e o `name` do manifesto devem ser idênticos. Nomes de plugin usam kebab-case e não podem começar com `claude-`, `anthropic-` ou prefixos reservados parecidos. **Nunca renomeie um plugin publicado**: as instalações ficam registradas com o nome antigo. Se for inevitável, use o mapa `renames` do marketplace.
 
+**Plugin de terceiro.** O marketplace também lista o `mattpocock-skills`, de outro repositório, com `"source": {"source": "github", "repo": "…", "ref": "<tag>", "sha": "<commit de 40 caracteres>"}`; o Claude Code faz checkout do `sha`. Mover a fixação é uma pull request: ler o diff do autor entre os dois commits, atualizar `ref`, `sha` e o commit citado nos dois READMEs, e testar o `spec:refine` à mão com o plugin instalado. O `scripts/validate.py` falha sem um `sha` completo ou sem o registro nos dois READMEs.
+
 ## Validação e release
 
 ```bash

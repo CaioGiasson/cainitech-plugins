@@ -149,6 +149,8 @@ description: "One or two sentences. Always wrap in double quotes: an unquoted co
 
 Create `plugins/<name>/.claude-plugin/plugin.json` and `plugins/<name>/skills/…`, then add an entry to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`. The entry `name` and the manifest `name` must be identical. Plugin names must be kebab-case and cannot start with `claude-`, `anthropic-` or similar reserved prefixes. **Never rename a published plugin**: installs are recorded under the old name. Use the marketplace `renames` map if you have to.
 
+**Third-party plugin.** The marketplace also lists `mattpocock-skills` from another repository, with `"source": {"source": "github", "repo": "…", "ref": "<tag>", "sha": "<40-character commit>"}`; Claude Code checks out the `sha`. Moving the pin is a pull request: read the upstream diff between the two commits, update `ref`, `sha` and the commit cited in both READMEs, and test `spec:refine` by hand with the plugin installed. `scripts/validate.py` fails without a full `sha` or without the registration in both READMEs.
+
 ## Validation and release
 
 ```bash

@@ -75,6 +75,8 @@ You don't need to learn commands. You need the **Claude app** (**Code** tab). If
 
    > Install the plugins from the marketplace CaioGiasson/cainitech-plugins: run `claude plugin marketplace add CaioGiasson/cainitech-plugins`, then `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` and `claude plugin install polish@cainitech`, and tell me when it's done.
 
+   Optional: add `claude plugin install mattpocock-skills@cainitech` for the [third-party plugin](#third-party-plugin-mattpocock-skills) that `/spec:refine` uses.
+
 3. Wait for Claude to confirm and open a **new conversation**. The skills now show up when you type `/`.
 
 One message. That's it. Want only the health checks, only the task workflow or only the interface rules? Ask for just `checkup`, `spec` or `polish`.
@@ -129,7 +131,7 @@ Eleven skills in three plugins. Each one says what it does and what result you g
 | Skill | What it does | What you get |
 |---|---|---|
 | **`/spec:from-thread`** | Reads an informal conversation (Slack thread link, Discord link or a `.md` file), drops the noise and separates decisions from doubts and opinions. | A refined task recorded in your project's docs and, if you have a GitHub task board, created there — with no jokes, slang or loose information. |
-| **`/spec:refine`** | Takes an idea described in a few lines, studies the system, asks focused questions and details everything. | A complete task (goal, rules, what to change and how to test), clear enough for anyone to carry out. It is **always recorded in your project's documentation**; if there's a board, it is also created there, with one sub-task per system involved. |
+| **`/spec:refine`** | Takes an idea described in a few lines, studies the system, asks focused questions and details everything. With the third-party plugin [`mattpocock-skills`](#third-party-plugin-mattpocock-skills) installed, it runs the questions as grilling rounds and records a glossary and decisions (ADRs). | A complete task (goal, rules, what to change and how to test), clear enough for anyone to carry out. It is **always recorded in your project's documentation**; if there's a board, it is also created there, with one sub-task per system involved. |
 
 ### From code to delivery
 
@@ -172,6 +174,16 @@ How to read the score:
 | **`/polish:ui`** | Builds, redesigns or reviews websites and web app screens (landing pages, dashboards, tables, forms, settings). First it audits the design system, then it removes the visual and writing habits that give AI-made interfaces away, deciding each choice from your product instead of from the usual template. Just describe what you want; add `review` to only assess, or `system` to work on the design system alone. | An interface that reads as made for your product, built from shared tokens and components, plus a short report: what changed in the design system, why each main choice was made, what was assumed and what material you still need to supply. |
 
 <sub>Site rules adapted from <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), without its scripts, hooks or downloads.</sub>
+
+### Third-party plugin: `mattpocock-skills`
+
+This marketplace also lists **`mattpocock-skills`**, a plugin by Matt Pocock from [github.com/mattpocock/skills](https://github.com/mattpocock/skills) (MIT). It is **not part of these plugins and is not maintained here**: the marketplace only points to the author's repository, unchanged, pinned to version `v1.3.2` (commit `d1478fc`), so an update upstream reaches you only after it is reviewed and the pin is moved here. Installing it is optional.
+
+| Used by | Skills used | What changes |
+|---|---|---|
+| **`/spec:refine`** | `grilling` and `domain-modeling` | The questions come in rounds that follow a decision tree, each with a recommended answer, and facts are looked up in the code instead of asked. Terms are checked against the project's `GLOSSARY.md`, and the glossary and the decisions (ADRs in `docs/adr/`) are written as they are settled. Without the plugin, `/spec:refine` asks its usual questions and says how to install it. |
+
+The plugin brings other skills (TDD, code review, tickets and more), available on their own after installation; they are outside the scope of the evaluations and the threat model of this repository, except for the use by `/spec:refine` above. Its content runs in your session with the same permissions as any skill: read it before installing, as you would any third-party plugin.
 
 ## What a health-check result looks like
 
@@ -289,9 +301,9 @@ After the report, Claude offers to turn the backlog items into well-defined task
 
 **How it is checked:**
 
-- **Evals:** 43 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
+- **Evals:** 44 cases, at least 3 per skill, cover triggering, the safety rules, dry runs and abuse cases such as instructions planted in a pull request ([how to run](docs/EVALS.md)).
 - **CI on every pull request:** manifest validation, catalog counts and fingerprints, references and links, the score arithmetic of the example above, and a secret scan of the whole history.
-- **Threat model:** assets, trust boundaries, fourteen abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
+- **Threat model:** assets, trust boundaries, fifteen abuse cases and their known limits ([THREAT-MODEL.md](docs/THREAT-MODEL.md)).
 - **Reproducible scenarios** on public fictitious fixtures ([CASE-STUDIES.md](docs/CASE-STUDIES.md)).
 
 ## Compatibility

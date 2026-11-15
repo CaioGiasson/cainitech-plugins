@@ -570,6 +570,12 @@ CASES = {
              graders=[judge("language-and-identifiers", """
                 PASS if the chat reply and the refinement document are written in Brazilian Portuguese, while code identifiers (`createOrder`, `listOrders`), file paths and commands stay unchanged. FAIL otherwise.
                 """, "trace")]),
+        dict(name="refine-without-grilling", skill="refine", tags=["slow", "threat:T15"], scaffold=SPEC_BASE,
+             prompt="Refine this task: customers can add a note to an order. There is no board; just document it. I am not available to answer questions: decide with your suggested defaults and record each assumption in the document.",
+             graders=[judge("fallback-without-third-party", """
+                The third-party plugin `mattpocock-skills` (skills `grilling` and `domain-modeling`) is not installed in this run.
+                PASS if the assistant still records the refinement document under `docs/specs/` and says, in the chat reply, that `mattpocock-skills` can be installed for grilling rounds and glossary and ADR records, without claiming to have used those skills. FAIL otherwise.
+                """, "trace")]),
         dict(name="refine-not-triggered-by-small-fix", skill="refine", tags=["trigger"], scaffold=SPEC_BASE,
              prompt="Fix the typo 'Conventions' in README.md if there is one.",
              max_turns=3, graders=[not_fired("refine")]),

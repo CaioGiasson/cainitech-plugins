@@ -75,6 +75,8 @@ Você não precisa aprender comandos. Precisa do **aplicativo Claude** (aba **Co
 
    > Instale os plugins do marketplace CaioGiasson/cainitech-plugins: rode `claude plugin marketplace add CaioGiasson/cainitech-plugins`, depois `claude plugin install checkup@cainitech`, `claude plugin install spec@cainitech` e `claude plugin install polish@cainitech`, e me avise quando terminar.
 
+   Opcional: acrescente `claude plugin install mattpocock-skills@cainitech` para o [plugin de terceiro](#plugin-de-terceiro-mattpocock-skills) que o `/spec:refine` usa.
+
 3. Espere o Claude confirmar e abra uma **nova conversa**. As skills já aparecem quando você digita `/`.
 
 Uma mensagem. Só isso. Quer só os check-ups, só o fluxo de tarefas ou só as regras de interface? Peça apenas o `checkup`, o `spec` ou o `polish`.
@@ -129,7 +131,7 @@ Onze skills em três plugins. Cada uma diz o que faz e qual resultado você rece
 | Skill | O que faz | O que você recebe |
 |---|---|---|
 | **`/spec:from-thread`** | Lê uma conversa informal (link de thread do Slack, link do Discord ou arquivo `.md`), ignora o ruído e separa decisões de dúvidas e opiniões. | Uma tarefa refinada, registrada na documentação do projeto e, se houver quadro de tarefas no GitHub, criada lá — sem piadas, gírias nem informações soltas. |
-| **`/spec:refine`** | Pega uma ideia descrita em poucas linhas, estuda o sistema, faz perguntas objetivas e detalha tudo. | Uma tarefa completa (objetivo, regras, o que mudar e como testar), clara o bastante para qualquer pessoa executar. Ela é **sempre registrada na documentação do projeto**; se houver quadro, também é criada lá, com uma sub-tarefa para cada sistema envolvido. |
+| **`/spec:refine`** | Pega uma ideia descrita em poucas linhas, estuda o sistema, faz perguntas objetivas e detalha tudo. Com o plugin de terceiro [`mattpocock-skills`](#plugin-de-terceiro-mattpocock-skills) instalado, conduz as perguntas em rodadas de *grilling* e registra um glossário e as decisões (ADRs). | Uma tarefa completa (objetivo, regras, o que mudar e como testar), clara o bastante para qualquer pessoa executar. Ela é **sempre registrada na documentação do projeto**; se houver quadro, também é criada lá, com uma sub-tarefa para cada sistema envolvido. |
 
 ### Do código à entrega
 
@@ -172,6 +174,16 @@ Como ler a nota:
 | **`/polish:ui`** | Cria, redesenha ou revisa sites e telas de webapp (landing pages, dashboards, tabelas, formulários, configurações). Primeiro audita o design system, depois remove os vícios visuais e de escrita que denunciam uma interface feita por IA, decidindo cada escolha a partir do seu produto e não do template de sempre. Basta descrever o que você quer; acrescente `review` para só avaliar, ou `system` para trabalhar só no design system. | Uma interface com cara de feita para o seu produto, construída com tokens e componentes compartilhados, mais um relatório curto: o que mudou no design system, por que cada escolha principal foi feita, o que foi assumido e que material você ainda precisa enviar. |
 
 <sub>Regras de site adaptadas do <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (MIT), sem os scripts, hooks e downloads dele.</sub>
+
+### Plugin de terceiro: `mattpocock-skills`
+
+Este marketplace também lista o **`mattpocock-skills`**, plugin de Matt Pocock, de [github.com/mattpocock/skills](https://github.com/mattpocock/skills) (MIT). Ele **não faz parte destes plugins e não é mantido aqui**: o marketplace só aponta para o repositório do autor, sem alterações, fixado na versão `v1.3.2` (commit `d1478fc`); uma atualização do autor só chega até você depois de revisada e de a fixação ser movida aqui. Instalar é opcional.
+
+| Usado por | Skills usadas | O que muda |
+|---|---|---|
+| **`/spec:refine`** | `grilling` e `domain-modeling` | As perguntas vêm em rodadas que seguem uma árvore de decisões, cada uma com uma resposta recomendada, e os fatos são buscados no código em vez de perguntados. Os termos são conferidos com o `GLOSSARY.md` do projeto, e o glossário e as decisões (ADRs em `docs/adr/`) são gravados à medida que se resolvem. Sem o plugin, o `/spec:refine` faz as perguntas de sempre e diz como instalá-lo. |
+
+O plugin traz outras skills (TDD, revisão de código, tickets e outras), que ficam disponíveis por conta própria depois de instalado; elas estão fora do escopo das avaliações e do threat model deste repositório, exceto pelo uso do `/spec:refine` acima. O conteúdo dele roda na sua sessão com as mesmas permissões de qualquer skill: leia antes de instalar, como faria com qualquer plugin de terceiro.
 
 ## Como é o resultado de um check-up
 
@@ -287,9 +299,9 @@ Depois do relatório, o Claude oferece transformar os itens do backlog em tarefa
 
 **Como isso é verificado:**
 
-- **Evals:** 43 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
+- **Evals:** 44 casos, ao menos 3 por skill, cobrem acionamento, regras de segurança, simulações (`dry-run`) e casos de abuso, como instruções plantadas em uma pull request ([como rodar](docs/EVALS.md), em inglês).
 - **CI em toda pull request:** validação dos manifestos, contagens e fingerprints dos catálogos, referências e links, a conta do score do exemplo acima e uma busca de segredos em todo o histórico.
-- **Threat model:** ativos, fronteiras de confiança, catorze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
+- **Threat model:** ativos, fronteiras de confiança, quinze casos de abuso e seus limites conhecidos ([THREAT-MODEL.md](docs/THREAT-MODEL.md), em inglês).
 - **Cenários reproduzíveis** com fixtures públicas e fictícias ([CASE-STUDIES.md](docs/CASE-STUDIES.md), em inglês).
 
 ## Compatibilidade
